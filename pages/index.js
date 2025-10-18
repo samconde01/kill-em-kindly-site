@@ -552,8 +552,42 @@ function CastItem({ person, openKey, setOpenKey }) {
   const open = openKey === person.key;
   const toggle = () => setOpenKey(open ? null : person.key);
 
+  const contentRef = React.useRef(null);
+  const [targetHeight, setTargetHeight] = React.useState(0);
+
+  // Recalculate height whenever open changes or bio changes
+  React.useEffect(() => {
+    if (!contentRef.current) return;
+    // Temporarily expand to measure
+    const el = contentRef.current;
+    // Force measurement state
+    el.style.maxHeight = 'none';
+    el.style.visibility = 'hidden';
+    el.style.position = 'absolute';
+    el.style.pointerEvents = 'none';
+    const h = el.scrollHeight;
+    // Revert
+    el.style.maxHeight = '';
+    el.style.visibility = '';
+    el.style.position = '';
+    el.style.pointerEvents = '';
+    setTargetHeight(h);
+  }, [open, person.bio]);
+
+  // Also recalc on window resize for responsive wrapping
+  React.useEffect(() => {
+    if (!open) return;
+    const onResize = () => {
+      if (!contentRef.current) return;
+      const h = contentRef.current.scrollHeight;
+      setTargetHeight(h);
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [open]);
+
   return (
-    <div className="pb-panel">  {/* ← removed overflow:'hidden' */}
+    <div className="pb-panel"> {/* no overflow hidden on the card */}
       <button
         onClick={toggle}
         aria-expanded={open}
@@ -613,10 +647,11 @@ function CastItem({ person, openKey, setOpenKey }) {
         </div>
       </button>
 
-      {/* Smooth expanding body (can’t get clipped) */}
+      {/* Animated body that matches real content height */}
       <div
+        ref={contentRef}
         style={{
-          maxHeight: open ? '1000px' : '0px',
+          maxHeight: open ? `${targetHeight}px` : '0px',
           overflow: 'hidden',
           transition: 'max-height 240ms ease',
         }}
@@ -635,6 +670,7 @@ function CastItem({ person, openKey, setOpenKey }) {
     </div>
   );
 }
+
 
 
 function FaqItem({ idx, q, a }){
