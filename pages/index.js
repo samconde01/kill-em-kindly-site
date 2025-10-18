@@ -486,18 +486,11 @@ function HomePage(){
         <div>
           <div className="pb-glow" style={{ fontSize:18, fontWeight:600, marginBottom:8 }}>Cast</div>
           <div className="cast-grid">
-  {CAST.map((person) => (
-    <div key={person.key} className="cast-card">
-      <img src={person.img} alt={person.name} className="cast-headshot" />
-      <h3>{person.name}</h3>
-      <details>
-        <summary>View Bio</summary>
-        <p>{person.bio}</p>
-      </details>
-    </div>
-  ))}
-</div>
-
+            {CAST.map((person) => (
+              <CastItem key={person.key} person={person} openKey={openCastKey} setOpenKey={setOpenCastKey} />
+            ))}
+          </div>
+        </div>
 
         {/* Producers */}
         <div style={{ marginTop:24 }}>
@@ -546,23 +539,9 @@ function CastItem({ person, openKey, setOpenKey }){
       <button onClick={toggle} aria-expanded={open} style={{ width:'100%', textAlign:'left', padding:0, border:'none', background:'transparent', color:'inherit', cursor:'pointer' }}>
         <div style={{ display:'grid', gridTemplateColumns:'auto 1fr', columnGap:12, padding:12, alignItems:'center', borderBottom: open ? '1px solid var(--pb-border)' : 'none' }}>
           {/* Headshot placeholder (replace src later) */}
-         <div
-  className="cast-head"
-  style={{
-    borderRadius: 12,
-    border: '1px solid var(--pb-border)',
-    overflow: 'hidden',
-    background: 'rgba(77,240,138,.08)'
-  }}
->
-  <img
-    src={person.img || '/images/placeholder.jpg'}
-    alt={person.name}
-    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: 'grayscale(20%) contrast(1.1)' }}
-    onError={(e) => { e.currentTarget.src = '/images/placeholder.jpg'; }}
-  />
-</div>
-
+          <div className="cast-head" style={{ borderRadius:12, border:'1px solid var(--pb-border)', background:'rgba(77,240,138,.08)', display:'flex', alignItems:'center', justifyContent:'center', color:'var(--pb-dim)', overflow:'hidden' }}>
+            [ Headshot ]
+          </div>
           <div>
             <div className="pb-glow" style={{ fontWeight:700 }}>{person.name}</div>
             <div style={{ color:'var(--pb-dim)', fontSize:12 }}>{open ? 'Tap to collapse' : 'Tap to read bio'}</div>
