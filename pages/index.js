@@ -473,43 +473,49 @@ function HomePage(){
         </div>
       </section>
 
-      {/* Cast & Producers */}
-      <section className="pb-container" style={{ padding:'24px 0' }}>
-        {/* Cast */}
-     <div>
-  <div className="pb-glow" style={{ fontSize:18, fontWeight:600, marginBottom:8 }}>Cast</div>
- <div className="cast-grid">
-  {CAST.map((person) => (
-    <CastItem
-      key={person.key}
-      person={person}
-      openKey={openCastKey}
-      setOpenKey={setOpenCastKey}
-    />
-  ))}
-</div>
+ {/* Cast & Producers */}
+<section className="pb-container" style={{ padding:'24px 0' }}>
+  {/* Cast */}
+  <div>
+    <div className="pb-glow" style={{ fontSize:18, fontWeight:600, marginBottom:8 }}>Cast</div>
+    <div className="cast-grid">
+      {CAST.map((person) => (
+        <CastItem
+          key={person.key}
+          person={person}
+          openKey={openCastKey}
+          setOpenKey={setOpenCastKey}
+        />
+      ))}
+    </div>
+  </div>
 
-
-
-
-        {/* Producers */}
-        <div style={{ marginTop:24 }}>
-          <div className="pb-glow" style={{ fontSize:18, fontWeight:600, marginBottom:8 }}>Producers</div>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(160px, 1fr))', gap:12 }}>
-            {[
-              { label: 'SC Digital' },
-              { label: 'Direct Action Media' },
-              { label: 'Slaughter Project' },
-            ].map((p) => (
-              <div key={p.label} className="pb-panel" style={{ padding:20, display:'flex', alignItems:'center', justifyContent:'center', minHeight:96, textAlign:'center' }}>
-                <span className="pb-glow" style={{ fontWeight:800, fontSize:18, letterSpacing:'0.05em', color:'var(--pb-bright)', textShadow:'0 0 12px rgba(185,255,156,0.65)' }}>
-                  {p.label}
-                </span>
-              </div>
-            ))}
-          </div>
+  {/* Producers */}
+  <div style={{ marginTop:24 }}>
+    <div className="pb-glow" style={{ fontSize:18, fontWeight:600, marginBottom:8 }}>Producers</div>
+    <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(160px, 1fr))', gap:12 }}>
+      {[
+        { label: 'SC Digital' },
+        { label: 'Direct Action Media' },
+        { label: 'Slaughter Project' },
+      ].map((p) => (
+        <div
+          key={p.label}
+          className="pb-panel"
+          style={{ padding:20, display:'flex', alignItems:'center', justifyContent:'center', minHeight:96, textAlign:'center' }}
+        >
+          <span
+            className="pb-glow"
+            style={{ fontWeight:800, fontSize:18, letterSpacing:'0.05em', color:'var(--pb-bright)', textShadow:'0 0 12px rgba(185,255,156,0.65)' }}
+          >
+            {p.label}
+          </span>
         </div>
-      </section>
+      ))}
+    </div>
+  </div>
+</section>
+
 
       {/* FAQ */}
       <section id="faq" className="pb-container" style={{ padding:'48px 0 72px' }}>
@@ -538,7 +544,7 @@ function CastItem({ person, openKey, setOpenKey }){
     <div className="pb-panel" style={{ overflow:'hidden' }}>
       <button onClick={toggle} aria-expanded={open} style={{ width:'100%', textAlign:'left', padding:0, border:'none', background:'transparent', color:'inherit', cursor:'pointer' }}>
         <div style={{ display:'grid', gridTemplateColumns:'auto 1fr', columnGap:12, padding:12, alignItems:'center', borderBottom: open ? '1px solid var(--pb-border)' : 'none' }}>
-         <div
+        <div
   className="cast-head"
   style={{ borderRadius:12, border:'1px solid var(--pb-border)', overflow:'hidden', background:'rgba(77,240,138,.08)' }}
 >
@@ -549,6 +555,7 @@ function CastItem({ person, openKey, setOpenKey }){
     onError={(e) => { e.currentTarget.src = '/images/placeholder.jpg'; }}
   />
 </div>
+
 
           <div>
             <div className="pb-glow" style={{ fontWeight:700 }}>{person.name}</div>
