@@ -553,7 +553,7 @@ function CastItem({ person, openKey, setOpenKey }) {
   const toggle = () => setOpenKey(open ? null : person.key);
 
   return (
-    <div className="pb-panel" style={{ overflow: 'hidden' }}>
+    <div className="pb-panel">  {/* ← removed overflow:'hidden' */}
       <button
         onClick={toggle}
         aria-expanded={open}
@@ -613,11 +613,25 @@ function CastItem({ person, openKey, setOpenKey }) {
         </div>
       </button>
 
-      {open && (
-        <div style={{ padding: '12px 12px 14px', color: 'var(--pb-dim)' }}>
+      {/* Smooth expanding body (can’t get clipped) */}
+      <div
+        style={{
+          maxHeight: open ? '1000px' : '0px',
+          overflow: 'hidden',
+          transition: 'max-height 240ms ease',
+        }}
+      >
+        <div
+          style={{
+            padding: open ? '12px 12px 14px' : '0 12px',
+            color: 'var(--pb-dim)',
+            whiteSpace: 'normal',
+            wordBreak: 'break-word',
+          }}
+        >
           {person.bio}
         </div>
-      )}
+      </div>
     </div>
   );
 }
