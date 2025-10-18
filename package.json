@@ -1,0 +1,17 @@
+{
+  "name": "kill-em-kindly-site",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000"
+  },
+  "dependencies": {
+    "framer-motion": "10.18.0",
+    "next": "14.2.3",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "stripe": "14.22.0",
+    "micro": "10.0.1"
+  }
+}
