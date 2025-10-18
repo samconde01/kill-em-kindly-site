@@ -51,47 +51,40 @@ const CAST = [
     name: 'Sam Conde',
     key: 'sam-conde',
     img: '/images/sam-conde.jpg',
-    bio: 'With a diverse background in on-camera work spanning short films, commercial content, and digital media, Sam excels at it all. While new to narrative acting, her ease in front of the lens and instinct for storytelling make her a standout presence. "Kill \'em Kindly" is a thrilling step into a lead role that channels her experience, passion, and sharp creative eye.'
+    bio: 'With a diverse background in on-camera work spanning short films...'
   },
   {
     name: 'James Choi',
     key: 'james-choi',
     img: '/images/james-choi.jpg',
-    bio: 'With over 30 film credits across indie features, shorts, and genre projects, this Korean American actor brings both range and presence to the screen. Trained in method and Meisner techniques, his performances balance intensity with nuance—whether he’s playing a conflicted lead or a ruthless antagonist. His background includes military tactical training, CQB, and weapons handling, making him a natural fit for action-heavy roles. Fluent in English, Korean, and Chinese, he brings an international versatility and grounded authenticity to every role he takes on.'
+    bio: 'With over 30 film credits across indie features...'
   },
   {
     name: 'Cole Thornton',
     key: 'cole-thornton',
     img: '/images/cole-thornton.jpg',
-    bio: 'Cole is an actor and model whose work often places him in high-intensity, action-driven roles. Best known for his performances in Stalker: Shadow of the Zone and Ten of Swords, Thornton has consistently brought a physical, commanding presence to screen. Recently, he has been exploring layered characters and more dramatic storytelling through collaborative projects. With a background that combines discipline, physicality, and a sharp instinct for performance, Thornton is carving a path as a versatile actor ready to tackle both action and character-driven roles.'
+    bio: 'Cole is an actor and model whose work often places him...'
   },
   {
     name: 'Austin Rearden',
     key: 'austin-rearden',
     img: '/images/austin-rearden.jpg',
-    bio: 'Austin has been a Voice Actor for the last 11 years, appearing most notably in large scale fan films such as SCP: Overlord, SCP: Dollhouse as well as dozens of digital short films, Machinima, animated series, indie games and advertising. Austin recently debuted in his first live action film: STALKER: Shadow of the Zone, which led to a continued interest in pursuing live action acting. He plans to continue to work in the industry and participate in large scale projects while continuing voice over work.'
+    bio: 'Austin has been a Voice Actor for the last 11 years...'
   },
   {
     name: 'Eric Cummins',
     key: 'eric-cummins',
     img: '/images/eric-cummins.jpg',
-    bio: 'New to acting, Eric brings his true personality with a fun sense of whimsy to the production. Traveling the country to network and build his brand has helped him develop exceptional character and on-camera presence.'
+    bio: 'New to acting, Eric brings his true personality...'
   },
   {
     name: 'Scott Crabb',
     key: 'scott-crabb',
     img: '/images/scott-crabb.jpg',
-    bio: 'Michael Scott Crabb, known professionally as Scott Crabb, is most recognized for his work in STALKER: Shadow of the Zone, for which his portrayal of the character, "Monk" received a nomination for best supporting actor at the 2024 Tampa Bay Underground Film Festival. Scott also played the role of “Topper’s Dad” in two episodes of the Netflix series Outer Banks, Season 3. Prior to stepping into the world of acting, Scott had a storied 25-year international career as a special agent with the U.S. government. Scott\'s unique background brings a deep sense of authenticity and intensity to his performances.'
+    bio: 'Michael Scott Crabb, known professionally as Scott Crabb...'
   },
 ];
 
-
-const MINI_TIMELINE = [
-  { label: 'Pre‑production', note: 'October & November 2025' },
-  { label: 'Filming', note: 'December 2025' },
-  { label: 'Post', note: 'January & February 2026' },
-  { label: 'Release', note: 'March 2026' },
-];
 
 // --- Legal Text (single source of truth) ----------------------------------
 const PRIVACY_TEXT = 'Privacy Policy\n\nEffective Date: October 2025\n\nThis Privacy Policy explains how we collect, use, and protect information from contributors and visitors on this crowdfunding page for our short film project. By contributing to this campaign, you agree to the terms below.\n\n1. Information We Collect\nWe may collect the following information when you contribute or interact with our page:\n\nName and email address\nShipping address (for physical perk fulfillment)\nPayment information (processed securely through our payment partners — we do not store credit card numbers)\nOptional info provided by you (e.g., T-shirt size, social handles, special instructions)\nWe also receive basic technical data automatically (e.g., IP address, browser type, time of visit) to maintain site security and performance.\n\n2. How We Use Your Information\nWe use your information strictly for:\nProcessing and confirming your contributions\nFulfilling and shipping perks\nSending project updates, shipping notifications, and key announcements\nResponding to refund or support inquiries\n\nWe do not sell or rent your information to third parties.\n\n3. How We Share Your Information\nWe may share your information with:\nPayment processors (to handle your transaction securely)\nShipping carriers (to deliver physical perks)\nProject team members (to fulfill perks or communicate with backers)\nWe require all partners to handle your information securely and use it only for the stated purpose.\n\n4. Data Retention\nWe retain contributor information only as long as needed for:\nFulfillment and communication\nLegal, accounting, or tax obligations\nMaintaining campaign records\nYou may request deletion of your personal information after fulfillment by emailing sconde@samcondedigital.com\n\n5. Your Rights\nYou have the right to:\nAccess the personal information we hold about you\nRequest corrections or deletion\nOpt out of non-essential emails (such as promotional updates)\n\n6. Data Security\nWe take reasonable administrative and technical measures to protect your personal information from unauthorized access, loss, or misuse.\n\n7. International Backers\nIf you contribute from outside the U.S., your information will be transferred and processed in the U.S. By contributing, you consent to this transfer.\n\n8. Policy Updates\nWe may update this Privacy Policy from time to time. The effective date at the top of this page reflects the latest version.\n\n9. Contact\nIf you have questions or requests regarding your personal information, contact:\nsconde@samcondedigital.com';
@@ -485,12 +478,15 @@ function HomePage(){
         {/* Cast */}
         <div>
           <div className="pb-glow" style={{ fontSize:18, fontWeight:600, marginBottom:8 }}>Cast</div>
-          <div className="cast-grid">
-            {CAST.map((person) => (
-              <CastItem key={person.key} person={person} openKey={openCastKey} setOpenKey={setOpenCastKey} />
-            ))}
-          </div>
-        </div>
+         <div className="cast-head" style={{ borderRadius:12, border:'1px solid var(--pb-border)', overflow:'hidden', background:'rgba(77,240,138,.08)' }}>
+  <img
+    src={person.img || '/images/placeholder.jpg'}
+    alt={person.name}
+    style={{ width:'100%', height:'100%', objectFit:'cover', display:'block', filter:'grayscale(20%) contrast(1.1)' }}
+    onError={(e) => { e.currentTarget.src = '/images/placeholder.jpg'; }}
+  />
+</div>
+
 
         {/* Producers */}
         <div style={{ marginTop:24 }}>
