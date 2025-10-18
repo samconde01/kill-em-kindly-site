@@ -486,11 +486,18 @@ function HomePage(){
         <div>
           <div className="pb-glow" style={{ fontSize:18, fontWeight:600, marginBottom:8 }}>Cast</div>
           <div className="cast-grid">
-            {CAST.map((person) => (
-              <CastItem key={person.key} person={person} openKey={openCastKey} setOpenKey={setOpenCastKey} />
-            ))}
-          </div>
-        </div>
+  {CAST.map((person) => (
+    <div key={person.key} className="cast-card">
+      <img src={person.img} alt={person.name} className="cast-headshot" />
+      <h3>{person.name}</h3>
+      <details>
+        <summary>View Bio</summary>
+        <p>{person.bio}</p>
+      </details>
+    </div>
+  ))}
+</div>
+
 
         {/* Producers */}
         <div style={{ marginTop:24 }}>
