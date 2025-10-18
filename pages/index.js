@@ -45,33 +45,46 @@ const TIER_DEFS = [
   { cost: 5000,name: 'OVERSEER',            rewards: 'Invite on Set, Producer Credit, and past rewards' },
 ];
 
-// Cast with bios (no subtitles). Headshot placeholders for now.
+// Cast with bios + image paths
 const CAST = [
   {
-    name: 'Sam Conde', key: 'sam-conde',
+    name: 'Sam Conde',
+    key: 'sam-conde',
+    img: '/images/sam-conde.jpg',
     bio: 'With a diverse background in on-camera work spanning short films, commercial content, and digital media, Sam excels at it all. While new to narrative acting, her ease in front of the lens and instinct for storytelling make her a standout presence. "Kill \'em Kindly" is a thrilling step into a lead role that channels her experience, passion, and sharp creative eye.'
   },
   {
-    name: 'James Choi', key: 'james-choi',
+    name: 'James Choi',
+    key: 'james-choi',
+    img: '/images/james-choi.jpg',
     bio: 'With over 30 film credits across indie features, shorts, and genre projects, this Korean American actor brings both range and presence to the screen. Trained in method and Meisner techniques, his performances balance intensity with nuance—whether he’s playing a conflicted lead or a ruthless antagonist. His background includes military tactical training, CQB, and weapons handling, making him a natural fit for action-heavy roles. Fluent in English, Korean, and Chinese, he brings an international versatility and grounded authenticity to every role he takes on.'
   },
   {
-    name: 'Cole Thornton', key: 'cole-thornton',
+    name: 'Cole Thornton',
+    key: 'cole-thornton',
+    img: '/images/cole-thornton.jpg',
     bio: 'Cole is an actor and model whose work often places him in high-intensity, action-driven roles. Best known for his performances in Stalker: Shadow of the Zone and Ten of Swords, Thornton has consistently brought a physical, commanding presence to screen. Recently, he has been exploring layered characters and more dramatic storytelling through collaborative projects. With a background that combines discipline, physicality, and a sharp instinct for performance, Thornton is carving a path as a versatile actor ready to tackle both action and character-driven roles.'
   },
   {
-    name: 'Austin Rearden', key: 'austin-rearden',
+    name: 'Austin Rearden',
+    key: 'austin-rearden',
+    img: '/images/austin-rearden.jpg',
     bio: 'Austin has been a Voice Actor for the last 11 years, appearing most notably in large scale fan films such as SCP: Overlord, SCP: Dollhouse as well as dozens of digital short films, Machinima, animated series, indie games and advertising. Austin recently debuted in his first live action film: STALKER: Shadow of the Zone, which led to a continued interest in pursuing live action acting. He plans to continue to work in the industry and participate in large scale projects while continuing voice over work.'
   },
   {
-    name: 'Eric Cummins', key: 'eric-cummins',
+    name: 'Eric Cummins',
+    key: 'eric-cummins',
+    img: '/images/eric-cummins.jpg',
     bio: 'New to acting, Eric brings his true personality with a fun sense of whimsy to the production. Traveling the country to network and build his brand has helped him develop exceptional character and on-camera presence.'
   },
   {
-    name: 'Scott Crabb', key: 'scott-crabb',
+    name: 'Scott Crabb',
+    key: 'scott-crabb',
+    img: '/images/scott-crabb.jpg',
     bio: 'Michael Scott Crabb, known professionally as Scott Crabb, is most recognized for his work in STALKER: Shadow of the Zone, for which his portrayal of the character, "Monk" received a nomination for best supporting actor at the 2024 Tampa Bay Underground Film Festival. Scott also played the role of “Topper’s Dad” in two episodes of the Netflix series Outer Banks, Season 3. Prior to stepping into the world of acting, Scott had a storied 25-year international career as a special agent with the U.S. government. Scott\'s unique background brings a deep sense of authenticity and intensity to his performances.'
   },
 ];
+
 
 const MINI_TIMELINE = [
   { label: 'Pre‑production', note: 'October & November 2025' },
