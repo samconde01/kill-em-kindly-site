@@ -18,20 +18,24 @@ function nearestTier(amount, tiers) {
 
 // Tiny sanity tests (runs in browser, no build impact)
 (function runNearestTierTests(){
-  const tt = [ {cost:20,name:'A'}, {cost:55,name:'B'}, {cost:75,name:'C'} ];
+  const tt = [
+    {cost:20,name:'A'},
+    {cost:35,name:'B'},
+    {cost:55,name:'C'},
+    {cost:75,name:'D'}
+  ];
   const t1 = nearestTier(18, tt); console.assert(t1.cost === 20, 'nearestTier(18) should be 20');
   const t2 = nearestTier(56, tt); console.assert(t2.cost === 55, 'nearestTier(56) should be 55');
   const t3 = nearestTier(70, tt); console.assert(t3.cost === 75, 'nearestTier(70) should be 75');
   const t4 = nearestTier(55, tt); console.assert(t4.cost === 55, 'nearestTier exact match should pick that tier');
-  // Additional tests (do not modify existing ones)
   const t5 = nearestTier(1, tt);  console.assert(t5.cost === 20, 'nearestTier(1) should snap to lowest tier 20');
   const t6 = nearestTier(1000, tt); console.assert(t6.cost === 75, 'nearestTier(1000) should snap to highest tier 75');
   const t7 = nearestTier(37, tt); console.assert(t7.cost === 35 || t7.cost === 55, 'nearestTier(37) should pick the closer of 35 or 55');
-  // New tie-breaking tests (always round up)
   const t8 = nearestTier(45, tt); console.assert(t8.cost === 55, 'nearestTier(45) tie between 35 and 55 should round up to 55');
   const t9 = nearestTier(65, tt); console.assert(t9.cost === 75, 'nearestTier(65) tie between 55 and 75 should round up to 75');
   const t10 = nearestTier(27.5, [{cost:20,name:'L'},{cost:35,name:'M'}]); console.assert(t10.cost === 35, 'nearestTier midpoint should round up to higher tier');
 })();
+
 
 // --- Data ------------------------------------------------------------------
 const TIER_DEFS = [
@@ -85,6 +89,14 @@ const CAST = [
   },
 ];
 
+// --- Mini timeline used in About section ---
+const MINI_TIMELINE = [
+  { label: 'Teaser live',           note: 'Sep 24' },
+  { label: 'Crowdfunding launch',   note: 'Sep 26' },
+  { label: 'Patch sale goes live',  note: 'Oct 3 (separate partner site)' },
+  { label: 'Campaign wraps',        note: 'Nov 17 (30 days total)' },
+  { label: 'Fulfillment begins',    note: 'Rolling, digital first; physical after production' },
+];
 
 // --- Legal Text (single source of truth) ----------------------------------
 const PRIVACY_TEXT = 'Privacy Policy\n\nEffective Date: October 2025\n\nThis Privacy Policy explains how we collect, use, and protect information from contributors and visitors on this crowdfunding page for our short film project. By contributing to this campaign, you agree to the terms below.\n\n1. Information We Collect\nWe may collect the following information when you contribute or interact with our page:\n\nName and email address\nShipping address (for physical perk fulfillment)\nPayment information (processed securely through our payment partners — we do not store credit card numbers)\nOptional info provided by you (e.g., T-shirt size, social handles, special instructions)\nWe also receive basic technical data automatically (e.g., IP address, browser type, time of visit) to maintain site security and performance.\n\n2. How We Use Your Information\nWe use your information strictly for:\nProcessing and confirming your contributions\nFulfilling and shipping perks\nSending project updates, shipping notifications, and key announcements\nResponding to refund or support inquiries\n\nWe do not sell or rent your information to third parties.\n\n3. How We Share Your Information\nWe may share your information with:\nPayment processors (to handle your transaction securely)\nShipping carriers (to deliver physical perks)\nProject team members (to fulfill perks or communicate with backers)\nWe require all partners to handle your information securely and use it only for the stated purpose.\n\n4. Data Retention\nWe retain contributor information only as long as needed for:\nFulfillment and communication\nLegal, accounting, or tax obligations\nMaintaining campaign records\nYou may request deletion of your personal information after fulfillment by emailing sconde@samcondedigital.com\n\n5. Your Rights\nYou have the right to:\nAccess the personal information we hold about you\nRequest corrections or deletion\nOpt out of non-essential emails (such as promotional updates)\n\n6. Data Security\nWe take reasonable administrative and technical measures to protect your personal information from unauthorized access, loss, or misuse.\n\n7. International Backers\nIf you contribute from outside the U.S., your information will be transferred and processed in the U.S. By contributing, you consent to this transfer.\n\n8. Policy Updates\nWe may update this Privacy Policy from time to time. The effective date at the top of this page reflects the latest version.\n\n9. Contact\nIf you have questions or requests regarding your personal information, contact:\nsconde@samcondedigital.com';
