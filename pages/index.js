@@ -289,7 +289,14 @@ function HomePage(){
             <button className="pb-btn pb-btn-ghost" style={{ padding:'12px 18px', borderRadius:14 }} onClick={() => document.getElementById('details')?.scrollIntoView({behavior:'smooth'})}>Learn More</button>
           </div>
 
-          {/* Video (YouTube-ready placeholder) */}
+          <iframe
+      src="https://www.youtube.com/embed/uQTAh-MuzgA?si=P5IG0i0hmeDRny8G"
+      title="Kill 'Em Kindly Crowdfunding Video"
+      frameBorder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowFullScreen
+      style={{ width:'100%', height:'100%' }}
+    />
           <div className="pb-panel" style={{ marginTop:16, padding:12 }}>
             <div style={{ aspectRatio:'16/9', border:'1px solid var(--pb-border)', borderRadius:12, overflow:'hidden', display:'flex', alignItems:'center', justifyContent:'center', color:'var(--pb-dim)' }}>
               [ Crowdfunding Video Placeholder ]
