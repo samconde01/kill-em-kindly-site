@@ -480,7 +480,7 @@ function HomePage(){
         {/* Rewards Banner */}
         <div className="pb-panel" style={{ padding:0, overflow:'hidden', marginTop:24 }}>
           <img 
-  src="/images/rewards-banner.jpg" 
+  src="/images/rewards-banner1.jpg" 
   alt="Rewards Banner" 
   style={{
     width: '100%',
