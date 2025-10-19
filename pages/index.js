@@ -115,54 +115,12 @@ return (
         </div>
 
         <div style={{ marginTop: 16, padding:16, border:'1px solid #333', borderRadius:8 }}>
-          <h4 style={{ margin: 0, fontSize: 14, fontWeight: 600 }}>Pay with Card</h4>
+  <h4 style={{ margin: 0, fontSize: 14, fontWeight: 600 }}>Pay with Card</h4>
+  <p style={{ fontSize: 12, opacity: 0.8, marginTop: 8 }}>
+    Card checkout temporarily disabled while we finish setup. Please use PayPal/Venmo above.
+  </p>
+</div>
 
-          <PayPalHostedFieldsProvider
-            createOrder={async () => {
-              const r = await fetch('/api/paypal/create-order', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  amount: Number(pledgeAmount),
-                  tShirtSize: needsShirtSize ? tShirtSize : null
-                })
-              });
-              const { id } = await r.json();
-              if (!id) throw new Error('Order creation failed');
-              return id;
-            }}
-          >
-            <div style={{ display:'grid', gap:12, marginTop:12 }}>
-              <label style={{ fontSize:12 }}>Card Number</label>
-              <div id="card-number" style={{ height:40, border:'1px solid #333', borderRadius:8, padding:'8px 10px' }} />
-              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
-                <div>
-                  <label style={{ fontSize:12 }}>Expiration</label>
-                  <div id="card-expiry" style={{ height:40, border:'1px solid #333', borderRadius:8, padding:'8px 10px' }} />
-                </div>
-                <div>
-                  <label style={{ fontSize:12 }}>CVV</label>
-                  <div id="card-cvv" style={{ height:40, border:'1px solid #333', borderRadius:8, padding:'8px 10px' }} />
-                </div>
-              </div>
-            </div>
-
-            <PayPalHostedField
-              hostedFieldType="number"
-              options={{ selector: '#card-number', placeholder: '4111 1111 1111 1111' }}
-            />
-            <PayPalHostedField
-              hostedFieldType="expirationDate"
-              options={{ selector: '#card-expiry', placeholder: 'MM/YY' }}
-            />
-            <PayPalHostedField
-              hostedFieldType="cvv"
-              options={{ selector: '#card-cvv', placeholder: '123' }}
-            />
-
-            <HostedCardSubmit canCheckout={canCheckout} />
-          </PayPalHostedFieldsProvider>
-        </div>
       </div>
     </div>
   </PayPalScriptProvider>
