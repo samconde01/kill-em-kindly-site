@@ -169,7 +169,16 @@ function Header(){
     <header className="pb-header">
       <div className="pb-container" style={{ height: 64, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
         <div style={{ display:'flex', alignItems:'center', gap:12 }}>
-          <span className="pb-glow" style={{ fontWeight:700, letterSpacing:'.2em' }}>KILL 'EM KINDLY</span>
+          <img
+            src="/images/hero-banner.png"
+            alt="Kill 'Em Kindly"
+            style={{
+              height: '48px',
+              width: 'auto',
+              display: 'block',
+              filter: 'drop-shadow(0 0 6px rgba(185,255,156,.35))'
+            }}
+          />
         </div>
         <nav style={{ display:'flex', gap:12 }}>
           <a href="#details" className="pb-btn" style={{ padding:'8px 12px', borderRadius:10 }}>About</a>
