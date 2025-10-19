@@ -93,12 +93,24 @@ const CAST = [
 
 // --- Mini timeline used in About section ---
 const MINI_TIMELINE = [
-  { label: 'Teaser live',           note: 'Sep 24' },
-  { label: 'Crowdfunding launch',   note: 'Sep 26' },
-  { label: 'Patch sale goes live',  note: 'Oct 3 (separate partner site)' },
-  { label: 'Campaign wraps',        note: 'Nov 17 (30 days total)' },
-  { label: 'Fulfillment begins',    note: 'Rolling, digital first; physical after production' },
+  {
+    label: 'Pre-Production',
+    note: 'October & November 2025',
+  },
+  {
+    label: 'Filming',
+    note: 'December 2025',
+  },
+  {
+    label: 'Post-Production',
+    note: 'January & February 2026',
+  },
+  {
+    label: 'Release',
+    note: 'March 2026',
+  },
 ];
+
 
 // --- Legal Text (single source of truth) ----------------------------------
 const PRIVACY_TEXT = 'Privacy Policy\n\nEffective Date: October 2025\n\nThis Privacy Policy explains how we collect, use, and protect information from contributors and visitors on this crowdfunding page for our short film project. By contributing to this campaign, you agree to the terms below.\n\n1. Information We Collect\nWe may collect the following information when you contribute or interact with our page:\n\nName and email address\nShipping address (for physical perk fulfillment)\nPayment information (processed securely through our payment partners — we do not store credit card numbers)\nOptional info provided by you (e.g., T-shirt size, social handles, special instructions)\nWe also receive basic technical data automatically (e.g., IP address, browser type, time of visit) to maintain site security and performance.\n\n2. How We Use Your Information\nWe use your information strictly for:\nProcessing and confirming your contributions\nFulfilling and shipping perks\nSending project updates, shipping notifications, and key announcements\nResponding to refund or support inquiries\n\nWe do not sell or rent your information to third parties.\n\n3. How We Share Your Information\nWe may share your information with:\nPayment processors (to handle your transaction securely)\nShipping carriers (to deliver physical perks)\nProject team members (to fulfill perks or communicate with backers)\nWe require all partners to handle your information securely and use it only for the stated purpose.\n\n4. Data Retention\nWe retain contributor information only as long as needed for:\nFulfillment and communication\nLegal, accounting, or tax obligations\nMaintaining campaign records\nYou may request deletion of your personal information after fulfillment by emailing sconde@samcondedigital.com\n\n5. Your Rights\nYou have the right to:\nAccess the personal information we hold about you\nRequest corrections or deletion\nOpt out of non-essential emails (such as promotional updates)\n\n6. Data Security\nWe take reasonable administrative and technical measures to protect your personal information from unauthorized access, loss, or misuse.\n\n7. International Backers\nIf you contribute from outside the U.S., your information will be transferred and processed in the U.S. By contributing, you consent to this transfer.\n\n8. Policy Updates\nWe may update this Privacy Policy from time to time. The effective date at the top of this page reflects the latest version.\n\n9. Contact\nIf you have questions or requests regarding your personal information, contact:\nsconde@samcondedigital.com';
