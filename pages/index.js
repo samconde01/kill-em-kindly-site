@@ -98,24 +98,9 @@ const PRIVACY_TEXT = 'Privacy Policy\n\nEffective Date: October 2025\n\nThis Pri
 
 const REFUNDS_TEXT = 'Refunds & Responsibility Policy\nEffective date: October 2025\n\nNature of Contributions\nAll payments are contributions to support production of the short film.\n\nPerks/rewards are good-faith thank-yous, not retail purchases. Delivery timelines may shift due to production realities.\n\nRefunds\nNo refunds will be issued once a contribution is processed.\nExceptions (extenuating circumstances only): If you believe your case qualifies (e.g., duplicate charge, obvious processing error, verified non-delivery after project wrap), email sconde@samcondedigital.com within 14 days of the issue. We\'ll review and respond in writing.\n\nOur Responsibilities\nUse funds solely for the project (e.g., travel, lodging, food, locations, costuming, set design, logistics, contingency).\nMake commercially reasonable efforts to deliver listed perks and communicate schedule changes.\nPost periodic updates on progress, setbacks, and delivery windows.\nProtect contributor data and use it only for fulfillment and project communications. See our Privacy Notice for details.\n\nContributor Responsibilities\nProvide accurate shipping info, email, and sizes (if applicable) at checkout; update us promptly if anything changes.\nMonitor project updates and email notifications for fulfillment steps.\nCover any applicable taxes, customs, or import fees in your country/region.\nUnderstand that production schedules can change due to weather, location access, safety, or force majeure.\n\nPerk Fulfillment\nPhysical items ship to the address you provide; digital items deliver to your email.\nIf a listed perk becomes impracticable (e.g., vendor discontinuation), we may substitute an item of equal or greater value or adjust delivery timing.\nUnclaimed or undeliverable perks after 60 days of our delivery notice may be forfeited.\n\nChargebacks & Disputes\nPlease contact us first at sconde@samcondedigital.com so we can resolve issues quickly. Filing a chargeback without contacting us may delay resolution.\n\nContact\nQuestions, extenuating-circumstance refunds, or address changes: sconde@samcondedigital.com';
 
-// --- Crowdfunding (mock data for preview) ---------------------------------
+// --- Crowdfunding (live data) ---------------------------------
 const FUNDING_GOAL = 15000; // USD
-const DONORS = [
-  { name: 'VaultDweller_101', amount: 500 },
-  { name: 'J. Reyes', amount: 1000 },
-  { name: 'BlueJeanOperator', amount: 75 },
-  { name: 'M. Carter', amount: 35 },
-  { name: 'Mysteryboiz', amount: 100 },
-  { name: 'RandomGuyKev', amount: 55 },
-  { name: 'Mojo', amount: 250 },
-  { name: 'A. Nguyen', amount: 20 },
-  { name: 'Operator XR', amount: 300 },
-  { name: 'C. Haynes', amount: 150 },
-  { name: 'Wayne & Stephen', amount: 200 },
-  { name: 'Anonymous', amount: 1000 },
-  { name: 'Rhea', amount: 25 },
-  { name: 'Mack', amount: 45 }
-];
+
 
 function formatUSD(n){
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
@@ -239,13 +224,31 @@ function HomePage(){
   const [suggestedTier, setSuggestedTier] = React.useState(null);
   const pledgeRef = React.useRef(null);
 
-  // --- Tracker state (preview-only) ---
-  const [donors] = React.useState(DONORS);
-  const [showAllDonors, setShowAllDonors] = React.useState(false);
-  const totalRaised = React.useMemo(() => donors.reduce((s,d)=> s + d.amount, 0), [donors]);
-  const backers = donors.length;
-  const progress = Math.min(totalRaised / FUNDING_GOAL, 1);
-  const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
+// --- Tracker state (LIVE) ---
+const [donors, setDonors] = React.useState([]);
+const [showAllDonors, setShowAllDonors] = React.useState(false);
+const totalRaised = React.useMemo(() => donors.reduce((s, d) => s + d.amount, 0), [donors]);
+const backers = donors.length;
+const progress = Math.min(totalRaised / FUNDING_GOAL, 1);
+const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
+
+React.useEffect(() => {
+  async function fetchStats() {
+    try {
+      const res = await fetch('/api/stats');
+      const data = await res.json();
+      setDonors(data.donors || []);
+    } catch (err) {
+      console.error('Failed to fetch stats', err);
+    }
+  }
+
+  fetchStats();
+  // Optional: auto-refresh every 30s
+  const interval = setInterval(fetchStats, 30000);
+  return () => clearInterval(interval);
+}, []);
+
 
   // Single-open Cast accordion
   const [openCastKey, setOpenCastKey] = React.useState(null);
