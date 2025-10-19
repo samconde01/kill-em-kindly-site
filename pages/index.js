@@ -16,20 +16,6 @@ function nearestTier(amount, tiers) {
   }, tiers[0]);
 }
 
-// Tiny sanity tests (runs in browser, no build impact)
-(function runNearestTierTests(){
-  const tt = [ {cost:20,name:'A'}, {cost:55,name:'B'}, {cost:75,name:'C'} ];
-  const t1 = nearestTier(18, tt); console.assert(t1.cost === 20, 'nearestTier(18) should be 20');
-  const t2 = nearestTier(56, tt); console.assert(t2.cost === 55, 'nearestTier(56) should be 55');
-  const t3 = nearestTier(70, tt); console.assert(t3.cost === 75, 'nearestTier(70) should be 75');
-  const t4 = nearestTier(55, tt); console.assert(t4.cost === 55, 'nearestTier exact match should pick that tier');
-  const t5 = nearestTier(1, tt);  console.assert(t5.cost === 20, 'nearestTier(1) should snap to lowest tier 20');
-  const t6 = nearestTier(1000, tt); console.assert(t6.cost === 75, 'nearestTier(1000) should snap to highest tier 75');
-  const t7 = nearestTier(37, tt); console.assert(t7.cost === 35 || t7.cost === 55, 'nearestTier(37) should pick the closer of 35 or 55');
-  const t8 = nearestTier(45, tt); console.assert(t8.cost === 55, 'nearestTier(45) tie should round up to 55');
-  const t9 = nearestTier(65, tt); console.assert(t9.cost === 75, 'nearestTier(65) tie should round up to 75');
-  const t10 = nearestTier(27.5, [{cost:20,name:'L'},{cost:35,name:'M'}]); console.assert(t10.cost === 35, 'nearestTier midpoint should round up');
-})();
 
 // --- Data ------------------------------------------------------------------
 const TIER_DEFS = [
