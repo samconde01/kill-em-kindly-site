@@ -3,6 +3,8 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+
 
 // --- Helpers ---------------------------------------------------------------
 function nearestTier(amount, tiers) {
