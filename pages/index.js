@@ -224,33 +224,17 @@ function HomePage(){
   const [suggestedTier, setSuggestedTier] = React.useState(null);
   const pledgeRef = React.useRef(null);
 
-// --- Tracker state (LIVE) ---
-const [donors, setDonors] = React.useState([]);
-const [showAllDonors, setShowAllDonors] = React.useState(false);
-const totalRaised = React.useMemo(() => donors.reduce((s, d) => s + d.amount, 0), [donors]);
-const backers = donors.length;
-const progress = Math.min(totalRaised / FUNDING_GOAL, 1);
-const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
+  // --- Live tracker state (optional: wire to /api/stats when ready) ---
+  // If you already swapped to live data, keep that logic instead.
+  // For now, this keeps your UI compiling even if stats API isn’t wired.
+  const [donors] = React.useState([]); // replace with live donors later
+  const [showAllDonors, setShowAllDonors] = React.useState(false);
+  const totalRaised = React.useMemo(() => donors.reduce((s,d)=> s + (d.amount || 0), 0), [donors]);
+  const backers = donors.length;
+  const progress = Math.min(totalRaised / FUNDING_GOAL, 1);
+  const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
 
-React.useEffect(() => {
-  async function fetchStats() {
-    try {
-      const res = await fetch('/api/stats');
-      const data = await res.json();
-      setDonors(data.donors || []);
-    } catch (err) {
-      console.error('Failed to fetch stats', err);
-    }
-  }
-
-  fetchStats();
-  // Optional: auto-refresh every 30s
-  const interval = setInterval(fetchStats, 30000);
-  return () => clearInterval(interval);
-}, []);
-
-
-  // Single-open Cast accordion
+  // Single-open Cast accordion (if you still use CastItem)
   const [openCastKey, setOpenCastKey] = React.useState(null);
 
   function chooseTier(t){
@@ -271,7 +255,10 @@ React.useEffect(() => {
     setErrorMsg("");
     const value = Number(amount);
     if (!value || value < 1) { setErrorMsg('Minimum pledge is $1.'); return; }
-    if (value < 20 && !noReward) { setErrorMsg("Pledges under $20 require either selecting 'Donate without reward' or choosing the $20 tier."); return; }
+    if (value < 20 && !noReward) {
+      setErrorMsg("Pledges under $20 require either selecting 'Donate without reward' or choosing the $20 tier.");
+      return;
+    }
 
     setLoading(true);
     try {
@@ -305,112 +292,77 @@ React.useEffect(() => {
             <button className="pb-btn pb-btn-ghost" style={{ padding:'12px 18px', borderRadius:14 }} onClick={() => document.getElementById('details')?.scrollIntoView({behavior:'smooth'})}>Learn More</button>
           </div>
 
-      {/* Video (YouTube embed) */}
-<div className="pb-panel" style={{ marginTop:16, padding:12 }}>
-  <div style={{ aspectRatio:'16/9', border:'1px solid var(--pb-border)', borderRadius:12, overflow:'hidden' }}>
-    <iframe
-      src="https://www.youtube.com/embed/uQTAh-MuzgA?si=P5IG0i0hmeDRny8G"
-      title="Kill 'Em Kindly Crowdfunding Video"
-      frameBorder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-      allowFullScreen
-      style={{ width:'100%', height:'100%', display:'block' }}
-    ></iframe>
-  </div>
-</div>
-
-
-      {/* Tracker & Donor List */}
-<div className="pb-panel" style={{ marginTop: 16, padding: 16 }}>
-  {/* Progress */}
-  <div className="pb-panel" style={{ padding: 12 }}>
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-      <div className="pb-glow" style={{ fontWeight: 700 }}>Funding Progress</div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span className="pb-chip">Ends 11/17</span>
-        <span style={{ color: 'var(--pb-dim)', fontSize: 12 }}>
-          {typeof progress === 'number' ? `${Math.round(progress * 100)}% funded` : '—'}
-        </span>
-      </div>
-    </div>
-  </div>
-
-  <div style={{ marginTop: 10, height: 14, border: '1px solid var(--pb-border-strong)', borderRadius: 10, overflow: 'hidden', background: 'rgba(77,240,138,.06)' }}>
-    <div style={{ width: `${(progress || 0) * 100}%`, height: '100%', background: 'linear-gradient(90deg, rgba(77,240,138,.45), rgba(77,240,138,.15))' }} />
-  </div>
-
-  <div style={{ marginTop: 10, display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, fontSize: 14 }}>
-    <div className="pb-panel" style={{ padding: 10, textAlign: 'center' }}>
-      <div className="pb-glow" style={{ fontWeight: 700 }}>
-        {formatUSD(totalRaised || 0)}
-      </div>
-      <div style={{ color: 'var(--pb-dim)', fontSize: 12 }}>Raised</div>
-    </div>
-    <div className="pb-panel" style={{ padding: 10, textAlign: 'center' }}>
-      <div className="pb-glow" style={{ fontWeight: 700 }}>
-        {formatUSD(FUNDING_GOAL)}
-      </div>
-      <div style={{ color: 'var(--pb-dim)', fontSize: 12 }}>Goal</div>
-    </div>
-    <div className="pb-panel" style={{ padding: 10, textAlign: 'center' }}>
-      <div className="pb-glow" style={{ fontWeight: 700 }}>
-        {backers ?? 0}
-      </div>
-      <div style={{ color: 'var(--pb-dim)', fontSize: 12 }}>Backers</div>
-    </div>
-  </div>
-
-  <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
-    <a href="#pledge" className="pb-btn" style={{ padding: '10px 14px', borderRadius: 12 }}>Back this project</a>
-    <button
-      className="pb-btn pb-btn-ghost"
-      style={{ padding: '10px 14px', borderRadius: 12 }}
-      onClick={() => document.getElementById('rewards')?.scrollIntoView({ behavior: 'smooth' })}
-    >
-      View rewards
-    </button>
-  </div>
-
-  {/* Donor list */}
-  <div className="pb-panel" style={{ padding: 12, marginTop: 12 }}>
-    <div className="pb-glow" style={{ fontWeight: 700, marginBottom: 8 }}>Recent Supporters</div>
-    <div style={{ display: 'grid', gap: 8 }}>
-      {(visibleDonors || []).map((d, i) => (
-        <div
-          key={`${d.name}-${i}`}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            border: '1px solid var(--pb-border)',
-            borderRadius: 10,
-            padding: '8px 10px',
-            background: 'var(--pb-bg-2)'
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{ width: 8, height: 8, borderRadius: 99, background: 'rgba(77,240,138,.6)' }} />
-            <span>{d.name}</span>
+          {/* Video (YouTube embed) */}
+          <div className="pb-panel" style={{ marginTop:16, padding:12 }}>
+            <div style={{ aspectRatio:'16/9', border:'1px solid var(--pb-border)', borderRadius:12, overflow:'hidden' }}>
+              <iframe
+                src="https://www.youtube.com/embed/uQTAh-MuzgA?si=P5IG0i0hmeDRny8G"
+                title="Kill 'Em Kindly Crowdfunding Video"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                style={{ width:'100%', height:'100%', display:'block' }}
+              />
+            </div>
           </div>
-          <div className="pb-glow" style={{ fontWeight: 600 }}>
-            {formatUSD(d.amount)}
+
+          {/* Tracker & Donor List */}
+          <div className="pb-panel" style={{ marginTop:16, padding:16 }}>
+            {/* Progress */}
+            <div className="pb-panel" style={{ padding:12 }}>
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
+                <div className="pb-glow" style={{ fontWeight:700 }}>Funding Progress</div>
+                <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+                  <span className="pb-chip">Ends 11/17</span>
+                  <span style={{ color:'var(--pb-dim)', fontSize:12 }}>{Math.round(progress*100)}% funded</span>
+                </div>
+              </div>
+            </div>
+            <div style={{ marginTop:10, height:14, border:'1px solid var(--pb-border-strong)', borderRadius:10, overflow:'hidden', background:'rgba(77,240,138,.06)' }}>
+              <div style={{ width:`${progress*100}%`, height:'100%', background:'linear-gradient(90deg, rgba(77,240,138,.45), rgba(77,240,138,.15))' }} />
+            </div>
+            <div style={{ marginTop:10, display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12, fontSize:14 }}>
+              <div className="pb-panel" style={{ padding:10, textAlign:'center' }}>
+                <div className="pb-glow" style={{ fontWeight:700 }}>{formatUSD(totalRaised)}</div>
+                <div style={{ color:'var(--pb-dim)', fontSize:12 }}>Raised</div>
+              </div>
+              <div className="pb-panel" style={{ padding:10, textAlign:'center' }}>
+                <div className="pb-glow" style={{ fontWeight:700 }}>{formatUSD(FUNDING_GOAL)}</div>
+                <div style={{ color:'var(--pb-dim)', fontSize:12 }}>Goal</div>
+              </div>
+              <div className="pb-panel" style={{ padding:10, textAlign:'center' }}>
+                <div className="pb-glow" style={{ fontWeight:700 }}>{backers}</div>
+                <div style={{ color:'var(--pb-dim)', fontSize:12 }}>Backers</div>
+              </div>
+            </div>
+            <div style={{ display:'flex', gap:12, marginTop:12 }}>
+              <a href="#pledge" className="pb-btn" style={{ padding:'10px 14px', borderRadius:12 }}>Back this project</a>
+              <button className="pb-btn pb-btn-ghost" style={{ padding:'10px 14px', borderRadius:12 }} onClick={()=>document.getElementById('rewards')?.scrollIntoView({behavior:'smooth'})}>View rewards</button>
+            </div>
+
+            {/* Donor list */}
+            <div className="pb-panel" style={{ padding:12, marginTop:12 }}>
+              <div className="pb-glow" style={{ fontWeight:700, marginBottom:8 }}>Recent Supporters</div>
+              <div style={{ display:'grid', gap:8 }}>
+                {visibleDonors.map((d, i) => (
+                  <div key={`${d.name || 'Anon'}-${i}`} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', border:'1px solid var(--pb-border)', borderRadius:10, padding:'8px 10px', background:'var(--pb-bg-2)' }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+                      <div style={{ width:8, height:8, borderRadius:99, background:'rgba(77,240,138,.6)' }} />
+                      <span>{d.name || 'Anonymous'}</span>
+                    </div>
+                    <div className="pb-glow" style={{ fontWeight:600 }}>{formatUSD(d.amount || 0)}</div>
+                  </div>
+                ))}
+              </div>
+              {donors.length > 6 && (
+                <button className="pb-btn" style={{ marginTop:10, padding:'8px 12px', borderRadius:10 }} onClick={()=>setShowAllDonors(v=>!v)}>
+                  {showAllDonors ? 'Hide list' : `View more (${donors.length - 6} more)`}
+                </button>
+              )}
+            </div>
           </div>
         </div>
-      ))}
-    </div>
-
-    {(donors?.length ?? 0) > 6 && (
-      <button
-        className="pb-btn"
-        style={{ marginTop: 10, padding: '8px 12px', borderRadius: 10 }}
-        onClick={() => setShowAllDonors(v => !v)}
-      >
-        {showAllDonors ? 'Hide list' : `View more (${donors.length - 6} more)`}
-      </button>
-    )}
-  </div>
-</div>
-
+      </section>
 
       {/* About / Details Section */}
       <section id="details" className="pb-container" style={{ padding:'24px 0' }}>
@@ -503,32 +455,31 @@ React.useEffect(() => {
         </div>
 
         {/* Reward Tiers (click to select) */}
-<div style={{ marginTop: 24, display: 'grid', gap: 12 }}>
-  {tiers.map((t, idx) => (
-    <div
-      key={`${t.name}-${t.cost}-${idx}`}
-      className="pb-panel"
-      style={{
-        padding: 16,
-        cursor: 'pointer',
-        boxShadow:
-          selectedTier?.cost === t.cost
-            ? '0 0 0 2px var(--pb-border-strong), inset 0 0 24px rgba(110,255,141,0.15)'
-            : undefined
-      }}
-      onClick={() => chooseTier(t)}
-    >
-      <div className="pb-glow" style={{ fontWeight: 600 }}>
-        {t.name} — ${t.cost}
-      </div>
-      <div style={{ color: 'var(--pb-dim)', marginTop: 6 }}>{t.rewards}</div>
-    </div>
-  ))}
-</div>
-</section> {/* ← CLOSES the Rewards section */}
+        <div style={{ marginTop: 24, display: 'grid', gap: 12 }}>
+          {tiers.map((t, idx) => (
+            <div
+              key={`${t.name}-${t.cost}-${idx}`}
+              className="pb-panel"
+              style={{
+                padding: 16,
+                cursor: 'pointer',
+                boxShadow:
+                  selectedTier?.cost === t.cost
+                    ? '0 0 0 2px var(--pb-border-strong), inset 0 0 24px rgba(110,255,141,0.15)'
+                    : undefined
+              }}
+              onClick={() => chooseTier(t)}
+            >
+              <div className="pb-glow" style={{ fontWeight: 600 }}>
+                {t.name} — ${t.cost}
+              </div>
+              <div style={{ color: 'var(--pb-dim)', marginTop: 6 }}>{t.rewards}</div>
+            </div>
+          ))}
+        </div>
+      </section> {/* closes Rewards */}
 
-
-          {/* Cast & Producers */}
+      {/* Cast & Producers */}
       <section className="pb-container" style={{ padding:'24px 0' }}>
         {/* Cast */}
         <div>
@@ -602,8 +553,8 @@ React.useEffect(() => {
 
       <Footer />
     </>
-  ); // end return of HomePage
-} // end function HomePage
+  );
+}
 
 
 
