@@ -503,19 +503,30 @@ React.useEffect(() => {
         </div>
 
         {/* Reward Tiers (click to select) */}
-        <div style={{ marginTop:24, display:'grid', gap:12 }}>
-          {tiers.map((t, idx) => (
-            <div
-              key={`${t.name}-${t.cost}-${idx}`}
-              className="pb-panel"
-              style={{ padding:16, cursor:'pointer', boxShadow: (selectedTier?.cost === t.cost) ? '0 0 0 2px var(--pb-border-strong), inset 0 0 24px rgba(110,255,141,0.15)' : undefined }}
-              onClick={() => chooseTier(t)}>
-              <div className="pb-glow" style={{ fontWeight:600 }}>{t.name} — ${t.cost}</div>
-              <div style={{ color:'var(--pb-dim)', marginTop:6 }}>{t.rewards}</div>
-            </div>
-          ))}
-        </div>
-          </section>
+<div style={{ marginTop: 24, display: 'grid', gap: 12 }}>
+  {tiers.map((t, idx) => (
+    <div
+      key={`${t.name}-${t.cost}-${idx}`}
+      className="pb-panel"
+      style={{
+        padding: 16,
+        cursor: 'pointer',
+        boxShadow:
+          selectedTier?.cost === t.cost
+            ? '0 0 0 2px var(--pb-border-strong), inset 0 0 24px rgba(110,255,141,0.15)'
+            : undefined
+      }}
+      onClick={() => chooseTier(t)}
+    >
+      <div className="pb-glow" style={{ fontWeight: 600 }}>
+        {t.name} — ${t.cost}
+      </div>
+      <div style={{ color: 'var(--pb-dim)', marginTop: 6 }}>{t.rewards}</div>
+    </div>
+  ))}
+</div>
+</section> {/* ← CLOSES the Rewards section */}
+
 
           {/* Cast & Producers */}
       <section className="pb-container" style={{ padding:'24px 0' }}>
