@@ -438,7 +438,17 @@ function HomePage(){
         <div className="pb-panel" style={{ padding:0, overflow:'hidden', marginTop:24 }}>
           <div style={{ aspectRatio:'21/5', width:'100%', display:'flex', alignItems:'center', justifyContent:'center', borderBottom:'1px solid var(--pb-border)', color:'var(--pb-dim)' }}>
             {/* If you added /photos/rewards banner.jpg, switch to /photos/rewards%20banner.jpg or import it via /public */}
-            <img src="https://images.unsplash.com/photo-1604079628042-943c6ff2e8bb?auto=format&fit=crop&w=1200&q=80" alt="Rewards Banner" style={{width:'100%', height:'100%', objectFit:'cover', filter:'grayscale(40%) contrast(1.2) brightness(0.8)'}} />
+           <img
+  src="/images/rewards-banner2.jpg"
+  alt="Rewards Banner"
+  style={{
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+    filter: 'grayscale(40%) contrast(1.2) brightness(0.8)' // optional styling
+  }}
+/>
+
           </div>
         </div>
 
