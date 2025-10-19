@@ -1,5 +1,5 @@
-// KILL 'EM KINDLY — Landing Page (single‑file preview)
-// Pip‑Boy UI reskin, single-page build (no client-side routing)
+// KILL 'EM KINDLY — Landing Page (single-file preview)
+// Pip-Boy UI reskin, single-page build (no client-side routing)
 
 import React from 'react';
 import { motion } from 'framer-motion';
@@ -23,14 +23,12 @@ function nearestTier(amount, tiers) {
   const t2 = nearestTier(56, tt); console.assert(t2.cost === 55, 'nearestTier(56) should be 55');
   const t3 = nearestTier(70, tt); console.assert(t3.cost === 75, 'nearestTier(70) should be 75');
   const t4 = nearestTier(55, tt); console.assert(t4.cost === 55, 'nearestTier exact match should pick that tier');
-  // Additional tests (do not modify existing ones)
   const t5 = nearestTier(1, tt);  console.assert(t5.cost === 20, 'nearestTier(1) should snap to lowest tier 20');
   const t6 = nearestTier(1000, tt); console.assert(t6.cost === 75, 'nearestTier(1000) should snap to highest tier 75');
   const t7 = nearestTier(37, tt); console.assert(t7.cost === 35 || t7.cost === 55, 'nearestTier(37) should pick the closer of 35 or 55');
-  // New tie-breaking tests (always round up)
-  const t8 = nearestTier(45, tt); console.assert(t8.cost === 55, 'nearestTier(45) tie between 35 and 55 should round up to 55');
-  const t9 = nearestTier(65, tt); console.assert(t9.cost === 75, 'nearestTier(65) tie between 55 and 75 should round up to 75');
-  const t10 = nearestTier(27.5, [{cost:20,name:'L'},{cost:35,name:'M'}]); console.assert(t10.cost === 35, 'nearestTier midpoint should round up to higher tier');
+  const t8 = nearestTier(45, tt); console.assert(t8.cost === 55, 'nearestTier(45) tie should round up to 55');
+  const t9 = nearestTier(65, tt); console.assert(t9.cost === 75, 'nearestTier(65) tie should round up to 75');
+  const t10 = nearestTier(27.5, [{cost:20,name:'L'},{cost:35,name:'M'}]); console.assert(t10.cost === 35, 'nearestTier midpoint should round up');
 })();
 
 // --- Data ------------------------------------------------------------------
@@ -45,7 +43,7 @@ const TIER_DEFS = [
   { cost: 5000,name: 'OVERSEER',            rewards: 'Invite on Set, Producer Credit, and past rewards' },
 ];
 
-// Cast with bios + image paths
+// Cast with bios + image paths (revised bios)
 const CAST = [
   {
     name: 'Sam Conde',
@@ -85,9 +83,8 @@ const CAST = [
   },
 ];
 
-
 const MINI_TIMELINE = [
-  { label: 'Pre‑production', note: 'October & November 2025' },
+  { label: 'Pre-production', note: 'October & November 2025' },
   { label: 'Filming', note: 'December 2025' },
   { label: 'Post', note: 'January & February 2026' },
   { label: 'Release', note: 'March 2026' },
@@ -98,10 +95,8 @@ const PRIVACY_TEXT = 'Privacy Policy\n\nEffective Date: October 2025\n\nThis Pri
 
 const REFUNDS_TEXT = 'Refunds & Responsibility Policy\nEffective date: October 2025\n\nNature of Contributions\nAll payments are contributions to support production of the short film.\n\nPerks/rewards are good-faith thank-yous, not retail purchases. Delivery timelines may shift due to production realities.\n\nRefunds\nNo refunds will be issued once a contribution is processed.\nExceptions (extenuating circumstances only): If you believe your case qualifies (e.g., duplicate charge, obvious processing error, verified non-delivery after project wrap), email sconde@samcondedigital.com within 14 days of the issue. We\'ll review and respond in writing.\n\nOur Responsibilities\nUse funds solely for the project (e.g., travel, lodging, food, locations, costuming, set design, logistics, contingency).\nMake commercially reasonable efforts to deliver listed perks and communicate schedule changes.\nPost periodic updates on progress, setbacks, and delivery windows.\nProtect contributor data and use it only for fulfillment and project communications. See our Privacy Notice for details.\n\nContributor Responsibilities\nProvide accurate shipping info, email, and sizes (if applicable) at checkout; update us promptly if anything changes.\nMonitor project updates and email notifications for fulfillment steps.\nCover any applicable taxes, customs, or import fees in your country/region.\nUnderstand that production schedules can change due to weather, location access, safety, or force majeure.\n\nPerk Fulfillment\nPhysical items ship to the address you provide; digital items deliver to your email.\nIf a listed perk becomes impracticable (e.g., vendor discontinuation), we may substitute an item of equal or greater value or adjust delivery timing.\nUnclaimed or undeliverable perks after 60 days of our delivery notice may be forfeited.\n\nChargebacks & Disputes\nPlease contact us first at sconde@samcondedigital.com so we can resolve issues quickly. Filing a chargeback without contacting us may delay resolution.\n\nContact\nQuestions, extenuating-circumstance refunds, or address changes: sconde@samcondedigital.com';
 
-// --- Crowdfunding (live data) ---------------------------------
+// --- Crowdfunding (live or mock) ---------------------------------
 const FUNDING_GOAL = 15000; // USD
-
-
 function formatUSD(n){
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
 }
@@ -111,20 +106,14 @@ export default function App(){
   const [showPrivacy, setShowPrivacy] = React.useState(false);
   const [showRefunds, setShowRefunds] = React.useState(false);
 
-  // Intercept clicks to any link that points to /refunds or /privacy and open modal instead
+  // Intercept /refunds and /privacy links and open modals instead
   React.useEffect(() => {
     function onClick(e){
       const a = e.target.closest && e.target.closest('a');
       if (!a) return;
       const href = a.getAttribute('href');
-      if (href === '/refunds'){
-        e.preventDefault();
-        setShowRefunds(true);
-      }
-      if (href === '/privacy'){
-        e.preventDefault();
-        setShowPrivacy(true);
-      }
+      if (href === '/refunds'){ e.preventDefault(); setShowRefunds(true); }
+      if (href === '/privacy'){ e.preventDefault(); setShowPrivacy(true); }
     }
     document.addEventListener('click', onClick);
     return () => document.removeEventListener('click', onClick);
@@ -165,13 +154,11 @@ function GlobalStyles(){
       .pb-grid-overlay { position:absolute; inset:0; pointer-events:none; background-image: linear-gradient(var(--pb-grid) 1px, transparent 1px), linear-gradient(90deg, var(--pb-grid) 1px, transparent 1px); background-size:48px 48px; }
       .pb-scanlines { position:fixed; inset:0; pointer-events:none; background:repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 2px, transparent 2px, transparent 4px); mix-blend-mode:multiply; opacity:.6; }
       .pb-glow { text-shadow: 0 0 8px rgba(110,255,141,.35); }
-      .crew-card:hover .crew-overlay { opacity:1; transform: translateY(0); }
-      /* Cast grid: 1 col on mobile, 2 cols on wider screens */
       .cast-grid { display:grid; grid-template-columns: 1fr; gap:12px; }
-      .cast-head { width:112px; height:112px; }
+      .cast-headshot { width:112px; height:112px; border-radius:12px; border:1px solid var(--pb-border); object-fit:cover; filter:grayscale(20%) contrast(1.1); }
       @media (min-width: 720px) {
         .cast-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap:14px; }
-        .cast-head { width:160px; height:160px; }
+        .cast-headshot { width:160px; height:160px; }
       }
     `}</style>
   );
@@ -204,7 +191,6 @@ function Footer(){
         </div>
         <div style={{ display:'flex', alignItems:'center', gap:18 }}>
           <a style={{ color:'var(--pb-dim)' }} href="#">Contact</a>
-          {/* Press Kit link intentionally removed */}
           <a style={{ color:'var(--pb-dim)' }} href="/refunds">Refunds & Responsibility</a>
           <a style={{ color:'var(--pb-dim)' }} href="/privacy">Privacy</a>
         </div>
@@ -213,7 +199,7 @@ function Footer(){
   );
 }
 
-// --- Home (Landing) --------------------------------------------------------
+// --- Page ---------------------------------------------------------
 function HomePage(){
   const tiers = TIER_DEFS;
   const [amount, setAmount] = React.useState(20);
@@ -224,18 +210,13 @@ function HomePage(){
   const [suggestedTier, setSuggestedTier] = React.useState(null);
   const pledgeRef = React.useRef(null);
 
-  // --- Live tracker state (optional: wire to /api/stats when ready) ---
-  // If you already swapped to live data, keep that logic instead.
-  // For now, this keeps your UI compiling even if stats API isn’t wired.
-  const [donors] = React.useState([]); // replace with live donors later
+  // Tracker (replace with live fetch later)
+  const [donors] = React.useState([]);
   const [showAllDonors, setShowAllDonors] = React.useState(false);
   const totalRaised = React.useMemo(() => donors.reduce((s,d)=> s + (d.amount || 0), 0), [donors]);
   const backers = donors.length;
   const progress = Math.min(totalRaised / FUNDING_GOAL, 1);
   const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
-
-  // Single-open Cast accordion (if you still use CastItem)
-  const [openCastKey, setOpenCastKey] = React.useState(null);
 
   function chooseTier(t){
     setSelectedTier({ cost: t.cost, name: t.name });
@@ -255,10 +236,7 @@ function HomePage(){
     setErrorMsg("");
     const value = Number(amount);
     if (!value || value < 1) { setErrorMsg('Minimum pledge is $1.'); return; }
-    if (value < 20 && !noReward) {
-      setErrorMsg("Pledges under $20 require either selecting 'Donate without reward' or choosing the $20 tier.");
-      return;
-    }
+    if (value < 20 && !noReward) { setErrorMsg("Pledges under $20 require either selecting the $20 tier or checking 'Donate without claiming a reward.'"); return; }
 
     setLoading(true);
     try {
@@ -292,7 +270,7 @@ function HomePage(){
             <button className="pb-btn pb-btn-ghost" style={{ padding:'12px 18px', borderRadius:14 }} onClick={() => document.getElementById('details')?.scrollIntoView({behavior:'smooth'})}>Learn More</button>
           </div>
 
-          {/* Video (YouTube embed) */}
+          {/* Video */}
           <div className="pb-panel" style={{ marginTop:16, padding:12 }}>
             <div style={{ aspectRatio:'16/9', border:'1px solid var(--pb-border)', borderRadius:12, overflow:'hidden' }}>
               <iframe
@@ -422,7 +400,7 @@ function HomePage(){
           </div>
           {amount > 0 && amount < 20 && !noReward && (
             <div style={{ marginTop:8, fontSize:13 }} className="pb-error">
-              Pledges under $20 require either selecting the $20 tier or checking “Donate without claiming a reward.”
+              Pledges under $20 require either selecting the $20 tier or checking 'Donate without claiming a reward.'
             </div>
           )}
           {!noReward && suggestedTier && (
@@ -450,6 +428,7 @@ function HomePage(){
         {/* Rewards Banner */}
         <div className="pb-panel" style={{ padding:0, overflow:'hidden', marginTop:24 }}>
           <div style={{ aspectRatio:'21/5', width:'100%', display:'flex', alignItems:'center', justifyContent:'center', borderBottom:'1px solid var(--pb-border)', color:'var(--pb-dim)' }}>
+            {/* If you added /photos/rewards banner.jpg, switch to /photos/rewards%20banner.jpg or import it via /public */}
             <img src="https://images.unsplash.com/photo-1604079628042-943c6ff2e8bb?auto=format&fit=crop&w=1200&q=80" alt="Rewards Banner" style={{width:'100%', height:'100%', objectFit:'cover', filter:'grayscale(40%) contrast(1.2) brightness(0.8)'}} />
           </div>
         </div>
@@ -477,7 +456,7 @@ function HomePage(){
             </div>
           ))}
         </div>
-      </section> {/* closes Rewards */}
+      </section>
 
       {/* Cast & Producers */}
       <section className="pb-container" style={{ padding:'24px 0' }}>
@@ -486,13 +465,17 @@ function HomePage(){
           <div className="pb-glow" style={{ fontSize:18, fontWeight:600, marginBottom:8 }}>Cast</div>
           <div className="cast-grid">
             {CAST.map((person) => (
-              <div key={person.key} className="cast-card">
-                <img src={person.img} alt={person.name} className="cast-headshot" />
-                <h3>{person.name}</h3>
-                <details>
-                  <summary>View Bio</summary>
-                  <p>{person.bio}</p>
-                </details>
+              <div key={person.key} className="cast-card pb-panel" style={{ padding:12 }}>
+                <div style={{ display:'grid', gridTemplateColumns:'auto 1fr', columnGap:12, alignItems:'center' }}>
+                  <img src={person.img || '/images/placeholder.jpg'} alt={person.name} className="cast-headshot" onError={(e)=>{ e.currentTarget.src = '/images/placeholder.jpg'; }} />
+                  <div>
+                    <div className="pb-glow" style={{ fontWeight:700 }}>{person.name}</div>
+                    <details>
+                      <summary style={{ cursor:'pointer', color:'var(--pb-dim)', marginTop:4 }}>View Bio</summary>
+                      <p style={{ color:'var(--pb-dim)', marginTop:8 }}>{person.bio}</p>
+                    </details>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -556,64 +539,7 @@ function HomePage(){
   );
 }
 
-
-
-// CastItem lives **after** HomePage is closed
-function CastItem({ person, openKey, setOpenKey }){
-  const open = openKey === person.key;
-  const toggle = () => setOpenKey(open ? null : person.key);
-  return (
-    <div className="pb-panel" style={{ overflow:'hidden' }}>
-      <button
-        onClick={toggle}
-        aria-expanded={open}
-        style={{ width:'100%', textAlign:'left', padding:0, border:'none', background:'transparent', color:'inherit', cursor:'pointer' }}
-      >
-        <div
-          style={{
-            display:'grid',
-            gridTemplateColumns:'auto 1fr',
-            columnGap:12,
-            padding:12,
-            alignItems:'center',
-            borderBottom: open ? '1px solid var(--pb-border)' : 'none'
-          }}
-        >
-          <div
-            className="cast-head"
-            style={{
-              borderRadius:12,
-              border:'1px solid var(--pb-border)',
-              overflow:'hidden',
-              background:'rgba(77,240,138,.08)'
-            }}
-          >
-            <img
-              src={person.img || '/images/placeholder.jpg'}
-              alt={person.name}
-              style={{ width:'100%', height:'100%', objectFit:'cover', display:'block', filter:'grayscale(20%) contrast(1.1)' }}
-              onError={(e)=>{ e.currentTarget.src = '/images/placeholder.jpg'; }}
-            />
-          </div>
-
-          <div>
-            <div className="pb-glow" style={{ fontWeight:700 }}>{person.name}</div>
-            <div style={{ color:'var(--pb-dim)', fontSize:12 }}>
-              {open ? 'Tap to collapse' : 'Tap to read bio'}
-            </div>
-          </div>
-        </div>
-      </button>
-
-      {open && (
-        <div style={{ padding:'12px 12px 14px', color:'var(--pb-dim)' }}>
-          {person.bio}
-        </div>
-      )}
-    </div>
-  );
-}
-
+// --- Small components ------------------------------------------------------
 function FaqItem({ idx, q, a }){
   const [open, setOpen] = React.useState(false);
   return (
@@ -674,4 +600,3 @@ function PrivacyModal({ open, onClose, text }){
     </div>
   );
 }
-function CastItem({ person, openKey, setOpenKey }) { ... }
