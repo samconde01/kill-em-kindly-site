@@ -517,25 +517,24 @@ React.useEffect(() => {
         </div>
       </section>
 
-      {/* Cast & Producers */}
+            {/* Cast & Producers */}
       <section className="pb-container" style={{ padding:'24px 0' }}>
         {/* Cast */}
         <div>
           <div className="pb-glow" style={{ fontSize:18, fontWeight:600, marginBottom:8 }}>Cast</div>
           <div className="cast-grid">
-  {CAST.map((person) => (
-    <div key={person.key} className="cast-card">
-      <img src={person.img} alt={person.name} className="cast-headshot" />
-      <h3>{person.name}</h3>
-      <details>
-        <summary>View Bio</summary>
-        <p>{person.bio}</p>
-      </details>
-    </div>
-  ))}
-</div>
- </div>
-
+            {CAST.map((person) => (
+              <div key={person.key} className="cast-card">
+                <img src={person.img} alt={person.name} className="cast-headshot" />
+                <h3>{person.name}</h3>
+                <details>
+                  <summary>View Bio</summary>
+                  <p>{person.bio}</p>
+                </details>
+              </div>
+            ))}
+          </div>
+        </div> {/* ← closes the wrapper we opened above */}
 
         {/* Producers */}
         <div style={{ marginTop:24 }}>
@@ -546,8 +545,15 @@ React.useEffect(() => {
               { label: 'Direct Action Media' },
               { label: 'Slaughter Project' },
             ].map((p) => (
-              <div key={p.label} className="pb-panel" style={{ padding:20, display:'flex', alignItems:'center', justifyContent:'center', minHeight:96, textAlign:'center' }}>
-                <span className="pb-glow" style={{ fontWeight:800, fontSize:18, letterSpacing:'0.05em', color:'var(--pb-bright)', textShadow:'0 0 12px rgba(185,255,156,0.65)' }}>
+              <div
+                key={p.label}
+                className="pb-panel"
+                style={{ padding:20, display:'flex', alignItems:'center', justifyContent:'center', minHeight:96, textAlign:'center' }}
+              >
+                <span
+                  className="pb-glow"
+                  style={{ fontWeight:800, fontSize:18, letterSpacing:'0.05em', color:'var(--pb-bright)', textShadow:'0 0 12px rgba(185,255,156,0.65)' }}
+                >
                   {p.label}
                 </span>
               </div>
@@ -575,6 +581,7 @@ React.useEffect(() => {
     </>
   );
 }
+
 
 function CastItem({ person, openKey, setOpenKey }){
   const open = openKey === person.key;
