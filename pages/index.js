@@ -320,63 +320,97 @@ React.useEffect(() => {
 </div>
 
 
-          {/* Tracker & Donor List */}
-          <div className="pb-panel" style={{ marginTop:16, padding:16 }}>
-            {/* Progress */}
-            <div className="pb-panel" style={{ padding:12 }}>
-              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
-                <div className="pb-glow" style={{ fontWeight:700 }}>Funding Progress</div>
-                <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-                  <span className="pb-chip">Ends 11/17</span>
-                  <span style={{ color:'var(--pb-dim)', fontSize:12 }}>{Math.round(progress*100)}% funded</span>
-                </div>
-              </div>
-            </div>
-            <div style={{ marginTop:10, height:14, border:'1px solid var(--pb-border-strong)', borderRadius:10, overflow:'hidden', background:'rgba(77,240,138,.06)' }}>
-              <div style={{ width:`${progress*100}%`, height:'100%', background:'linear-gradient(90deg, rgba(77,240,138,.45), rgba(77,240,138,.15))' }} />
-            </div>
-            <div style={{ marginTop:10, display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12, fontSize:14 }}>
-              <div className="pb-panel" style={{ padding:10, textAlign:'center' }}>
-                <div className="pb-glow" style={{ fontWeight:700 }}>{formatUSD(totalRaised)}</div>
-                <div style={{ color:'var(--pb-dim)', fontSize:12 }}>Raised</div>
-              </div>
-              <div className="pb-panel" style={{ padding:10, textAlign:'center' }}>
-                <div className="pb-glow" style={{ fontWeight:700 }}>{formatUSD(FUNDING_GOAL)}</div>
-                <div style={{ color:'var(--pb-dim)', fontSize:12 }}>Goal</div>
-              </div>
-              <div className="pb-panel" style={{ padding:10, textAlign:'center' }}>
-                <div className="pb-glow" style={{ fontWeight:700 }}>{backers}</div>
-                <div style={{ color:'var(--pb-dim)', fontSize:12 }}>Backers</div>
-              </div>
-            </div>
-            <div style={{ display:'flex', gap:12, marginTop:12 }}>
-              <a href="#pledge" className="pb-btn" style={{ padding:'10px 14px', borderRadius:12 }}>Back this project</a>
-              <button className="pb-btn pb-btn-ghost" style={{ padding:'10px 14px', borderRadius:12 }} onClick={()=>document.getElementById('rewards')?.scrollIntoView({behavior:'smooth'})}>View rewards</button>
-            </div>
+      {/* Tracker & Donor List */}
+<div className="pb-panel" style={{ marginTop: 16, padding: 16 }}>
+  {/* Progress */}
+  <div className="pb-panel" style={{ padding: 12 }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+      <div className="pb-glow" style={{ fontWeight: 700 }}>Funding Progress</div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <span className="pb-chip">Ends 11/17</span>
+        <span style={{ color: 'var(--pb-dim)', fontSize: 12 }}>
+          {typeof progress === 'number' ? `${Math.round(progress * 100)}% funded` : '—'}
+        </span>
+      </div>
+    </div>
+  </div>
 
-            {/* Donor list */}
-            <div className="pb-panel" style={{ padding:12, marginTop:12 }}>
-              <div className="pb-glow" style={{ fontWeight:700, marginBottom:8 }}>Recent Supporters</div>
-              <div style={{ display:'grid', gap:8 }}>
-                {visibleDonors.map((d, i) => (
-                  <div key={`${d.name}-${i}`} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', border:'1px solid var(--pb-border)', borderRadius:10, padding:'8px 10px', background:'var(--pb-bg-2)' }}>
-                    <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-                      <div style={{ width:8, height:8, borderRadius:99, background:'rgba(77,240,138,.6)' }} />
-                      <span>{d.name}</span>
-                    </div>
-                    <div className="pb-glow" style={{ fontWeight:600 }}>{formatUSD(d.amount)}</div>
-                  </div>
-                ))}
-              </div>
-              {donors.length > 6 && (
-                <button className="pb-btn" style={{ marginTop:10, padding:'8px 12px', borderRadius:10 }} onClick={()=>setShowAllDonors(v=>!v)}>
-                  {showAllDonors ? 'Hide list' : `View more (${donors.length - 6} more)`}
-                </button>
-              )}
-            </div>
+  <div style={{ marginTop: 10, height: 14, border: '1px solid var(--pb-border-strong)', borderRadius: 10, overflow: 'hidden', background: 'rgba(77,240,138,.06)' }}>
+    <div style={{ width: `${(progress || 0) * 100}%`, height: '100%', background: 'linear-gradient(90deg, rgba(77,240,138,.45), rgba(77,240,138,.15))' }} />
+  </div>
+
+  <div style={{ marginTop: 10, display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, fontSize: 14 }}>
+    <div className="pb-panel" style={{ padding: 10, textAlign: 'center' }}>
+      <div className="pb-glow" style={{ fontWeight: 700 }}>
+        {formatUSD(totalRaised || 0)}
+      </div>
+      <div style={{ color: 'var(--pb-dim)', fontSize: 12 }}>Raised</div>
+    </div>
+    <div className="pb-panel" style={{ padding: 10, textAlign: 'center' }}>
+      <div className="pb-glow" style={{ fontWeight: 700 }}>
+        {formatUSD(FUNDING_GOAL)}
+      </div>
+      <div style={{ color: 'var(--pb-dim)', fontSize: 12 }}>Goal</div>
+    </div>
+    <div className="pb-panel" style={{ padding: 10, textAlign: 'center' }}>
+      <div className="pb-glow" style={{ fontWeight: 700 }}>
+        {backers ?? 0}
+      </div>
+      <div style={{ color: 'var(--pb-dim)', fontSize: 12 }}>Backers</div>
+    </div>
+  </div>
+
+  <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
+    <a href="#pledge" className="pb-btn" style={{ padding: '10px 14px', borderRadius: 12 }}>Back this project</a>
+    <button
+      className="pb-btn pb-btn-ghost"
+      style={{ padding: '10px 14px', borderRadius: 12 }}
+      onClick={() => document.getElementById('rewards')?.scrollIntoView({ behavior: 'smooth' })}
+    >
+      View rewards
+    </button>
+  </div>
+
+  {/* Donor list */}
+  <div className="pb-panel" style={{ padding: 12, marginTop: 12 }}>
+    <div className="pb-glow" style={{ fontWeight: 700, marginBottom: 8 }}>Recent Supporters</div>
+    <div style={{ display: 'grid', gap: 8 }}>
+      {(visibleDonors || []).map((d, i) => (
+        <div
+          key={`${d.name}-${i}`}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            border: '1px solid var(--pb-border)',
+            borderRadius: 10,
+            padding: '8px 10px',
+            background: 'var(--pb-bg-2)'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ width: 8, height: 8, borderRadius: 99, background: 'rgba(77,240,138,.6)' }} />
+            <span>{d.name}</span>
+          </div>
+          <div className="pb-glow" style={{ fontWeight: 600 }}>
+            {formatUSD(d.amount)}
           </div>
         </div>
-      </section>
+      ))}
+    </div>
+
+    {(donors?.length ?? 0) > 6 && (
+      <button
+        className="pb-btn"
+        style={{ marginTop: 10, padding: '8px 12px', borderRadius: 10 }}
+        onClick={() => setShowAllDonors(v => !v)}
+      >
+        {showAllDonors ? 'Hide list' : `View more (${donors.length - 6} more)`}
+      </button>
+    )}
+  </div>
+</div>
+
 
       {/* About / Details Section */}
       <section id="details" className="pb-container" style={{ padding:'24px 0' }}>
