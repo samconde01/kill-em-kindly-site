@@ -167,6 +167,47 @@ return (
     </div>
   </PayPalScriptProvider>
 );
+}
+
+export function HostedCardSubmit({ canCheckout }) {
+  const [{ isPending }] = usePayPalScriptReducer();
+
+  const onSubmit = async () => {
+    const cardFields = window.paypal?.HostedFields;
+    if (!cardFields) return;
+    try {
+      await cardFields.getState();
+      const { orderId } = await cardFields.submit({});
+      const r = await fetch('/api/paypal/capture-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderID: orderId })
+      });
+      const cap = await r.json();
+      if (!r.ok) throw new Error('Capture failed');
+      alert('Thank you! Your card pledge was captured.');
+    } catch (e) {
+      console.error(e);
+      alert('Card payment failed. Please try again.');
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={onSubmit}
+      disabled={!canCheckout || isPending}
+      style={{
+        marginTop: 12, width:'100%', padding:'12px 14px',
+        border:'1px solid #555', borderRadius:8, background:'#1b1b1e', color:'#fff',
+        opacity: (!canCheckout || isPending) ? 0.6 : 1
+      }}
+    >
+      {isPending ? 'Loading…' : 'Pay with Card'}
+    </button>
+  );
+}
+
 
 
 // --- Helpers ---------------------------------------------------------------
