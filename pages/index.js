@@ -47,85 +47,11 @@ export default function Home() {
 
 return (
   <PayPalScriptProvider options={paypalOptions}>
-    <div style={{ maxWidth: 720, margin: "0 auto", padding: 24 }}>
-      <Head>
-        <title>My Crowdfunding Page</title>
-      </Head>
-
-      <h1 style={{ marginBottom: 8 }}>Kill 'Em Kindly</h1>
-      <p style={{ marginTop: 0 }}>Support the project and get exclusive perks.</p>
-
-      <div style={{ maxWidth: 520 }}>
-        <label style={{ display:'block', marginTop: 12, fontWeight:600 }}>Your Pledge (USD)</label>
-        <input
-          type="number"
-          min="1"
-          step="1"
-          value={pledgeAmount}
-          onChange={(e) => setPledgeAmount(e.target.value)}
-          style={{ width:'100%', padding:'10px 12px', border:'1px solid #333', borderRadius:8, background:'#0d0e0f', color:'#f0f0f0' }}
-        />
-
-        {needsShirtSize && (
-          <div style={{ marginTop: 12 }}>
-            <label htmlFor="tshirt-size" style={{ display:'block', fontSize:14, fontWeight:600 }}>
-              T-Shirt Size (required for $75+)
-            </label>
-            <select
-              id="tshirt-size"
-              value={tShirtSize}
-              onChange={(e) => setTShirtSize(e.target.value)}
-              style={{ width:'100%', padding:'10px 12px', border:'1px solid #333', borderRadius:8, background:'#0d0e0f', color:'#f0f0f0' }}
-            >
-              <option value="" disabled>Select a size…</option>
-              {sizeOptions.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
-            <p style={{ marginTop:6, fontSize:12, opacity:0.8 }}>Sizes: XS–3XL • Unisex fit</p>
-          </div>
-        )}
-
-        <div style={{ marginTop: 16 }}>
-          <PayPalButtons
-            style={{ layout: "horizontal" }}
-            disabled={!canCheckout}
-            createOrder={async () => {
-              const r = await fetch('/api/paypal/create-order', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  amount: Number(pledgeAmount),
-                  tShirtSize: needsShirtSize ? tShirtSize : null
-                })
-              });
-              const { id } = await r.json();
-              if (!id) throw new Error('Order creation failed');
-              return id;
-            }}
-            onApprove={async (data) => {
-              const r = await fetch('/api/paypal/capture-order', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ orderID: data.orderID })
-              });
-              const cap = await r.json();
-              if (!r.ok) throw new Error('Capture failed');
-              alert('Thank you! Your pledge was captured.');
-            }}
-          />
-        </div>
-
-        <div style={{ marginTop: 16, padding:16, border:'1px solid #333', borderRadius:8 }}>
-  <h4 style={{ margin: 0, fontSize: 14, fontWeight: 600 }}>Pay with Card</h4>
-  <p style={{ fontSize: 12, opacity: 0.8, marginTop: 8 }}>
-    Card checkout temporarily disabled while we finish setup. Please use PayPal/Venmo above.
-  </p>
-</div>
-
-      </div>
-    </div>
+    <App />
   </PayPalScriptProvider>
 );
 }
+
 
 export function HostedCardSubmit({ canCheckout }) {
   const [{ isPending }] = usePayPalScriptReducer();
