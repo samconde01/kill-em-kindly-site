@@ -55,54 +55,40 @@ const CAST = [
     name: 'Sam Conde',
     key: 'sam-conde',
     img: '/images/sam-conde.jpg',
-    bio: `Sam Conde is an on-camera creator, producer, and storyteller with a background spanning narrative shorts, live events, branded content, and digital campaigns. 
-She has worked with brands across the tech, entertainment, and lifestyle spaces, often bridging the gap between creative vision and production execution.
-
-Her work emphasizes strong character performance and immersive worldbuilding. Sam’s unique storytelling voice blends grounded emotion with high-concept settings, which makes her an ideal lead for Kill ’em Kindly.`
-  },
-  {
-    name: 'James Choi',
-    key: 'james-choi',
-    img: '/images/james-choi.jpg',
-    bio: `James Choi is a seasoned actor with more than 30 film and television credits. He’s known for portraying intense, layered characters that bring nuance and realism to genre projects.
-
-His indie film work has taken him through action, thriller, and sci-fi productions, where he’s collaborated with both up-and-coming and veteran filmmakers. James’s ability to ground even the most surreal scenarios makes him an essential part of the Kill ’em Kindly cast.`
-  },
-  {
-    name: 'Cole Thornton',
-    key: 'cole-thornton',
-    img: '/images/cole-thornton.jpg',
-    bio: `Cole Thornton is an actor and model whose work often places him at the center of gritty, character-driven stories. 
-His recent projects have spanned commercial campaigns, short films, and immersive experiences.
-
-Cole brings a magnetic on-screen presence and a talent for portraying hardened, emotionally complex figures. His role in Kill ’em Kindly leans into that strength, embodying the harsh moral gray zones of a post-apocalyptic world.`
+    bio: `With a diverse background in on-camera work spanning short films, commercial content, and digital media, Sam excels at it all. While new to narrative acting, her ease in front of the lens and instinct for storytelling make her a standout presence. "Kill 'em Kindly" is a thrilling step into a lead role that channels her experience, passion, and sharp creative eye.`
   },
   {
     name: 'Austin Rearden',
     key: 'austin-rearden',
     img: '/images/austin-rearden.jpg',
-    bio: `Austin Rearden has been a professional voice actor for more than a decade, with credits ranging from anime and indie animation to AAA video game titles. 
-His ability to deliver emotionally charged performances has earned him a strong reputation in voice work.
-
-Austin brings a versatile vocal range, lending a distinct edge to his character in Kill ’em Kindly — one that blends menace, charm, and humanity.`
+    bio: `Austin has been a Voice Actor for the last 11 years, appearing most notably in large-scale fan films such as SCP: Overlord and SCP: Dollhouse, as well as dozens of digital short films, machinima, animated series, indie games, and advertising. He recently debuted in his first live-action film, STALKER: Shadow of the Zone, which sparked a continued interest in on-camera performance. Austin plans to keep working in the industry and participate in large-scale projects while continuing voice-over work.`
   },
   {
-    name: 'Eric Cummins',
-    key: 'eric-cummins',
-    img: '/images/eric-cummins.jpg',
-    bio: `Eric Cummins is stepping into the spotlight with Kill ’em Kindly as his first major on-camera performance. Known among peers for his unfiltered personality and sharp sense of humor, Eric brings an authenticity that translates naturally on screen.
-
-His character offers a grounded, human lens into the wasteland — someone not born for the chaos but forced to survive within it.`
+    name: 'Cole Thornton',
+    key: 'cole-thornton',
+    img: '/images/cole-thornton.jpg',
+    bio: `Cole is an actor and model whose work often places him in high-intensity, action-driven roles. Best known for his performances in STALKER: Shadow of the Zone and Ten of Swords, he consistently brings a physical, commanding presence to screen. Recently, he has been exploring layered characters and more dramatic storytelling through collaborative projects. With a background that combines discipline, physicality, and a sharp instinct for performance, Cole is carving a path as a versatile actor ready to tackle both action and character-driven roles.`
+  },
+  {
+    name: 'James Choi',
+    key: 'james-choi',
+    img: '/images/james-choi.jpg',
+    bio: `With over 30 film credits across indie features, shorts, and genre projects, this Korean American actor brings both range and presence to the screen. Trained in method and Meisner techniques, his performances balance intensity with nuance—whether he’s playing a conflicted lead or a ruthless antagonist. His background includes military tactical training, CQB, and weapons handling, making him a natural fit for action-heavy roles. Fluent in English, Korean, and Chinese, he brings international versatility and grounded authenticity to every role.`
   },
   {
     name: 'Scott Crabb',
     key: 'scott-crabb',
     img: '/images/scott-crabb.jpg',
-    bio: `Michael Scott Crabb, known professionally as Scott Crabb, is an experienced performer with a dynamic background in both acting and stunts. His work includes commercial campaigns, short films, and tactical training media.
-
-Scott is recognized for his disciplined presence and ability to portray authority figures with intensity and grit. His role in Kill ’em Kindly embodies the hard lines between power and survival in a broken world.`
+    bio: `Michael Scott Crabb, known professionally as Scott Crabb, is most recognized for his work in STALKER: Shadow of the Zone, for which his portrayal of “Monk” received a nomination for Best Supporting Actor at the 2024 Tampa Bay Underground Film Festival. He also played “Topper’s Dad” in two episodes of Netflix’s Outer Banks (Season 3). Before acting, Scott spent 25 years as an international special agent with the U.S. government. His unique background brings a deep sense of authenticity and intensity to his performances.`
+  },
+  {
+    name: 'Eric Cummins',
+    key: 'eric-cummins',
+    img: '/images/eric-cummins.jpg',
+    bio: `New to acting, Eric brings his true personality and a fun sense of whimsy to the production. Traveling the country to network and build his brand has sharpened his character work and on-camera presence, making him a natural fit for the world of Kill ’em Kindly.`
   },
 ];
+
 
 
 // --- Mini timeline used in About section ---
@@ -568,42 +554,8 @@ function CastItem({ person, openKey, setOpenKey }) {
   const open = openKey === person.key;
   const toggle = () => setOpenKey(open ? null : person.key);
 
-  const contentRef = React.useRef(null);
-  const [targetHeight, setTargetHeight] = React.useState(0);
-
-  // Recalculate height whenever open changes or bio changes
-  React.useEffect(() => {
-    if (!contentRef.current) return;
-    // Temporarily expand to measure
-    const el = contentRef.current;
-    // Force measurement state
-    el.style.maxHeight = 'none';
-    el.style.visibility = 'hidden';
-    el.style.position = 'absolute';
-    el.style.pointerEvents = 'none';
-    const h = el.scrollHeight;
-    // Revert
-    el.style.maxHeight = '';
-    el.style.visibility = '';
-    el.style.position = '';
-    el.style.pointerEvents = '';
-    setTargetHeight(h);
-  }, [open, person.bio]);
-
-  // Also recalc on window resize for responsive wrapping
-  React.useEffect(() => {
-    if (!open) return;
-    const onResize = () => {
-      if (!contentRef.current) return;
-      const h = contentRef.current.scrollHeight;
-      setTargetHeight(h);
-    };
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, [open]);
-
   return (
-    <div className="pb-panel"> {/* no overflow hidden on the card */}
+    <div className="pb-panel">
       <button
         onClick={toggle}
         aria-expanded={open}
@@ -646,16 +598,12 @@ function CastItem({ person, openKey, setOpenKey }) {
                 display: 'block',
                 filter: 'grayscale(20%) contrast(1.1)'
               }}
-              onError={(e) => {
-                e.currentTarget.src = '/images/placeholder.jpg';
-              }}
+              onError={(e) => { e.currentTarget.src = '/images/placeholder.jpg'; }}
             />
           </div>
 
           <div>
-            <div className="pb-glow" style={{ fontWeight: 700 }}>
-              {person.name}
-            </div>
+            <div className="pb-glow" style={{ fontWeight: 700 }}>{person.name}</div>
             <div style={{ color: 'var(--pb-dim)', fontSize: 12 }}>
               {open ? 'Tap to collapse' : 'Tap to read bio'}
             </div>
@@ -663,29 +611,22 @@ function CastItem({ person, openKey, setOpenKey }) {
         </div>
       </button>
 
-      {/* Animated body that matches real content height */}
-      <div
-        ref={contentRef}
-        style={{
-          maxHeight: open ? `${targetHeight}px` : '0px',
-          overflow: 'hidden',
-          transition: 'max-height 240ms ease',
-        }}
-      >
+      {open && (
         <div
           style={{
-            padding: open ? '12px 12px 14px' : '0 12px',
+            padding: '12px 12px 14px',
             color: 'var(--pb-dim)',
             whiteSpace: 'normal',
-            wordBreak: 'break-word',
+            wordBreak: 'break-word'
           }}
         >
           {person.bio}
         </div>
-      </div>
+      )}
     </div>
   );
 }
+
 
 
 
