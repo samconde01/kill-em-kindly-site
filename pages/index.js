@@ -116,7 +116,7 @@ function formatUSD(n){
 }
 
 // --- Exported Root ---------------------------------------------------------
-export default function App(){
+export function App(){
   const [showPrivacy, setShowPrivacy] = React.useState(false);
   const [showRefunds, setShowRefunds] = React.useState(false);
 
