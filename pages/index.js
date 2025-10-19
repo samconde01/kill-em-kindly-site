@@ -534,6 +534,7 @@ React.useEffect(() => {
     </div>
   ))}
 </div>
+ </div>
 
 
         {/* Producers */}
