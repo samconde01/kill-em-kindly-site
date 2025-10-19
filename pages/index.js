@@ -46,100 +46,58 @@ export default function Home() {
   if (loadingToken) return <div style={{padding:24}}>Loading checkout…</div>;
 
   return (
-    <PayPalScriptProvider options={paypalOptions}>
-      <div style={{ maxWidth: 720, margin: "0 auto", padding: 24 }}>
-        <Head>
-          <title>My Crowdfunding Page</title>
-        </Head>
+      </PayPalScriptProvider>
+  );
+}
 
-        <h1 style={{ marginBottom: 8 }}>Kill 'Em Kindly</h1>
-        <p style={{ marginTop: 0 }}>Support the project and get exclusive perks.</p>
+export function HostedCardSubmit({ canCheckout }) {
+  const [{ isPending }] = usePayPalScriptReducer();
 
-        <div style={{ maxWidth: 520 }}>
-          <label style={{ display:'block', marginTop: 12, fontWeight:600 }}>Your Pledge (USD)</label>
-          <input
-            type="number"
-            min="1"
-            step="1"
-            value={pledgeAmount}
-            onChange={(e) => setPledgeAmount(e.target.value)}
-            style={{ width:'100%', padding:'10px 12px', border:'1px solid #333', borderRadius:8, background:'#0d0e0f', color:'#f0f0f0' }}
-          />
+  const onSubmit = async () => {
+    const cardFields = window.paypal?.HostedFields;
+    if (!cardFields) return;
+    try {
+      await cardFields.getState();
+      const { orderId } = await cardFields.submit({});
+      const r = await fetch('/api/paypal/capture-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderID: orderId })
+      });
+      const cap = await r.json();
+      if (!r.ok) throw new Error('Capture failed');
+      alert('Thank you! Your card pledge was captured.');
+    } catch (e) {
+      console.error(e);
+      alert('Card payment failed. Please try again.');
+    }
+  };
 
-          {needsShirtSize && (
-            <div style={{ marginTop: 12 }}>
-              <label htmlFor="tshirt-size" style={{ display:'block', fontSize:14, fontWeight:600 }}>
-                T-Shirt Size (required for $75+)
-              </label>
-              <select
-                id="tshirt-size"
-                value={tShirtSize}
-                onChange={(e) => setTShirtSize(e.target.value)}
-                style={{ width:'100%', padding:'10px 12px', border:'1px solid #333', borderRadius:8, background:'#0d0e0f', color:'#f0f0f0' }}
-              >
-                <option value="" disabled>Select a size…</option>
-                {sizeOptions.map(s => <option key={s} value={s}>{s}</option>)}
-              </select>
-              <p style={{ marginTop:6, fontSize:12, opacity:0.8 }}>Sizes: XS–3XL • Unisex fit</p>
-            </div>
-          )}
-
-          <div style={{ marginTop: 16 }}>
-            <PayPalButtons
-              style={{ layout: "horizontal" }}
-              disabled={!canCheckout}
-              createOrder={async () => {
-                const r = await fetch('/api/paypal/create-order', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    amount: Number(pledgeAmount),
-                    tShirtSize: needsShirtSize ? tShirtSize : null
-                  })
-                });
-                const { id } = await r.json();
-                if (!id) throw new Error('Order creation failed');
-                return id;
-              }}
-              onApprove={async (data) => {
-                const r = await fetch('/api/paypal/capture-order', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ orderID: data.orderID })
-                });
-                const cap = await r.json();
-                if (!r.ok) throw new Error('Capture failed');
-                alert('Thank you! Your pledge was captured.');
-              }}
-            />
-          </div>
-
-          <div style={{ marginTop: 16, padding:16, border:'1px solid #333', borderRadius:8 }}>
-            <h4 style={{ margin: 0, fontSize: 14, fontWeight: 600 }}>Pay with Card</h4>
-
-            <PayPalHostedFieldsProvider
-              createOrder={async () => {
-                const r = await fetch('/api/paypal/create-order', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    amount: Number(pledgeAmount),
-                    tShirtSize: needsShirtSize ? tShirtSize : null
-
-
-
+  return (
+    <button
+      type="button"
+      onClick={onSubmit}
+      disabled={!canCheckout || isPending}
+      style={{
+        marginTop: 12, width:'100%', padding:'12px 14px',
+        border:'1px solid #555', borderRadius:8, background:'#1b1b1e', color:'#fff',
+        opacity: (!canCheckout || isPending) ? 0.6 : 1
+      }}
+    >
+      {isPending ? 'Loading…' : 'Pay with Card'}
+    </button>
+  );
+}
 
 // --- Helpers ---------------------------------------------------------------
 function nearestTier(amount, tiers) {
   return tiers.reduce((best, t) => {
     const d = Math.abs(t.cost - amount);
     const bd = Math.abs(best.cost - amount);
-    if (d < bd) return t;            // strictly closer → take it
-    if (d > bd) return best;         // strictly farther → keep best
-    // tie: always round up to the higher tier
-    return t.cost >= best.cost ? t : best;
+    return d < bd ? t : best;
   }, tiers[0]);
 }
+
 
 
 // --- Data ------------------------------------------------------------------
