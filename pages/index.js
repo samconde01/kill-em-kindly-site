@@ -489,8 +489,6 @@ function HomePage(){
     filter: 'grayscale(40%) contrast(1.2) brightness(0.8)'
   }}
 />
-
-          </div>
         </div>
 
         {/* Reward Tiers (click to select) */}
