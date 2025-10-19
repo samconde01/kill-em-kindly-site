@@ -3,32 +3,129 @@
 
 import React from "react";
 import Head from "next/head";
-import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import {
+  PayPalScriptProvider,
+  PayPalButtons,
+  PayPalHostedFieldsProvider,
+  PayPalHostedField,
+  usePayPalScriptReducer
+} from "@paypal/react-paypal-js";
 
 export default function Home() {
+  const [pledgeAmount, setPledgeAmount] = React.useState(20);
+  const [tShirtSize, setTShirtSize] = React.useState('');
+  const needsShirtSize = Number(pledgeAmount) >= 75;
+  const sizeOptions = ['XS','S','M','L','XL','2XL','3XL'];
+  React.useEffect(() => { if (!needsShirtSize) setTShirtSize(''); }, [needsShirtSize]);
+  const canCheckout = Number(pledgeAmount) > 0 && (!needsShirtSize || !!tShirtSize);
+
+  const [clientToken, setClientToken] = React.useState(null);
+  const [loadingToken, setLoadingToken] = React.useState(true);
+  React.useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const r = await fetch('/api/paypal/generate-client-token', { method: 'POST' });
+        const data = await r.json();
+        if (mounted && data?.client_token) setClientToken(data.client_token);
+      } catch {}
+      finally { if (mounted) setLoadingToken(false); }
+    })();
+    return () => { mounted = false; };
+  }, []);
+
+  const paypalOptions = React.useMemo(() => ({
+    'client-id': process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID,
+    'data-client-token': clientToken || undefined,
+    'components': 'buttons,hosted-fields',
+    'currency': process.env.NEXT_PUBLIC_PAYPAL_CURRENCY || 'USD',
+    'intent': 'capture',
+    'enable-funding': 'venmo,paylater'
+  }), [clientToken]);
+
+  if (loadingToken) return <div style={{padding:24}}>Loading checkout…</div>;
+
   return (
-    <PayPalScriptProvider
-      options={{
-        "client-id": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID,
-        currency: "USD",
-        components: "buttons,hosted-fields",
-        intent: "capture",
-        "enable-funding": "venmo,paylater"
-      }}
-    >
-      <div>
+    <PayPalScriptProvider options={paypalOptions}>
+      <div style={{ maxWidth: 720, margin: "0 auto", padding: 24 }}>
         <Head>
           <title>My Crowdfunding Page</title>
         </Head>
 
-        <h1>Kill 'Em Kindly</h1>
-        <p>Support the project and get exclusive perks!</p>
+        <h1 style={{ marginBottom: 8 }}>Kill 'Em Kindly</h1>
+        <p style={{ marginTop: 0 }}>Support the project and get exclusive perks.</p>
 
-        <PayPalButtons style={{ layout: "horizontal" }} />
-      </div>
-    </PayPalScriptProvider>
-  );
-}
+        <div style={{ maxWidth: 520 }}>
+          <label style={{ display:'block', marginTop: 12, fontWeight:600 }}>Your Pledge (USD)</label>
+          <input
+            type="number"
+            min="1"
+            step="1"
+            value={pledgeAmount}
+            onChange={(e) => setPledgeAmount(e.target.value)}
+            style={{ width:'100%', padding:'10px 12px', border:'1px solid #333', borderRadius:8, background:'#0d0e0f', color:'#f0f0f0' }}
+          />
+
+          {needsShirtSize && (
+            <div style={{ marginTop: 12 }}>
+              <label htmlFor="tshirt-size" style={{ display:'block', fontSize:14, fontWeight:600 }}>
+                T-Shirt Size (required for $75+)
+              </label>
+              <select
+                id="tshirt-size"
+                value={tShirtSize}
+                onChange={(e) => setTShirtSize(e.target.value)}
+                style={{ width:'100%', padding:'10px 12px', border:'1px solid #333', borderRadius:8, background:'#0d0e0f', color:'#f0f0f0' }}
+              >
+                <option value="" disabled>Select a size…</option>
+                {sizeOptions.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+              <p style={{ marginTop:6, fontSize:12, opacity:0.8 }}>Sizes: XS–3XL • Unisex fit</p>
+            </div>
+          )}
+
+          <div style={{ marginTop: 16 }}>
+            <PayPalButtons
+              style={{ layout: "horizontal" }}
+              disabled={!canCheckout}
+              createOrder={async () => {
+                const r = await fetch('/api/paypal/create-order', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    amount: Number(pledgeAmount),
+                    tShirtSize: needsShirtSize ? tShirtSize : null
+                  })
+                });
+                const { id } = await r.json();
+                if (!id) throw new Error('Order creation failed');
+                return id;
+              }}
+              onApprove={async (data) => {
+                const r = await fetch('/api/paypal/capture-order', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ orderID: data.orderID })
+                });
+                const cap = await r.json();
+                if (!r.ok) throw new Error('Capture failed');
+                alert('Thank you! Your pledge was captured.');
+              }}
+            />
+          </div>
+
+          <div style={{ marginTop: 16, padding:16, border:'1px solid #333', borderRadius:8 }}>
+            <h4 style={{ margin: 0, fontSize: 14, fontWeight: 600 }}>Pay with Card</h4>
+
+            <PayPalHostedFieldsProvider
+              createOrder={async () => {
+                const r = await fetch('/api/paypal/create-order', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    amount: Number(pledgeAmount),
+                    tShirtSize: needsShirtSize ? tShirtSize : null
+
 
 
 
