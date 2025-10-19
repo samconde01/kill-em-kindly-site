@@ -723,3 +723,4 @@ function PrivacyModal({ open, onClose, text }){
     </div>
   );
 }
+function CastItem({ person, openKey, setOpenKey }) { ... }
