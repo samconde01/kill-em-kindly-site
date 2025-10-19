@@ -55,39 +55,55 @@ const CAST = [
     name: 'Sam Conde',
     key: 'sam-conde',
     img: '/images/sam-conde.jpg',
-    bio: 'With a diverse background in on-camera work spanning short films...'
+    bio: `Sam Conde is an on-camera creator, producer, and storyteller with a background spanning narrative shorts, live events, branded content, and digital campaigns. 
+She has worked with brands across the tech, entertainment, and lifestyle spaces, often bridging the gap between creative vision and production execution.
+
+Her work emphasizes strong character performance and immersive worldbuilding. Sam’s unique storytelling voice blends grounded emotion with high-concept settings, which makes her an ideal lead for Kill ’em Kindly.`
   },
   {
     name: 'James Choi',
     key: 'james-choi',
     img: '/images/james-choi.jpg',
-    bio: 'With over 30 film credits across indie features...'
+    bio: `James Choi is a seasoned actor with more than 30 film and television credits. He’s known for portraying intense, layered characters that bring nuance and realism to genre projects.
+
+His indie film work has taken him through action, thriller, and sci-fi productions, where he’s collaborated with both up-and-coming and veteran filmmakers. James’s ability to ground even the most surreal scenarios makes him an essential part of the Kill ’em Kindly cast.`
   },
   {
     name: 'Cole Thornton',
     key: 'cole-thornton',
     img: '/images/cole-thornton.jpg',
-    bio: 'Cole is an actor and model whose work often places him...'
+    bio: `Cole Thornton is an actor and model whose work often places him at the center of gritty, character-driven stories. 
+His recent projects have spanned commercial campaigns, short films, and immersive experiences.
+
+Cole brings a magnetic on-screen presence and a talent for portraying hardened, emotionally complex figures. His role in Kill ’em Kindly leans into that strength, embodying the harsh moral gray zones of a post-apocalyptic world.`
   },
   {
     name: 'Austin Rearden',
     key: 'austin-rearden',
     img: '/images/austin-rearden.jpg',
-    bio: 'Austin has been a Voice Actor for the last 11 years...'
+    bio: `Austin Rearden has been a professional voice actor for more than a decade, with credits ranging from anime and indie animation to AAA video game titles. 
+His ability to deliver emotionally charged performances has earned him a strong reputation in voice work.
+
+Austin brings a versatile vocal range, lending a distinct edge to his character in Kill ’em Kindly — one that blends menace, charm, and humanity.`
   },
   {
     name: 'Eric Cummins',
     key: 'eric-cummins',
     img: '/images/eric-cummins.jpg',
-    bio: 'New to acting, Eric brings his true personality...'
+    bio: `Eric Cummins is stepping into the spotlight with Kill ’em Kindly as his first major on-camera performance. Known among peers for his unfiltered personality and sharp sense of humor, Eric brings an authenticity that translates naturally on screen.
+
+His character offers a grounded, human lens into the wasteland — someone not born for the chaos but forced to survive within it.`
   },
   {
     name: 'Scott Crabb',
     key: 'scott-crabb',
     img: '/images/scott-crabb.jpg',
-    bio: 'Michael Scott Crabb, known professionally as Scott Crabb...'
+    bio: `Michael Scott Crabb, known professionally as Scott Crabb, is an experienced performer with a dynamic background in both acting and stunts. His work includes commercial campaigns, short films, and tactical training media.
+
+Scott is recognized for his disciplined presence and ability to portray authority figures with intensity and grit. His role in Kill ’em Kindly embodies the hard lines between power and survival in a broken world.`
   },
 ];
+
 
 // --- Mini timeline used in About section ---
 const MINI_TIMELINE = [
