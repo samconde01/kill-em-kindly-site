@@ -10,12 +10,10 @@ export default async function handler(req, res) {
 
   try {
     const { amount, noReward, selectedTier } = req.body || {};
-
-    // Basic validation
     const amt = Number(amount);
-    if (!Number.isFinite(amt)) return res.status(400).json({ error: 'Invalid amount' });
-    if (amt < 100) return res.status(400).json({ error: 'Minimum pledge is $1' });
-    if (amt > 1500000) return res.status(400).json({ error: 'Max pledge is $15,000' });
+    if (!Number.isFinite(amt) || amt < 100) {
+      return res.status(400).json({ error: 'Minimum pledge is $1' });
+    }
 
     const origin = req.headers.origin || `https://${req.headers.host}`;
 
@@ -24,6 +22,20 @@ export default async function handler(req, res) {
       currency: 'usd',
       payment_method_types: ['card'],
       allow_promotion_codes: true,
+      customer_creation: 'always',                   // helps get name/email reliably
+
+      // Optional: collect shipping if tiers include physical perks
+      // shipping_address_collection: { allowed_countries: ['US','CA','GB','AU','NZ'] },
+
+      // Optional: collect T-shirt size as a simple text field
+      custom_fields: [
+        {
+          key: 'shirt_size',
+          label: { type: 'custom', custom: 'T-Shirt Size (XS–XXXL)' },
+          type: 'text',
+          optional: true,
+        },
+      ],
 
       line_items: [
         {
@@ -33,9 +45,9 @@ export default async function handler(req, res) {
               name: selectedTier ? `Pledge — ${selectedTier}` : 'Pledge — No Reward',
               description: noReward
                 ? 'Donation without claiming a reward'
-                : 'Pledge towards film rewards',
+                : 'Pledge toward film rewards',
             },
-            unit_amount: amt, // already in cents
+            unit_amount: amt, // cents
           },
           quantity: 1,
         },
@@ -47,12 +59,13 @@ export default async function handler(req, res) {
       metadata: {
         selectedTier: selectedTier || '',
         noReward: String(!!noReward),
+        // optional future: anonymous: 'true'
       },
     });
 
-    return res.status(200).json({ url: session.url });
+    res.status(200).json({ url: session.url });
   } catch (err) {
-    console.error('Stripe checkout error:', err);
-    return res.status(500).json({ error: 'Checkout not available' });
+    console.error('checkout error', err);
+    res.status(500).json({ error: 'Checkout not available' });
   }
 }
