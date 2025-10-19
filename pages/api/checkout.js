@@ -86,9 +86,11 @@ export default async function handler(req, res) {
     const session = await stripe.checkout.sessions.create(params);
     return res.status(200).json({ url: session.url });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: 'Checkout not available' });
-  }
+  console.error('Checkout error:', err);
+  // Surface the actual cause to the client so we don’t guess
+  return res.status(500).json({ error: err?.message || 'Checkout not available' });
+}
+
 }
 
 function getBaseUrl(req) {
