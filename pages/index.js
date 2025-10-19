@@ -1,9 +1,35 @@
 // KILL 'EM KINDLY — Landing Page (single-file preview)
 // Pip-Boy UI reskin, single-page build (no client-side routing)
 
-import React from 'react';
-import { motion } from 'framer-motion';
+import React from "react";
+import Head from "next/head";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+
+export default function Home() {
+  return (
+    <PayPalScriptProvider
+      options={{
+        "client-id": process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID,
+        currency: "USD",
+        components: "buttons,hosted-fields",
+        intent: "capture",
+        "enable-funding": "venmo,paylater"
+      }}
+    >
+      <div>
+        <Head>
+          <title>My Crowdfunding Page</title>
+        </Head>
+
+        <h1>Kill 'Em Kindly</h1>
+        <p>Support the project and get exclusive perks!</p>
+
+        <PayPalButtons style={{ layout: "horizontal" }} />
+      </div>
+    </PayPalScriptProvider>
+  );
+}
+
 
 
 // --- Helpers ---------------------------------------------------------------
