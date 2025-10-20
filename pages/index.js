@@ -485,120 +485,137 @@ const sizeOptions = ['XS','S','M','L','XL','2XL','3XL'];
       <section id="rewards" className="pb-container" style={{ padding:'48px 0' }}>
         <h3 className="pb-glow" style={{ fontSize:18, fontWeight:600 }}>Donate Now</h3>
 
-        {/* Pledge Box */}
-        <div className="pb-panel" style={{ marginTop:16, width:'100%', padding:24 }} id="pledge" ref={pledgeRef}>
-          <label style={{ fontSize:12, color:'var(--pb-dim)' }}>Enter your pledge amount</label>
-          <div style={{ marginTop:8, display:'flex', gap:8, alignItems:'center' }}>
-            <span style={{ color:'var(--pb-dim)' }}>$</span>
-            <input type="number" min={1} value={amount} onChange={(e)=>{ setAmount(Number(e.target.value)); setNoReward(false); }} className="pb-input" />
-          </div>
-{needsShirtSize && (
-  <div style={{ marginTop: 12 }}>
-    <label htmlFor="tshirt-size" style={{ display:'block', fontSize:14, fontWeight:600 }}>
-      T-Shirt Size (required for $75+)
-    </label>
-    <select
-      id="tshirt-size"
-      value={tShirtSize}
-      onChange={(e) => setTShirtSize(e.target.value)}
+  {/* Pledge Box */}
+<div className="pb-panel" style={{ marginTop:16, width:'100%', padding:24 }} id="pledge" ref={pledgeRef}>
+  <label style={{ fontSize:12, color:'var(--pb-dim)' }}>Enter your pledge amount</label>
+  <div style={{ marginTop:8, display:'flex', gap:8, alignItems:'center' }}>
+    <span style={{ color:'var(--pb-dim)' }}>$</span>
+    <input
+      type="number"
+      min={1}
+      value={amount}
+      onChange={(e)=>{ setAmount(Number(e.target.value)); setNoReward(false); }}
       className="pb-input"
-      style={{ marginTop: 6 }}
-    >
-      <option value="" disabled>Select a size…</option>
-      {sizeOptions.map(s => <option key={s} value={s}>{s}</option>)}
-    </select>
-    <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>Sizes: XS–3XL • Unisex fit</p>
+    />
   </div>
-)}
-          {amount > 0 && amount < 20 && !noReward && (
-            <div style={{ marginTop:8, fontSize:13 }} className="pb-error">
-              Pledges under $20 require either selecting the $20 tier or checking 'Donate without claiming a reward.'
-            </div>
-          )}
-          {!noReward && suggestedTier && (
-            <div style={{ marginTop:8, fontSize:13, color:'var(--pb-dim)' }}>
-              Suggested tier: <strong>{suggestedTier.name}</strong> (${suggestedTier.cost}).
-              <button onClick={() => chooseTier(suggestedTier)} className="pb-btn" style={{ marginLeft:8, padding:'6px 10px', borderRadius:8 }}>Select</button>
-            </div>
-          )}
-          <label style={{ display:'flex', alignItems:'center', gap:8, marginTop:10, fontSize:13, color:'var(--pb-dim)' }}>
-            <input type="checkbox" checked={noReward} onChange={(e)=>{ setNoReward(e.target.checked); if (e.target.checked) setSelectedTier(null); }} />
-            Donate without claiming a reward
-          </label>
-      <div style={{ marginTop: 12, display: 'grid', gap: 8 }}>
-  {/* PayPal */}
-  <PayPalButtons
-    fundingSource="paypal"
-    style={{ layout: "horizontal", label: "pay", shape: "rect", height: 45 }}
-    disabled={!canCheckout}
-    createOrder={async () => {
-      const r = await fetch('/api/paypal/create-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: Number(amount),
-          tShirtSize: Number(amount) >= 75 ? (tShirtSize || null) : null
-        })
-      });
-      const { id } = await r.json();
-      if (!id) throw new Error('Order creation failed');
-      return id;
-    }}
-    onApprove={async (data) => {
-      const r = await fetch('/api/paypal/capture-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderID: data.orderID })
-      });
-      const cap = await r.json();
-      if (!r.ok) throw new Error('Capture failed');
-      alert('Thank you! Your pledge was captured.');
-    }}
-  />
 
-  {/* Venmo */}
-  <PayPalButtons
-    fundingSource="venmo"
-    style={{ layout: "horizontal", shape: "rect", height: 45 }}
-    disabled={!canCheckout}
-    createOrder={async () => {
-      const r = await fetch('/api/paypal/create-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: Number(amount),
-          tShirtSize: Number(amount) >= 75 ? (tShirtSize || null) : null
-        })
-      });
-      const { id } = await r.json();
-      if (!id) throw new Error('Order creation failed');
-      return id;
-    }}
-    onApprove={async (data) => {
-      const r = await fetch('/api/paypal/capture-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderID: data.orderID })
-      });
-      const cap = await r.json();
-      if (!r.ok) throw new Error('Capture failed');
-      alert('Thank you! Your pledge was captured.');
-    }}
-  />
-</div>
-      return id;
-    }}
-    onApprove={async (data) => {
-      const r = await fetch('/api/paypal/capture-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderID: data.orderID })
-      });
-      const cap = await r.json();
-      if (!r.ok) throw new Error('Capture failed');
-      alert('Thank you! Your pledge was captured.');
-    }}
-  />
+  {needsShirtSize && (
+    <div style={{ marginTop: 12 }}>
+      <label htmlFor="tshirt-size" style={{ display:'block', fontSize:14, fontWeight:600 }}>
+        T-Shirt Size (required for $75+)
+      </label>
+      <select
+        id="tshirt-size"
+        value={tShirtSize}
+        onChange={(e) => setTShirtSize(e.target.value)}
+        className="pb-input"
+        style={{ marginTop: 6 }}
+      >
+        <option value="" disabled>Select a size…</option>
+        {sizeOptions.map(s => <option key={s} value={s}>{s}</option>)}
+      </select>
+      <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>Sizes: XS–3XL • Unisex fit</p>
+    </div>
+  )}
+
+  {amount > 0 && amount < 20 && !noReward && (
+    <div style={{ marginTop:8, fontSize:13 }} className="pb-error">
+      Pledges under $20 require either selecting the $20 tier or checking 'Donate without claiming a reward.'
+    </div>
+  )}
+
+  {!noReward && suggestedTier && (
+    <div style={{ marginTop:8, fontSize:13, color:'var(--pb-dim)' }}>
+      Suggested tier: <strong>{suggestedTier.name}</strong> (${suggestedTier.cost}).
+      <button onClick={() => chooseTier(suggestedTier)} className="pb-btn" style={{ marginLeft:8, padding:'6px 10px', borderRadius:8 }}>Select</button>
+    </div>
+  )}
+
+  <label style={{ display:'flex', alignItems:'center', gap:8, marginTop:10, fontSize:13, color:'var(--pb-dim)' }}>
+    <input
+      type="checkbox"
+      checked={noReward}
+      onChange={(e)=>{ setNoReward(e.target.checked); if (e.target.checked) setSelectedTier(null); }}
+    />
+    Donate without claiming a reward
+  </label>
+
+  {/* Payment buttons */}
+  <div style={{ marginTop: 12, display: 'grid', gap: 8 }}>
+    {/* PayPal */}
+    <PayPalButtons
+      fundingSource="paypal"
+      style={{ layout: "horizontal", label: "pay", shape: "rect", height: 45 }}
+      disabled={!canCheckout}
+      createOrder={async () => {
+        const r = await fetch('/api/paypal/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount: Number(amount),
+            tShirtSize: Number(amount) >= 75 ? (tShirtSize || null) : null
+          })
+        });
+        const data = await r.json();
+        const id = data?.id;
+        if (!id) throw new Error('Order creation failed');
+        return id;
+      }}
+      onApprove={async (data) => {
+        const r = await fetch('/api/paypal/capture-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderID: data.orderID })
+        });
+        const cap = await r.json();
+        if (!r.ok) throw new Error('Capture failed');
+        alert('Thank you! Your pledge was captured.');
+      }}
+    />
+
+    {/* Venmo */}
+    <PayPalButtons
+      fundingSource="venmo"
+      style={{ layout: "horizontal", shape: "rect", height: 45 }}
+      disabled={!canCheckout}
+      createOrder={async () => {
+        const r = await fetch('/api/paypal/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount: Number(amount),
+            tShirtSize: Number(amount) >= 75 ? (tShirtSize || null) : null
+          })
+        });
+        const data = await r.json();
+        const id = data?.id;
+        if (!id) throw new Error('Order creation failed');
+        return id;
+      }}
+      onApprove={async (data) => {
+        const r = await fetch('/api/paypal/capture-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderID: data.orderID })
+        });
+        const cap = await r.json();
+        if (!r.ok) throw new Error('Capture failed');
+        alert('Thank you! Your pledge was captured.');
+      }}
+    />
+  </div>
+
+  {selectedTier && !noReward && (
+    <div style={{ marginTop:8, fontSize:13, color:'var(--pb-bright)' }}>
+      Selected Tier: <strong>{selectedTier.name}</strong> (${selectedTier.cost})
+    </div>
+  )}
+
+  {errorMsg && (<div style={{ marginTop:8, fontSize:13 }} className="pb-error">{errorMsg}</div>)}
+
+  <p style={{ marginTop:4, fontSize:11, color:'var(--pb-dim)' }}>
+    By pledging you agree to our <a href="/refunds" style={{ color:'var(--pb-bright)' }}>Refunds & Responsibility</a> and <a href="/privacy" style={{ color:'var(--pb-bright)' }}>Privacy Policy</a>.
+  </p>
 </div>
 
 
