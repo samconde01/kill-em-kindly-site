@@ -304,7 +304,36 @@ const sizeOptions = ['XS','S','M','L','XL','2XL','3XL'];
 
 
   // Tracker (replace with live fetch later)
-  const [donors] = React.useState([]);
+ const [donors, setDonors] = React.useState([]);
+React.useEffect(() => {
+  async function load() {
+    try {
+      const url = process.env.NEXT_PUBLIC_DONORS_JSON_URL;
+      if (!url) return;
+
+      const text = await fetch(url).then(r => r.text());
+      // Strip the JSONP wrapper:
+      const json = JSON.parse(text.replace(/^[^{]+/, '').replace(/;?\s*$/, ''));
+      const rows = (json.table?.rows || []).map(r => {
+        const c = (r.c || []).map(x => (x && x.v != null ? String(x.v) : ''));
+        const [name, amount, message, size, source, ts] = c;
+        return {
+          name: name || 'Anonymous',
+          amount: Number(amount) || 0,
+          message: message || '',
+          size: size || '',
+          source: source || 'manual',
+          ts: ts || ''
+        };
+      });
+      setDonors(rows.filter(r => r.amount > 0));
+    } catch (e) {
+      console.error('Failed to load donors sheet', e);
+    }
+  }
+  load();
+}, []);
+
   const [showAllDonors, setShowAllDonors] = React.useState(false);
   const totalRaised = React.useMemo(() => donors.reduce((s,d)=> s + (d.amount || 0), 0), [donors]);
   const backers = donors.length;
