@@ -525,21 +525,11 @@ const sizeOptions = ['XS','S','M','L','XL','2XL','3XL'];
             <input type="checkbox" checked={noReward} onChange={(e)=>{ setNoReward(e.target.checked); if (e.target.checked) setSelectedTier(null); }} />
             Donate without claiming a reward
           </label>
-       <button type="button" className="pb-btn" style={{ marginTop:12, width:'100%', padding:'12px 14px', borderRadius:12 }} onClick={()=>{const el=document.querySelector('.paypal-section');if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.classList.add('highlight-paypal');setTimeout(()=>el.classList.remove('highlight-paypal'),2000);}}}>Continue to PayPal / Venmo</button>
-          {selectedTier && !noReward && (
-            <div style={{ marginTop:8, fontSize:13, color:'var(--pb-bright)' }}>
-              Selected Tier: <strong>{selectedTier.name}</strong> (${selectedTier.cost})
-            </div>
-          )}
-          {errorMsg && (<div style={{ marginTop:8, fontSize:13 }} className="pb-error">{errorMsg}</div>)}
-          <p style={{ marginTop:4, fontSize:11, color:'var(--pb-dim)' }}>
-            By pledging you agree to our <a href="/refunds" style={{ color:'var(--pb-bright)' }}>Refunds & Responsibility</a> and <a href="/privacy" style={{ color:'var(--pb-bright)' }}>Privacy Policy</a>.
-          </p>
-        </div>
-
-<div className="paypal-section" style={{ marginTop: 24 }}>
+      <div style={{ marginTop: 12, display: 'grid', gap: 8 }}>
+  {/* PayPal */}
   <PayPalButtons
-    style={{ layout: "horizontal" }}
+    fundingSource="paypal"
+    style={{ layout: "horizontal", label: "pay", shape: "rect", height: 45 }}
     disabled={!canCheckout}
     createOrder={async () => {
       const r = await fetch('/api/paypal/create-order', {
@@ -552,6 +542,50 @@ const sizeOptions = ['XS','S','M','L','XL','2XL','3XL'];
       });
       const { id } = await r.json();
       if (!id) throw new Error('Order creation failed');
+      return id;
+    }}
+    onApprove={async (data) => {
+      const r = await fetch('/api/paypal/capture-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderID: data.orderID })
+      });
+      const cap = await r.json();
+      if (!r.ok) throw new Error('Capture failed');
+      alert('Thank you! Your pledge was captured.');
+    }}
+  />
+
+  {/* Venmo */}
+  <PayPalButtons
+    fundingSource="venmo"
+    style={{ layout: "horizontal", shape: "rect", height: 45 }}
+    disabled={!canCheckout}
+    createOrder={async () => {
+      const r = await fetch('/api/paypal/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: Number(amount),
+          tShirtSize: Number(amount) >= 75 ? (tShirtSize || null) : null
+        })
+      });
+      const { id } = await r.json();
+      if (!id) throw new Error('Order creation failed');
+      return id;
+    }}
+    onApprove={async (data) => {
+      const r = await fetch('/api/paypal/capture-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderID: data.orderID })
+      });
+      const cap = await r.json();
+      if (!r.ok) throw new Error('Capture failed');
+      alert('Thank you! Your pledge was captured.');
+    }}
+  />
+</div>
       return id;
     }}
     onApprove={async (data) => {
