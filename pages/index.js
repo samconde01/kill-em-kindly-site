@@ -511,251 +511,258 @@ React.useEffect(() => {
       </section>
 
       {/* Rewards & Pledge Section */}
-      <section id="rewards" className="pb-container" style={{ padding:'48px 0' }}>
-        <h3 className="pb-glow" style={{ fontSize:18, fontWeight:600 }}>Donate Now</h3>
+     <section id="rewards" className="pb-container" style={{ padding:'48px 0' }}>
+  <h3 className="pb-glow" style={{ fontSize:18, fontWeight:600 }}>Donate Now</h3>
 
   {/* Pledge Box */}
-<div className="pb-panel" style={{ marginTop:16, width:'100%', padding:24 }} id="pledge" ref={pledgeRef}>
-  <label style={{ fontSize:12, color:'var(--pb-dim)' }}>Enter your pledge amount</label>
-  <div style={{ marginTop:8, display:'flex', gap:8, alignItems:'center' }}>
-    <span style={{ color:'var(--pb-dim)' }}>$</span>
-    <input
-      type="number"
-      min={1}
-      value={amount}
-      onChange={(e)=>{ setAmount(Number(e.target.value)); setNoReward(false); }}
-      className="pb-input"
-    />
-  </div>
-
-  {needsShirtSize && (
-    <div style={{ marginTop: 12 }}>
-      <label htmlFor="tshirt-size" style={{ display:'block', fontSize:14, fontWeight:600 }}>
-        T-Shirt Size (required for $75+)
-      </label>
-      <select
-        id="tshirt-size"
-        value={tShirtSize}
-        onChange={(e) => setTShirtSize(e.target.value)}
+  <div className="pb-panel" style={{ marginTop:16, width:'100%', padding:24 }} id="pledge" ref={pledgeRef}>
+    <label style={{ fontSize:12, color:'var(--pb-dim)' }}>Enter your pledge amount</label>
+    <div style={{ marginTop:8, display:'flex', gap:8, alignItems:'center' }}>
+      <span style={{ color:'var(--pb-dim)' }}>$</span>
+      <input
+        type="number"
+        min={1}
+        value={amount}
+        onChange={(e)=>{ setAmount(Number(e.target.value)); setNoReward(false); }}
         className="pb-input"
-        style={{ marginTop: 6 }}
-      >
-        <option value="" disabled>Select a size…</option>
-        {sizeOptions.map(s => <option key={s} value={s}>{s}</option>)}
-      </select>
-      <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>Sizes: XS–3XL • Unisex fit</p>
+      />
     </div>
-  )}
 
-  {amount > 0 && amount < 20 && !noReward && (
-    <div style={{ marginTop:8, fontSize:13 }} className="pb-error">
-      Pledges under $20 require either selecting the $20 tier or checking 'Donate without claiming a reward.'
+    {needsShirtSize && (
+      <div style={{ marginTop: 12 }}>
+        <label htmlFor="tshirt-size" style={{ display:'block', fontSize:14, fontWeight:600 }}>
+          T-Shirt Size (required for $75+)
+        </label>
+        <select
+          id="tshirt-size"
+          value={tShirtSize}
+          onChange={(e) => setTShirtSize(e.target.value)}
+          className="pb-input"
+          style={{ marginTop: 6 }}
+        >
+          <option value="" disabled>Select a size…</option>
+          {sizeOptions.map(s => <option key={s} value={s}>{s}</option>)}
+        </select>
+        <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>Sizes: XS–3XL • Unisex fit</p>
+      </div>
+    )}
+
+    {amount > 0 && amount < 20 && !noReward && (
+      <div style={{ marginTop:8, fontSize:13 }} className="pb-error">
+        Pledges under $20 require either selecting the $20 tier or checking 'Donate without claiming a reward.'
+      </div>
+    )}
+
+    {!noReward && suggestedTier && (
+      <div style={{ marginTop:8, fontSize:13, color:'var(--pb-dim)' }}>
+        Suggested tier: <strong>{suggestedTier.name}</strong> (${suggestedTier.cost}).
+        <button onClick={() => chooseTier(suggestedTier)} className="pb-btn" style={{ marginLeft:8, padding:'6px 10px', borderRadius:8 }}>Select</button>
+      </div>
+    )}
+
+    <label style={{ display:'flex', alignItems:'center', gap:8, marginTop:10, fontSize:13, color:'var(--pb-dim)' }}>
+      <input
+        type="checkbox"
+        checked={noReward}
+        onChange={(e)=>{ setNoReward(e.target.checked); if (e.target.checked) setSelectedTier(null); }}
+      />
+      Donate without claiming a reward
+    </label>
+
+    {/* Payment buttons */}
+    <div style={{ marginTop: 12, display: 'grid', gap: 8 }}>
+      {/* PayPal */}
+      <PayPalButtons
+        fundingSource="paypal"
+        style={{ layout: "horizontal", label: "pay", shape: "rect", height: 45 }}
+        disabled={!canCheckout}
+        createOrder={async () => {
+          const r = await fetch('/api/paypal/create-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              amount: Number(amount),
+              tShirtSize: Number(amount) >= 75 ? (tShirtSize || null) : null
+            })
+          });
+          const data = await r.json();
+          const id = data?.id;
+          if (!id) throw new Error('Order creation failed');
+          return id;
+        }}
+        onApprove={async (data) => {
+          try {
+            const r = await fetch('/api/paypal/capture-order', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ orderID: data.orderID })
+            });
+            const cap = await r.json();
+            if (!r.ok) throw new Error(cap?.error || 'Capture failed');
+
+            const status = cap?.status || cap?.raw?.status || 'UNKNOWN';
+            const captureId = cap?.id || cap?.raw?.purchase_units?.[0]?.payments?.captures?.[0]?.id;
+
+            if (status !== 'COMPLETED') {
+              console.error('Capture not completed:', cap);
+              alert(`Payment did not complete (status: ${status}). Your card/PayPal was not charged.`);
+              return;
+            }
+
+            alert(`Thank you! Your pledge was captured. (ID: ${captureId})`);
+            // TODO: trigger your tracker update here (webhook/DB/sheet)
+          } catch (e) {
+            console.error('Capture error', e);
+            alert('Payment could not be completed. Please try again or use a different account.');
+          }
+        }}
+      />
+
+      {/* Venmo */}
+      <PayPalButtons
+        fundingSource="venmo"
+        style={{ layout: "horizontal", shape: "rect", height: 45 }}
+        disabled={!canCheckout}
+        createOrder={async () => {
+          const r = await fetch('/api/paypal/create-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              amount: Number(amount),
+              tShirtSize: Number(amount) >= 75 ? (tShirtSize || null) : null
+            })
+          });
+          const data = await r.json();
+          const id = data?.id;
+          if (!id) throw new Error('Order creation failed');
+          return id;
+        }}
+        onApprove={async (data) => {
+          const r = await fetch('/api/paypal/capture-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orderID: data.orderID })
+          });
+          const cap = await r.json();
+          if (!r.ok) throw new Error('Capture failed');
+          alert('Thank you! Your pledge was captured.');
+        }}
+      />
     </div>
-  )}
 
-  {!noReward && suggestedTier && (
-    <div style={{ marginTop:8, fontSize:13, color:'var(--pb-dim)' }}>
-      Suggested tier: <strong>{suggestedTier.name}</strong> (${suggestedTier.cost}).
-      <button onClick={() => chooseTier(suggestedTier)} className="pb-btn" style={{ marginLeft:8, padding:'6px 10px', borderRadius:8 }}>Select</button>
+    {/* Card (Hosted Fields) */}
+    <div className="pb-panel" style={{ marginTop: 16, padding: 16 }}>
+      <h4 style={{ margin: 0, fontSize: 14, fontWeight: 600 }}>Pay with Card</h4>
+      <p style={{ fontSize: 12, opacity: 0.8, marginTop: 6 }}>
+        Secure card entry powered by PayPal.
+      </p>
+
+      {hasClientToken && typeof window !== 'undefined' && window.paypal?.HostedFields?.isEligible() ? (
+        <PayPalHostedFieldsProvider
+          createOrder={async () => {
+            const r = await fetch('/api/paypal/create-order', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                amount: Number(amount),
+                tShirtSize: Number(amount) >= 75 ? (tShirtSize || null) : null
+              })
+            });
+            const data = await r.json();
+            const id = data?.id;
+            if (!id) throw new Error('Order creation failed');
+            return id;
+          }}
+        >
+          <div style={{ display:'grid', gap:12, marginTop:12 }}>
+            <label style={{ fontSize:12 }}>Card Number</label>
+            <div id="card-number" style={{ height:40, border:'1px solid var(--pb-border)', borderRadius:8, padding:'8px 10px', background:'#04170f' }} />
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+              <div>
+                <label style={{ fontSize:12 }}>Expiration</label>
+                <div id="card-expiry" style={{ height:40, border:'1px solid var(--pb-border)', borderRadius:8, padding:'8px 10px', background:'#04170f' }} />
+              </div>
+              <div>
+                <label style={{ fontSize:12 }}>CVV</label>
+                <div id="card-cvv" style={{ height:40, border:'1px solid var(--pb-border)', borderRadius:8, padding:'8px 10px', background:'#04170f' }} />
+              </div>
+            </div>
+          </div>
+
+          <PayPalHostedField
+            hostedFieldType="number"
+            options={{ selector: '#card-number', placeholder: '4111 1111 1111 1111' }}
+          />
+          <PayPalHostedField
+            hostedFieldType="expirationDate"
+            options={{ selector: '#card-expiry', placeholder: 'MM/YY' }}
+          />
+          <PayPalHostedField
+            hostedFieldType="cvv"
+            options={{ selector: '#card-cvv', placeholder: '123' }}
+          />
+
+          <HostedCardSubmit canCheckout={canCheckout} />
+        </PayPalHostedFieldsProvider>
+      ) : (
+        <div style={{ marginTop: 8, fontSize: 12, color: 'var(--pb-dim)' }}>
+          {hasClientToken
+            ? 'Card entry not available in this browser. Please use PayPal or Venmo.'
+            : 'Loading secure card fields… (PayPal token)'}
+        </div>
+      )}
     </div>
-  )}
 
-  <label style={{ display:'flex', alignItems:'center', gap:8, marginTop:10, fontSize:13, color:'var(--pb-dim)' }}>
-    <input
-      type="checkbox"
-      checked={noReward}
-      onChange={(e)=>{ setNoReward(e.target.checked); if (e.target.checked) setSelectedTier(null); }}
-    />
-    Donate without claiming a reward
-  </label>
+    {/* Selected tier + errors + policy */}
+    {selectedTier && !noReward && (
+      <div style={{ marginTop:8, fontSize:13, color:'var(--pb-bright)' }}>
+        Selected Tier: <strong>{selectedTier.name}</strong> (${selectedTier.cost})
+      </div>
+    )}
 
-  {/* Payment buttons */}
-  <div style={{ marginTop: 12, display: 'grid', gap: 8 }}>
-    {/* PayPal */}
-    <PayPalButtons
-      fundingSource="paypal"
-      style={{ layout: "horizontal", label: "pay", shape: "rect", height: 45 }}
-      disabled={!canCheckout}
-      createOrder={async () => {
-        const r = await fetch('/api/paypal/create-order', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            amount: Number(amount),
-            tShirtSize: Number(amount) >= 75 ? (tShirtSize || null) : null
-          })
-        });
-        const data = await r.json();
-        const id = data?.id;
-        if (!id) throw new Error('Order creation failed');
-        return id;
-      }}
-     onApprove={async (data) => {
-  try {
-    const r = await fetch('/api/paypal/capture-order', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ orderID: data.orderID })
-    });
-    const cap = await r.json();
-    if (!r.ok) throw new Error(cap?.error || 'Capture failed');
+    {errorMsg && (<div style={{ marginTop:8, fontSize:13 }} className="pb-error">{errorMsg}</div>)}
 
-    const status = cap?.status || cap?.raw?.status || 'UNKNOWN';
-    const captureId = cap?.id || cap?.raw?.purchase_units?.[0]?.payments?.captures?.[0]?.id;
+    <p style={{ marginTop:4, fontSize:11, color:'var(--pb-dim)' }}>
+      By pledging you agree to our <a href="/refunds" style={{ color:'var(--pb-bright)' }}>Refunds & Responsibility</a> and <a href="/privacy" style={{ color:'var(--pb-bright)' }}>Privacy Policy</a>.
+    </p>
+  </div> {/* <-- THIS closes the Pledge Box panel */}
 
-    if (status !== 'COMPLETED') {
-      console.error('Capture not completed:', cap);
-      alert(`Payment did not complete (status: ${status}). Your card/PayPal was not charged.`);
-      return;
-    }
-
-    alert(`Thank you! Your pledge was captured. (ID: ${captureId})`);
-    // TODO: trigger your tracker update here (webhook/DB/sheet)
-  } catch (e) {
-    console.error('Capture error', e);
-    alert('Payment could not be completed. Please try again or use a different account.');
-  }
-      }}
-    />
-
-    {/* Venmo */}
-    <PayPalButtons
-      fundingSource="venmo"
-      style={{ layout: "horizontal", shape: "rect", height: 45 }}
-      disabled={!canCheckout}
-      createOrder={async () => {
-        const r = await fetch('/api/paypal/create-order', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            amount: Number(amount),
-            tShirtSize: Number(amount) >= 75 ? (tShirtSize || null) : null
-          })
-        });
-        const data = await r.json();
-        const id = data?.id;
-        if (!id) throw new Error('Order creation failed');
-        return id;
-      }}
-      onApprove={async (data) => {
-        const r = await fetch('/api/paypal/capture-order', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ orderID: data.orderID })
-        });
-        const cap = await r.json();
-        if (!r.ok) throw new Error('Capture failed');
-        alert('Thank you! Your pledge was captured.');
-      }}
-    />
+  {/* Rewards Banner */}
+  <div className="pb-panel" style={{ padding:0, overflow:'hidden', marginTop:24 }}>
+    <div style={{ aspectRatio:'21/5', width:'100%', display:'flex', alignItems:'center', justifyContent:'center', borderBottom:'1px solid var(--pb-border)', color:'var(--pb-dim)' }}>
+      <img
+        src="/images/rewards-banner2.jpg"
+        alt="Rewards Banner"
+        style={{ width:'100%', height:'100%', objectFit:'cover', filter:'grayscale(40%) contrast(1.2) brightness(0.8)' }}
+      />
+    </div>
   </div>
 
-{/* Card (Hosted Fields) */}
-<div className="pb-panel" style={{ marginTop: 16, padding: 16 }}>
-  <h4 style={{ margin: 0, fontSize: 14, fontWeight: 600 }}>Pay with Card</h4>
-  <p style={{ fontSize: 12, opacity: 0.8, marginTop: 6 }}>
-    Secure card entry powered by PayPal.
-  </p>
-
-  {hasClientToken && typeof window !== 'undefined' && window.paypal?.HostedFields?.isEligible() ? (
-    <PayPalHostedFieldsProvider
-      createOrder={async () => {
-        const r = await fetch('/api/paypal/create-order', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            amount: Number(amount),
-            tShirtSize: Number(amount) >= 75 ? (tShirtSize || null) : null
-          })
-        });
-        const data = await r.json();
-        const id = data?.id;
-        if (!id) throw new Error('Order creation failed');
-        return id;
-      }}
-    >
-      <div style={{ display:'grid', gap:12, marginTop:12 }}>
-        <label style={{ fontSize:12 }}>Card Number</label>
-        <div id="card-number" style={{ height:40, border:'1px solid var(--pb-border)', borderRadius:8, padding:'8px 10px', background:'#04170f' }} />
-        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
-          <div>
-            <label style={{ fontSize:12 }}>Expiration</label>
-            <div id="card-expiry" style={{ height:40, border:'1px solid var(--pb-border)', borderRadius:8, padding:'8px 10px', background:'#04170f' }} />
-          </div>
-          <div>
-            <label style={{ fontSize:12 }}>CVV</label>
-            <div id="card-cvv" style={{ height:40, border:'1px solid var(--pb-border)', borderRadius:8, padding:'8px 10px', background:'#04170f' }} />
-          </div>
+  {/* Reward Tiers (click to select) */}
+  <div style={{ marginTop: 24, display: 'grid', gap: 12 }}>
+    {tiers.map((t, idx) => (
+      <div
+        key={`${t.name}-${t.cost}-${idx}`}
+        className="pb-panel"
+        style={{
+          padding: 16,
+          cursor: 'pointer',
+          boxShadow:
+            selectedTier?.cost === t.cost
+              ? '0 0 0 2px var(--pb-border-strong), inset 0 0 24px rgba(110,255,141,0.15)'
+              : undefined
+        }}
+        onClick={() => chooseTier(t)}
+      >
+        <div className="pb-glow" style={{ fontWeight: 600 }}>
+          {t.name} — ${t.cost}
         </div>
+        <div style={{ color: 'var(--pb-dim)', marginTop: 6 }}>{t.rewards}</div>
       </div>
+    ))}
+  </div>
+</section>
 
-      <PayPalHostedField
-        hostedFieldType="number"
-        options={{ selector: '#card-number', placeholder: '4111 1111 1111 1111' }}
-      />
-      <PayPalHostedField
-        hostedFieldType="expirationDate"
-        options={{ selector: '#card-expiry', placeholder: 'MM/YY' }}
-      />
-      <PayPalHostedField
-        hostedFieldType="cvv"
-        options={{ selector: '#card-cvv', placeholder: '123' }}
-      />
-
-      <HostedCardSubmit canCheckout={canCheckout} />
-    </PayPalHostedFieldsProvider>
-  ) : (
-    <div style={{ marginTop: 8, fontSize: 12, color: 'var(--pb-dim)' }}>
-      {hasClientToken
-        ? 'Card entry not available in this browser. Please use PayPal or Venmo.'
-        : 'Loading secure card fields… (PayPal token)'}
-    </div>
-  )}
-</div>
-
-
-        {/* Rewards Banner */}
-        <div className="pb-panel" style={{ padding:0, overflow:'hidden', marginTop:24 }}>
-          <div style={{ aspectRatio:'21/5', width:'100%', display:'flex', alignItems:'center', justifyContent:'center', borderBottom:'1px solid var(--pb-border)', color:'var(--pb-dim)' }}>
-            {/* If you added /photos/rewards banner.jpg, switch to /photos/rewards%20banner.jpg or import it via /public */}
-           <img
-  src="/images/rewards-banner2.jpg"
-  alt="Rewards Banner"
-  style={{
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-    filter: 'grayscale(40%) contrast(1.2) brightness(0.8)' // optional styling
-  }}
-/>
-
-          </div>
-        </div>
-
-        {/* Reward Tiers (click to select) */}
-        <div style={{ marginTop: 24, display: 'grid', gap: 12 }}>
-          {tiers.map((t, idx) => (
-            <div
-              key={`${t.name}-${t.cost}-${idx}`}
-              className="pb-panel"
-              style={{
-                padding: 16,
-                cursor: 'pointer',
-                boxShadow:
-                  selectedTier?.cost === t.cost
-                    ? '0 0 0 2px var(--pb-border-strong), inset 0 0 24px rgba(110,255,141,0.15)'
-                    : undefined
-              }}
-              onClick={() => chooseTier(t)}
-            >
-              <div className="pb-glow" style={{ fontWeight: 600 }}>
-                {t.name} — ${t.cost}
-              </div>
-              <div style={{ color: 'var(--pb-dim)', marginTop: 6 }}>{t.rewards}</div>
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* Cast & Producers */}
       <section className="pb-container" style={{ padding:'24px 0' }}>
