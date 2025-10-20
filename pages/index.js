@@ -584,15 +584,31 @@ React.useEffect(() => {
         if (!id) throw new Error('Order creation failed');
         return id;
       }}
-      onApprove={async (data) => {
-        const r = await fetch('/api/paypal/capture-order', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ orderID: data.orderID })
-        });
-        const cap = await r.json();
-        if (!r.ok) throw new Error('Capture failed');
-        alert('Thank you! Your pledge was captured.');
+     onApprove={async (data) => {
+  try {
+    const r = await fetch('/api/paypal/capture-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderID: data.orderID })
+    });
+    const cap = await r.json();
+    if (!r.ok) throw new Error(cap?.error || 'Capture failed');
+
+    const status = cap?.status || cap?.raw?.status || 'UNKNOWN';
+    const captureId = cap?.id || cap?.raw?.purchase_units?.[0]?.payments?.captures?.[0]?.id;
+
+    if (status !== 'COMPLETED') {
+      console.error('Capture not completed:', cap);
+      alert(`Payment did not complete (status: ${status}). Your card/PayPal was not charged.`);
+      return;
+    }
+
+    alert(`Thank you! Your pledge was captured. (ID: ${captureId})`);
+    // TODO: trigger your tracker update here (webhook/DB/sheet)
+  } catch (e) {
+    console.error('Capture error', e);
+    alert('Payment could not be completed. Please try again or use a different account.');
+  }
       }}
     />
 
