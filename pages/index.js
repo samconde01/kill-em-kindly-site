@@ -14,21 +14,40 @@ import { motion } from "framer-motion";
 
 
 export default function Home() {
+  // --- existing local UI state you had ---
   const [pledgeAmount, setPledgeAmount] = React.useState(20);
   const [tShirtSize, setTShirtSize] = React.useState('');
   const needsShirtSize = Number(pledgeAmount) >= 75;
-  const sizeOptions = ['XS','S','M','L','XL','2XL','3XL'];
   React.useEffect(() => { if (!needsShirtSize) setTShirtSize(''); }, [needsShirtSize]);
   const canCheckout = Number(pledgeAmount) > 0 && (!needsShirtSize || !!tShirtSize);
 
+  // --- NEW: fetch a LIVE client token for Hosted Fields/Advanced Cards ---
+  const [clientToken, setClientToken] = React.useState(null);
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const r = await fetch('/api/paypal/generate-client-token', { method: 'POST' });
+        const { clientToken } = await r.json();
+        setClientToken(clientToken || null);
+      } catch (e) {
+        console.error('Failed to fetch PayPal client token', e);
+      }
+    })();
+  }, []);
+
+  // --- IMPORTANT: include hosted-fields + pass data-client-token ---
   const paypalOptions = {
-    'client-id': process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID,
-    components: 'buttons',
-    currency: process.env.NEXT_PUBLIC_PAYPAL_CURRENCY || 'USD',
-    intent: 'capture',
-    'enable-funding': 'venmo,paylater'
+    'client-id'        : process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID, // LIVE client id
+    components         : 'buttons,hosted-fields',                   // <-- add hosted-fields
+    currency           : process.env.NEXT_PUBLIC_PAYPAL_CURRENCY || 'USD',
+    intent             : 'capture',
+    'enable-funding'   : 'venmo,paylater',
+    'data-client-token': clientToken                                // <-- pass LIVE client token
   };
 
+  // Render nothing until we have a token (prevents SDK from loading wrong)
+  if (!clientToken) return null;
+
   return (
     <PayPalScriptProvider options={paypalOptions}>
       <App />
@@ -36,15 +55,6 @@ export default function Home() {
   );
 }
 
-
-  // Don’t block the whole page; render immediately.
-  // Buttons will work even while token is loading; Hosted Fields show once token arrives.
-  return (
-    <PayPalScriptProvider options={paypalOptions}>
-      <App />
-    </PayPalScriptProvider>
-  );
-}
 
 
 
