@@ -306,19 +306,33 @@ const sizeOptions = ['XS','S','M','L','XL','2XL','3XL'];
 
  // Tracker – read from our own API
 const [donors, setDonors] = React.useState([]);
+  const lastRevRef = React.useRef(0);
 React.useEffect(() => {
   let alive = true;
+
   async function load() {
     try {
-      const r = await fetch('/api/tracker/list');
+      const r = await fetch(`/api/tracker/list?t=${Date.now()}`, { cache: 'no-store' });
       const data = await r.json();
-      if (!r.ok) throw new Error(data?.error || 'list failed');
-      if (alive) setDonors(Array.isArray(data.donors) ? data.donors : []);
+      if (!r.ok) throw new Error(data?.error || 'Tracker list failed');
+
+      const rev = Number(data.rev || 0);
+      if (alive && rev >= lastRevRef.current) {
+        lastRevRef.current = rev;
+        setDonors(Array.isArray(data.donors) ? data.donors : []);
+      }
     } catch (e) {
       console.error('Failed to load donors', e);
     }
   }
+
+  // initial load + refresh every 20s
   load();
+  const interval = setInterval(load, 20000);
+
+  return () => { alive = false; clearInterval(interval); };
+}, []);
+
 
   // (nice-to-have) refresh every 20s during campaign
   const t = setInterval(load, 20000);
@@ -603,14 +617,12 @@ React.useEffect(() => {
             alert(`Thank you! Your pledge was captured. (ID: ${captureId})`);
       // refresh tracker list
 try {
-  const r2 = await fetch('/api/tracker/list');
+  const r2 = await fetch(`/api/tracker/list?t=${Date.now()}`, { cache: 'no-store' });
   const d2 = await r2.json();
-  if (r2.ok && Array.isArray(d2.donors)) {
-    setDonors(d2.donors);
-  }
-} catch (err) {
-  console.error('Tracker refresh failed', err);
-}
+  lastRevRef.current = Number(d2.rev || 0);
+  setDonors(Array.isArray(d2.donors) ? d2.donors : []);
+} catch {}
+
 
           } catch (e) {
             console.error('Capture error', e);
@@ -649,14 +661,12 @@ try {
           alert('Thank you! Your pledge was captured.');
           // refresh tracker list
 try {
-  const r2 = await fetch('/api/tracker/list');
+  const r2 = await fetch(`/api/tracker/list?t=${Date.now()}`, { cache: 'no-store' });
   const d2 = await r2.json();
-  if (r2.ok && Array.isArray(d2.donors)) {
-    setDonors(d2.donors);
-  }
-} catch (err) {
-  console.error('Tracker refresh failed', err);
-}
+  lastRevRef.current = Number(d2.rev || 0);
+  setDonors(Array.isArray(d2.donors) ? d2.donors : []);
+} catch {}
+
         }}
       />
     </div>
