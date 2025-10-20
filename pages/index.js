@@ -304,9 +304,10 @@ const canCheckout = Number(amount) > 0 && (!needsShirtSize || !!tShirtSize);
 const sizeOptions = ['XS','S','M','L','XL','2XL','3XL'];
 
 
- // Tracker – read from our own API
+ // Tracker – read from our own API (no cache) and ignore stale responses
 const [donors, setDonors] = React.useState([]);
-  const lastRevRef = React.useRef(0);
+const lastRevRef = React.useRef(0);
+
 React.useEffect(() => {
   let alive = true;
 
@@ -330,14 +331,12 @@ React.useEffect(() => {
   load();
   const interval = setInterval(load, 20000);
 
-  return () => { alive = false; clearInterval(interval); };
+  return () => {
+    alive = false;
+    clearInterval(interval);
+  };
 }, []);
 
-
-  // (nice-to-have) refresh every 20s during campaign
-  const t = setInterval(load, 20000);
-  return () => { alive = false; clearInterval(t); };
-}, []);
 
 
   const [showAllDonors, setShowAllDonors] = React.useState(false);
@@ -360,25 +359,6 @@ React.useEffect(() => {
     if (!selectedTier || nearest.cost !== selectedTier.cost) setSuggestedTier(nearest); else setSuggestedTier(null);
   }, [amount, selectedTier, tiers]);
 
-  async function handlePledge(){
-    setErrorMsg("");
-    const value = Number(amount);
-    if (!value || value < 1) { setErrorMsg('Minimum pledge is $1.'); return; }
-    if (value < 20 && !noReward) { setErrorMsg("Pledges under $20 require either selecting the $20 tier or checking 'Donate without claiming a reward.'"); return; }
-
-    setLoading(true);
-    try {
-      const res = await fetch('/api/checkout', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: Math.round(value * 100), noReward, selectedTier: selectedTier?.name ?? null })
-      });
-      if (!res.ok) throw new Error('Checkout not available');
-      const data = await res.json();
-      if (data?.url) window.location.href = data.url; else throw new Error('No redirect URL returned');
-    } catch (e) {
-      console.error(e); setErrorMsg('Looks like checkout isn’t available yet. Please complete your $1+ pledge.');
-    } finally { setLoading(false); }
-  }
 
   return (
     <>
