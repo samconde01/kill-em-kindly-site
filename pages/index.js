@@ -604,6 +604,68 @@ const sizeOptions = ['XS','S','M','L','XL','2XL','3XL'];
     />
   </div>
 
+{/* Card (Hosted Fields) */}
+<div className="pb-panel" style={{ marginTop: 16, padding: 16 }}>
+  <h4 style={{ margin: 0, fontSize: 14, fontWeight: 600 }}>Pay with Card</h4>
+  <p style={{ fontSize: 12, opacity: 0.8, marginTop: 6 }}>
+    Secure card entry powered by PayPal.
+  </p>
+
+  {typeof window !== 'undefined' && window.paypal?.HostedFields?.isEligible() ? (
+    <PayPalHostedFieldsProvider
+      createOrder={async () => {
+        const r = await fetch('/api/paypal/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount: Number(amount),
+            tShirtSize: Number(amount) >= 75 ? (tShirtSize || null) : null
+          })
+        });
+        const data = await r.json();
+        const id = data?.id;
+        if (!id) throw new Error('Order creation failed');
+        return id;
+      }}
+    >
+      <div style={{ display:'grid', gap:12, marginTop:12 }}>
+        <label style={{ fontSize:12 }}>Card Number</label>
+        <div id="card-number" style={{ height:40, border:'1px solid var(--pb-border)', borderRadius:8, padding:'8px 10px', background:'#04170f' }} />
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+          <div>
+            <label style={{ fontSize:12 }}>Expiration</label>
+            <div id="card-expiry" style={{ height:40, border:'1px solid var(--pb-border)', borderRadius:8, padding:'8px 10px', background:'#04170f' }} />
+          </div>
+          <div>
+            <label style={{ fontSize:12 }}>CVV</label>
+            <div id="card-cvv" style={{ height:40, border:'1px solid var(--pb-border)', borderRadius:8, padding:'8px 10px', background:'#04170f' }} />
+          </div>
+        </div>
+      </div>
+
+      <PayPalHostedField
+        hostedFieldType="number"
+        options={{ selector: '#card-number', placeholder: '4111 1111 1111 1111' }}
+      />
+      <PayPalHostedField
+        hostedFieldType="expirationDate"
+        options={{ selector: '#card-expiry', placeholder: 'MM/YY' }}
+      />
+      <PayPalHostedField
+        hostedFieldType="cvv"
+        options={{ selector: '#card-cvv', placeholder: '123' }}
+      />
+
+      <HostedCardSubmit canCheckout={canCheckout} />
+    </PayPalHostedFieldsProvider>
+  ) : (
+    <div style={{ marginTop: 8, fontSize: 12, color: 'var(--pb-dim)' }}>
+      Card entry not available in this browser. Please use PayPal or Venmo.
+    </div>
+  )}
+</div>
+
+
   {selectedTier && !noReward && (
     <div style={{ marginTop:8, fontSize:13, color:'var(--pb-bright)' }}>
       Selected Tier: <strong>{selectedTier.name}</strong> (${selectedTier.cost})
