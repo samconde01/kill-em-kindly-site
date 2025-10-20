@@ -31,16 +31,13 @@ export default async function handler(req, res) {
     const capture = pu?.payments?.captures?.[0];
     const status = cap?.status || capture?.status || 'UNKNOWN';
 
-    // Try to infer details for tracker
-    const amount = parseFloat(capture?.amount?.value || '0');
-    const sizeFromCustom = (pu?.custom_id || '').startsWith('size:')
-      ? (pu.custom_id.split(':')[1] || '')
-      : '';
-    const payer = cap?.payer;
-    const nameGuess = [
-      payer?.name?.given_name || '',
-      payer?.name?.surname || ''
-    ].filter(Boolean).join(' ').trim();
+  // Try to infer details for tracker
+const amount = parseFloat(capture?.amount?.value || '0');
+const sizeFromCustom = (pu?.custom_id || '').startsWith('size:')
+  ? (pu.custom_id.split(':')[1] || '')
+  : '';
+const payer = cap?.payer;
+const nameGuess = (payer?.name?.given_name || '').trim() || 'Anonymous';
 
     // Venmo vs PayPal (best-effort)
     const paySrc = cap?.payment_source;
