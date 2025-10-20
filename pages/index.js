@@ -304,36 +304,27 @@ const canCheckout = Number(amount) > 0 && (!needsShirtSize || !!tShirtSize);
 const sizeOptions = ['XS','S','M','L','XL','2XL','3XL'];
 
 
-  // Tracker (replace with live fetch later)
- const [donors, setDonors] = React.useState([]);
+ // Tracker – read from our own API
+const [donors, setDonors] = React.useState([]);
 React.useEffect(() => {
+  let alive = true;
   async function load() {
     try {
-      const url = process.env.NEXT_PUBLIC_DONORS_JSON_URL;
-      if (!url) return;
-
-      const text = await fetch(url).then(r => r.text());
-      // Strip the JSONP wrapper:
-      const json = JSON.parse(text.replace(/^[^{]+/, '').replace(/;?\s*$/, ''));
-      const rows = (json.table?.rows || []).map(r => {
-        const c = (r.c || []).map(x => (x && x.v != null ? String(x.v) : ''));
-        const [name, amount, message, size, source, ts] = c;
-        return {
-          name: name || 'Anonymous',
-          amount: Number(amount) || 0,
-          message: message || '',
-          size: size || '',
-          source: source || 'manual',
-          ts: ts || ''
-        };
-      });
-      setDonors(rows.filter(r => r.amount > 0));
+      const r = await fetch('/api/tracker/list');
+      const data = await r.json();
+      if (!r.ok) throw new Error(data?.error || 'list failed');
+      if (alive) setDonors(Array.isArray(data.donors) ? data.donors : []);
     } catch (e) {
-      console.error('Failed to load donors sheet', e);
+      console.error('Failed to load donors', e);
     }
   }
   load();
+
+  // (nice-to-have) refresh every 20s during campaign
+  const t = setInterval(load, 20000);
+  return () => { alive = false; clearInterval(t); };
 }, []);
+
 
   const [showAllDonors, setShowAllDonors] = React.useState(false);
   const totalRaised = React.useMemo(() => donors.reduce((s,d)=> s + (d.amount || 0), 0), [donors]);
@@ -610,7 +601,17 @@ React.useEffect(() => {
             }
 
             alert(`Thank you! Your pledge was captured. (ID: ${captureId})`);
-            // TODO: trigger your tracker update here (webhook/DB/sheet)
+      // refresh tracker list
+try {
+  const r2 = await fetch('/api/tracker/list');
+  const d2 = await r2.json();
+  if (r2.ok && Array.isArray(d2.donors)) {
+    setDonors(d2.donors);
+  }
+} catch (err) {
+  console.error('Tracker refresh failed', err);
+}
+
           } catch (e) {
             console.error('Capture error', e);
             alert('Payment could not be completed. Please try again or use a different account.');
@@ -646,6 +647,16 @@ React.useEffect(() => {
           const cap = await r.json();
           if (!r.ok) throw new Error('Capture failed');
           alert('Thank you! Your pledge was captured.');
+          // refresh tracker list
+try {
+  const r2 = await fetch('/api/tracker/list');
+  const d2 = await r2.json();
+  if (r2.ok && Array.isArray(d2.donors)) {
+    setDonors(d2.donors);
+  }
+} catch (err) {
+  console.error('Tracker refresh failed', err);
+}
         }}
       />
     </div>
