@@ -1,4 +1,4 @@
-// pages/api/checkout.js  (stub)
+// pages/api/checkout.js
 export default function handler(req, res) {
-  return res.status(410).json({ error: 'Stripe checkout is disabled. Use PayPal.' });
+  return res.status(410).json({ error: 'Stripe is disabled for this project.' });
 }
