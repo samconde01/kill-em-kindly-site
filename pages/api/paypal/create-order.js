@@ -1,56 +1,62 @@
 // pages/api/paypal/create-order.js
+const API_BASE = process.env.PAYPAL_API_BASE || 'https://api-m.sandbox.paypal.com';
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
 
   try {
     const { amount, tShirtSize } = req.body || {};
-    if (!amount || Number(amount) <= 0) {
-      return res.status(400).json({ error: 'invalid_amount' });
-    }
-    if (Number(amount) >= 75 && !tShirtSize) {
+    const value = Number(amount || 0);
+    if (!value || value < 1) return res.status(400).json({ error: 'invalid_amount' });
+
+    // Enforce shirt size only if you really want to block checkout at $75+
+    if (value >= 75 && !tShirtSize) {
       return res.status(400).json({ error: 'size_required_for_75_plus' });
     }
 
-    const base = process.env.NEXT_PUBLIC_PAYPAL_ENV === 'live'
-      ? 'https://api-m.paypal.com'
-      : 'https://api-m.sandbox.paypal.com';
+    const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = process.env;
+    if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
+      return res.status(500).json({ error: 'missing_paypal_creds' });
+    }
 
-    const auth = Buffer.from(
-      `${process.env.PAYPAL_CLIENT_ID}:${process.env.PAYPAL_CLIENT_SECRET}`
-    ).toString('base64');
-
-    // Get access token
-    const tokenRes = await fetch(`${base}/v1/oauth2/token`, {
+    // --- OAuth
+    const basic = Buffer.from(`${PAYPAL_CLIENT_ID}:${PAYPAL_CLIENT_SECRET}`).toString('base64');
+    const tokenResp = await fetch(`${API_BASE}/v1/oauth2/token`, {
       method: 'POST',
-      headers: { 'Authorization': `Basic ${auth}` },
-      body: new URLSearchParams({ grant_type: 'client_credentials' })
+      headers: {
+        'Authorization': `Basic ${basic}`,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: 'grant_type=client_credentials'
     });
-    const tokenData = await tokenRes.json();
-    if (!tokenRes.ok) return res.status(500).json({ error: 'oauth_failed', detail: tokenData });
+    const tokenData = await tokenResp.json();
+    if (!tokenResp.ok) return res.status(500).json({ error: 'oauth_failed', detail: tokenData });
 
-    // Create order
+    // --- Build order
+    const currency = process.env.NEXT_PUBLIC_PAYPAL_CURRENCY || 'USD';
     const orderPayload = {
       intent: 'CAPTURE',
-      purchase_units: [
-        {
-          amount: {
-            currency_code: process.env.NEXT_PUBLIC_PAYPAL_CURRENCY || 'USD',
-            value: String(amount)
-          },
-          custom_id: JSON.stringify({
-            campaign: 'kill-em-kindly',
-            tierHint: Number(amount) >= 75 ? 'ShirtTierOrAbove' : 'SubShirtTier',
-            tShirtSize: Number(amount) >= 75 ? tShirtSize : null
-          }).slice(0, 127) // PayPal limit
-        }
-      ],
+      purchase_units: [{
+        amount: {
+          currency_code: currency,
+          value: value.toFixed(2) // PayPal expects a string with 2 decimals
+        },
+        custom_id: JSON.stringify({
+          campaign: 'kill-em-kindly',
+          tierHint: value >= 75 ? 'ShirtTierOrAbove' : 'SubShirtTier',
+          tShirtSize: value >= 75 ? tShirtSize : null
+        }).slice(0, 127),
+        description: value >= 75 && tShirtSize ? `Pledge (T-shirt size: ${tShirtSize})` : 'Pledge'
+      }],
       application_context: {
+        brand_name: "Kill 'Em Kindly",
+        user_action: 'PAY_NOW',
         shipping_preference: 'NO_SHIPPING',
-        user_action: 'PAY_NOW'
+        landing_page: 'NO_PREFERENCE'
       }
     };
 
-    const createRes = await fetch(`${base}/v2/checkout/orders`, {
+    const createResp = await fetch(`${API_BASE}/v2/checkout/orders`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${tokenData.access_token}`,
@@ -58,11 +64,12 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify(orderPayload)
     });
-    const order = await createRes.json();
-    if (!createRes.ok) return res.status(500).json({ error: 'create_failed', detail: order });
+    const order = await createResp.json();
+    if (!createResp.ok) return res.status(500).json({ error: 'create_failed', detail: order });
 
-    res.status(200).json({ id: order.id });
+    return res.status(200).json({ id: order.id });
   } catch (err) {
-    res.status(500).json({ error: 'server_error', detail: String(err) });
+    console.error('create-order error:', err);
+    return res.status(500).json({ error: 'server_error', detail: String(err) });
   }
 }
