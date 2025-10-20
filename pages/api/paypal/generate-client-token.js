@@ -1,30 +1,35 @@
-// pages/api/paypal/generate-client-token.js
 export default async function handler(req, res) {
-  try {
-    const base = process.env.NEXT_PUBLIC_PAYPAL_ENV === 'live'
-      ? 'https://api-m.paypal.com'
-      : 'https://api-m.sandbox.paypal.com';
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-    const auth = Buffer.from(
-      `${process.env.PAYPAL_CLIENT_ID}:${process.env.PAYPAL_CLIENT_SECRET}`
-    ).toString('base64');
-
-    const r = await fetch(`${base}/v1/identity/generate-token`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Basic ${auth}`,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (!r.ok) {
-      const text = await r.text();
-      return res.status(r.status).json({ error: 'client_token_failed', detail: text });
-    }
-
-    const data = await r.json(); // { client_token: '...' }
-    res.status(200).json(data);
-  } catch (err) {
-    res.status(500).json({ error: 'server_error', detail: String(err) });
+  const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = process.env;
+  if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
+    return res.status(500).json({ error: 'Missing PAYPAL_CLIENT_ID or PAYPAL_CLIENT_SECRET' });
   }
+
+  // Get OAuth access token
+  const basic = Buffer.from(`${PAYPAL_CLIENT_ID}:${PAYPAL_CLIENT_SECRET}`).toString('base64');
+  const tokenResp = await fetch('https://api-m.sandbox.paypal.com/v1/oauth2/token', {
+    method: 'POST',
+    headers: { 'Authorization': `Basic ${basic}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'grant_type=client_credentials'
+  });
+  if (!tokenResp.ok) {
+    const t = await tokenResp.text();
+    return res.status(500).json({ error: 'Failed to get access token', detail: t });
+  }
+  const { access_token } = await tokenResp.json();
+
+  // Generate client token for Hosted Fields
+  const ctResp = await fetch('https://api-m.sandbox.paypal.com/v1/identity/generate-token', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${access_token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({})
+  });
+
+  const data = await ctResp.json();
+  if (!ctResp.ok) return res.status(500).json({ error: 'Failed to generate client token', detail: data });
+  return res.status(200).json({ client_token: data.client_token });
 }
