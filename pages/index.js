@@ -21,7 +21,7 @@ export default function Home() {
   React.useEffect(() => { if (!needsShirtSize) setTShirtSize(''); }, [needsShirtSize]);
   const canCheckout = Number(pledgeAmount) > 0 && (!needsShirtSize || !!tShirtSize);
 
-  // --- NEW: fetch a LIVE client token for Hosted Fields/Advanced Cards ---
+  // NEW: fetch a client token but DO NOT block page render
   const [clientToken, setClientToken] = React.useState(null);
   React.useEffect(() => {
     (async () => {
@@ -35,27 +35,23 @@ export default function Home() {
     })();
   }, []);
 
-  // --- IMPORTANT: include hosted-fields + pass data-client-token ---
+  // IMPORTANT: include hosted-fields; pass token only when present
   const paypalOptions = {
-    'client-id'        : process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID, // LIVE client id
-    components         : 'buttons,hosted-fields',                   // <-- add hosted-fields
+    'client-id'        : process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID,
+    components         : 'buttons,hosted-fields',
     currency           : process.env.NEXT_PUBLIC_PAYPAL_CURRENCY || 'USD',
     intent             : 'capture',
     'enable-funding'   : 'venmo,paylater',
-    'data-client-token': clientToken                                // <-- pass LIVE client token
+    // only add data-client-token when we have one; otherwise omit it
+    ...(clientToken ? { 'data-client-token': clientToken } : {})
   };
-
-  // Render nothing until we have a token (prevents SDK from loading wrong)
-  if (!clientToken) return null;
 
   return (
     <PayPalScriptProvider options={paypalOptions}>
-      <App />
+      <App hasClientToken={!!clientToken} />
     </PayPalScriptProvider>
   );
 }
-
-
 
 
 
@@ -182,9 +178,33 @@ function formatUSD(n){
 }
 
 // --- Exported Root ---------------------------------------------------------
-export function App(){
+export function App({ hasClientToken = false }){
   const [showPrivacy, setShowPrivacy] = React.useState(false);
   const [showRefunds, setShowRefunds] = React.useState(false);
+
+  // Intercept /refunds and /privacy links and open modals instead
+  React.useEffect(() => {
+    function onClick(e){
+      const a = e.target.closest && e.target.closest('a');
+      if (!a) return;
+      const href = a.getAttribute('href');
+      if (href === '/refunds'){ e.preventDefault(); setShowRefunds(true); }
+      if (href === '/privacy'){ e.preventDefault(); setShowPrivacy(true); }
+    }
+    document.addEventListener('click', onClick);
+    return () => document.removeEventListener('click', onClick);
+  }, []);
+
+  return (
+    <div className="pipboy">
+      <GlobalStyles />
+      <HomePage hasClientToken={hasClientToken} />
+      <RefundsModal open={showRefunds} onClose={()=>setShowRefunds(false)} text={REFUNDS_TEXT} />
+      <PrivacyModal open={showPrivacy} onClose={()=>setShowPrivacy(false)} text={PRIVACY_TEXT} />
+    </div>
+  );
+}
+
 
   // Intercept /refunds and /privacy links and open modals instead
   React.useEffect(() => {
@@ -290,7 +310,7 @@ function Footer(){
 }
 
 // --- Page ---------------------------------------------------------
-function HomePage(){
+function HomePage({ hasClientToken }){
   const tiers = TIER_DEFS;
   const [amount, setAmount] = React.useState(20);
   const [loading, setLoading] = React.useState(false);
@@ -661,7 +681,7 @@ React.useEffect(() => {
     Secure card entry powered by PayPal.
   </p>
 
-  {typeof window !== 'undefined' && window.paypal?.HostedFields?.isEligible() ? (
+  {hasClientToken && typeof window !== 'undefined' && window.paypal?.HostedFields?.isEligible() ? (
     <PayPalHostedFieldsProvider
       createOrder={async () => {
         const r = await fetch('/api/paypal/create-order', {
@@ -710,23 +730,11 @@ React.useEffect(() => {
     </PayPalHostedFieldsProvider>
   ) : (
     <div style={{ marginTop: 8, fontSize: 12, color: 'var(--pb-dim)' }}>
-      Card entry not available in this browser. Please use PayPal or Venmo.
+      {hasClientToken
+        ? 'Card entry not available in this browser. Please use PayPal or Venmo.'
+        : 'Loading secure card fields… (PayPal token)'}
     </div>
   )}
-</div>
-
-
-  {selectedTier && !noReward && (
-    <div style={{ marginTop:8, fontSize:13, color:'var(--pb-bright)' }}>
-      Selected Tier: <strong>{selectedTier.name}</strong> (${selectedTier.cost})
-    </div>
-  )}
-
-  {errorMsg && (<div style={{ marginTop:8, fontSize:13 }} className="pb-error">{errorMsg}</div>)}
-
-  <p style={{ marginTop:4, fontSize:11, color:'var(--pb-dim)' }}>
-    By pledging you agree to our <a href="/refunds" style={{ color:'var(--pb-bright)' }}>Refunds & Responsibility</a> and <a href="/privacy" style={{ color:'var(--pb-bright)' }}>Privacy Policy</a>.
-  </p>
 </div>
 
 
