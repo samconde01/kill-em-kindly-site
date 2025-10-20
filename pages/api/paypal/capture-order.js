@@ -1,75 +1,73 @@
-// pages/api/paypal/capture-order.js
-const API_BASE = process.env.PAYPAL_API_BASE || 'https://api-m.sandbox.paypal.com';
+import { addDonor } from '../tracker/_store';
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ error: 'method_not_allowed' });
-
   try {
-    const { orderID } = req.body || {};
-    if (!orderID) return res.status(400).json({ error: 'missing_order_id' });
+    const { orderID } = req.body;
+    if (!orderID) return res.status(400).json({ error: 'Missing orderID' });
 
-    const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = process.env;
-    if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
-      return res.status(500).json({ error: 'missing_paypal_creds' });
-    }
+    const auth = Buffer.from(
+      `${process.env.PAYPAL_CLIENT_ID}:${process.env.PAYPAL_CLIENT_SECRET}`
+    ).toString('base64');
 
-    // --- OAuth
-    const basic = Buffer.from(`${PAYPAL_CLIENT_ID}:${PAYPAL_CLIENT_SECRET}`).toString('base64');
-    const tokenResp = await fetch(`${API_BASE}/v1/oauth2/token`, {
+    const oauth = await fetch('https://api-m.paypal.com/v1/oauth2/token', {
       method: 'POST',
       headers: {
-        'Authorization': `Basic ${basic}`,
+        Authorization: `Basic ${auth}`,
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: 'grant_type=client_credentials'
-    });
-    const tokenData = await tokenResp.json();
-    if (!tokenResp.ok) {
-      return res.status(500).json({ error: 'oauth_failed', detail: tokenData });
-    }
+    }).then(r => r.json());
 
-    // --- Capture
-    const capResp = await fetch(`${API_BASE}/v2/checkout/orders/${orderID}/capture`, {
+    // Capture
+    const cap = await fetch(`https://api-m.paypal.com/v2/checkout/orders/${orderID}/capture`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${tokenData.access_token}`,
+        Authorization: `Bearer ${oauth.access_token}`,
         'Content-Type': 'application/json'
       }
-    });
-    const capture = await capResp.json();
-    if (!capResp.ok) {
-      return res.status(500).json({ error: 'capture_failed', detail: capture });
+    }).then(r => r.json());
+
+    const pu = cap?.purchase_units?.[0];
+    const capture = pu?.payments?.captures?.[0];
+    const status = cap?.status || capture?.status || 'UNKNOWN';
+
+    // Try to infer details for tracker
+    const amount = parseFloat(capture?.amount?.value || '0');
+    const sizeFromCustom = (pu?.custom_id || '').startsWith('size:')
+      ? (pu.custom_id.split(':')[1] || '')
+      : '';
+    const payer = cap?.payer;
+    const nameGuess = [
+      payer?.name?.given_name || '',
+      payer?.name?.surname || ''
+    ].filter(Boolean).join(' ').trim();
+
+    // Venmo vs PayPal (best-effort)
+    const paySrc = cap?.payment_source;
+    const source =
+      paySrc?.venmo ? 'venmo'
+      : paySrc?.paypal ? 'paypal'
+      : 'paypal';
+
+    // Only record successful, completed captures
+    if (status === 'COMPLETED' && amount > 0) {
+      await addDonor({
+        name: nameGuess || 'Anonymous',
+        amount,
+        message: '',           // you can surface a message field if you collect it in UI
+        size: sizeFromCustom,  // saved from create-order custom_id
+        source,
+        ts: new Date().toISOString()
+      });
     }
 
-    // Optional: extract handy fields (payer, amount, meta)
-    const pu = capture?.purchase_units?.[0];
-    const cap = pu?.payments?.captures?.[0];
-    let meta = null;
-    try { meta = cap?.custom_id ? JSON.parse(cap.custom_id) : null; } catch {}
-
-    // You could persist a pledge record here (DB call).
-    // console.log('PAYPAL CAPTURE OK', {
-    //   captureId: cap?.id,
-    //   payerEmail: capture?.payer?.email_address,
-    //   amount: cap?.amount,
-    //   status: cap?.status,
-    //   meta
-    // });
-
     return res.status(200).json({
-      ok: true,
-      id: cap?.id || null,
-      status: cap?.status || null,
-      amount: cap?.amount || null,
-      payer: {
-        email: capture?.payer?.email_address || null,
-        name: capture?.payer?.name?.given_name ? `${capture.payer.name.given_name} ${capture.payer.name.surname || ''}`.trim() : null
-      },
-      meta,
-      raw: capture // keep raw for your client/devtools; remove later if you want
+      status,
+      id: capture?.id,
+      raw: cap
     });
-  } catch (err) {
-    console.error('capture-order error:', err);
-    return res.status(500).json({ error: 'server_error', detail: String(err) });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'capture-order failed' });
   }
 }
