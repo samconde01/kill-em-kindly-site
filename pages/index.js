@@ -14,45 +14,21 @@ import { motion } from "framer-motion";
 
 
 export default function Home() {
-  const [pledgeAmount, setPledgeAmount] = React.useState(20);
-  const [tShirtSize, setTShirtSize] = React.useState('');
-  const needsShirtSize = Number(pledgeAmount) >= 75;
-  const sizeOptions = ['XS','S','M','L','XL','2XL','3XL'];
-  React.useEffect(() => { if (!needsShirtSize) setTShirtSize(''); }, [needsShirtSize]);
-  const canCheckout = Number(pledgeAmount) > 0 && (!needsShirtSize || !!tShirtSize);
-
-  const [clientToken, setClientToken] = React.useState(null);
-  const [loadingToken, setLoadingToken] = React.useState(true);
-  React.useEffect(() => {
-    let mounted = true;
-    (async () => {
-      try {
-        const r = await fetch('/api/paypal/generate-client-token', { method: 'POST' });
-        const data = await r.json();
-        if (mounted && data?.client_token) setClientToken(data.client_token);
-      } catch {}
-      finally { if (mounted) setLoadingToken(false); }
-    })();
-    return () => { mounted = false; };
-  }, []);
-
   const paypalOptions = React.useMemo(() => ({
     'client-id': process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID,
-    'data-client-token': clientToken || undefined,
-    'components': 'buttons,hosted-fields',
-    'currency': process.env.NEXT_PUBLIC_PAYPAL_CURRENCY || 'USD',
-    'intent': 'capture',
+    components: 'buttons',
+    currency: 'USD',
+    intent: 'capture',
     'enable-funding': 'venmo,paylater'
-  }), [clientToken]);
+  }), []);
 
-  if (loadingToken) return <div style={{padding:24}}>Loading checkout…</div>;
-
-return (
-  <PayPalScriptProvider options={paypalOptions}>
-    <App />
-  </PayPalScriptProvider>
-);
+  return (
+    <PayPalScriptProvider options={paypalOptions}>
+      <App />
+    </PayPalScriptProvider>
+  );
 }
+
 
 
 export function HostedCardSubmit({ canCheckout }) {
