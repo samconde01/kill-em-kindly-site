@@ -205,30 +205,6 @@ export function App({ hasClientToken = false }){
   );
 }
 
-
-  // Intercept /refunds and /privacy links and open modals instead
-  React.useEffect(() => {
-    function onClick(e){
-      const a = e.target.closest && e.target.closest('a');
-      if (!a) return;
-      const href = a.getAttribute('href');
-      if (href === '/refunds'){ e.preventDefault(); setShowRefunds(true); }
-      if (href === '/privacy'){ e.preventDefault(); setShowPrivacy(true); }
-    }
-    document.addEventListener('click', onClick);
-    return () => document.removeEventListener('click', onClick);
-  }, []);
-
-  return (
-    <div className="pipboy">
-      <GlobalStyles />
-      <HomePage />
-      <RefundsModal open={showRefunds} onClose={()=>setShowRefunds(false)} text={REFUNDS_TEXT} />
-      <PrivacyModal open={showPrivacy} onClose={()=>setShowPrivacy(false)} text={PRIVACY_TEXT} />
-    </div>
-  );
-}
-
 // --- Global Styles & Header/Footer ----------------------------------------
 function GlobalStyles(){
   return (
