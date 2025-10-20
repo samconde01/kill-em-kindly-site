@@ -1,18 +1,23 @@
 {
-  "name": "kill-em-kindly-site",
+  "name": "kill-em-kindly",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3000",
+    "dev": "next dev",
     "build": "next build",
-    "start": "next start -p 3000"
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
-    "@paypal/react-paypal-js": "^8.9.2",
-    "framer-motion": "10.18.0",
-    "micro": "10.0.1",
-    "next": "14.2.3",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "stripe": "14.22.0"
+    "@neondatabase/serverless": "^0.9.0",
+    "@paypal/react-paypal-js": "^8.1.3",
+    "framer-motion": "^11.0.3",
+    "next": "14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "eslint": "8.57.0",
+    "eslint-config-next": "14.2.5"
   }
 }
