@@ -295,6 +295,14 @@ function HomePage(){
   const [noReward, setNoReward] = React.useState(false);
   const [suggestedTier, setSuggestedTier] = React.useState(null);
   const pledgeRef = React.useRef(null);
+  
+  // --- PayPal sizing / validation (must live in HomePage)
+const [tShirtSize, setTShirtSize] = React.useState('');
+const needsShirtSize = Number(amount) >= 75;
+React.useEffect(() => { if (!needsShirtSize) setTShirtSize(''); }, [needsShirtSize]);
+const canCheckout = Number(amount) > 0 && (!needsShirtSize || !!tShirtSize);
+const sizeOptions = ['XS','S','M','L','XL','2XL','3XL'];
+
 
   // Tracker (replace with live fetch later)
   const [donors] = React.useState([]);
@@ -484,6 +492,24 @@ function HomePage(){
             <span style={{ color:'var(--pb-dim)' }}>$</span>
             <input type="number" min={1} value={amount} onChange={(e)=>{ setAmount(Number(e.target.value)); setNoReward(false); }} className="pb-input" />
           </div>
+{needsShirtSize && (
+  <div style={{ marginTop: 12 }}>
+    <label htmlFor="tshirt-size" style={{ display:'block', fontSize:14, fontWeight:600 }}>
+      T-Shirt Size (required for $75+)
+    </label>
+    <select
+      id="tshirt-size"
+      value={tShirtSize}
+      onChange={(e) => setTShirtSize(e.target.value)}
+      className="pb-input"
+      style={{ marginTop: 6 }}
+    >
+      <option value="" disabled>Select a size…</option>
+      {sizeOptions.map(s => <option key={s} value={s}>{s}</option>)}
+    </select>
+    <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>Sizes: XS–3XL • Unisex fit</p>
+  </div>
+)}
           {amount > 0 && amount < 20 && !noReward && (
             <div style={{ marginTop:8, fontSize:13 }} className="pb-error">
               Pledges under $20 require either selecting the $20 tier or checking 'Donate without claiming a reward.'
