@@ -10,6 +10,8 @@ import {
   PayPalHostedField,
   usePayPalScriptReducer
 } from "@paypal/react-paypal-js";
+import { motion } from "framer-motion";
+
 
 export default function Home() {
   const [pledgeAmount, setPledgeAmount] = React.useState(20);
