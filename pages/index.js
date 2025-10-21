@@ -499,7 +499,7 @@ const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
   <h3 className="pb-glow" style={{ fontSize:18, fontWeight:600 }}>Donate Now</h3>
 
   {/* Pledge Box */}
-  <div className="pb-panel" style={{ marginTop:16, width:'100%', padding:24 }} id="pledge" ref={pledgeRef}>
+ <div className="pb-panel" style={{ marginTop:16, padding:16 }} id="pledge" ref={pledgeRef}>
     <label style={{ fontSize:12, color:'var(--pb-dim)' }}>Enter your pledge amount</label>
     <div style={{ marginTop:8, display:'flex', gap:8, alignItems:'center' }}>
       <span style={{ color:'var(--pb-dim)' }}>$</span>
