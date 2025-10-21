@@ -1,25 +1,48 @@
+// pages/api/tracker/list.js
 import { Pool } from 'pg';
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
+});
 
 export default async function handler(req, res) {
+  if (req.method !== 'GET') return res.status(405).end();
+
   try {
-    const { rows } = await pool.query(
-      `SELECT name, amount, message, size, source, created_at AS ts
-       FROM donations
-       ORDER BY created_at DESC
-       LIMIT 200`
-    );
+    // Use columns that safely exist: id, amount_cents, etc.
+    const { rows } = await pool.query(`
+      SELECT
+        id,
+        COALESCE(amount_cents, 0) AS amount_cents,
+        name,
+        message,
+        size,
+        source,
+        -- if you have created_at use it; if not, id gives stable newest-first
+        created_at
+      FROM donations
+      ORDER BY id DESC
+      LIMIT 200
+    `);
 
-    // monotonic-ish revision based on the latest row time
-    const { rows: r2 } = await pool.query(
-      `SELECT EXTRACT(EPOCH FROM COALESCE(MAX(created_at), now()))::bigint AS rev
-       FROM donations`
-    );
+    // Shape for the frontend: derive amount from amount_cents
+    const donors = rows.map(r => ({
+      name: r.name || 'Anonymous',
+      amount: Number((Number(r.amount_cents || 0) / 100).toFixed(2)),
+      message: r.message || '',
+      size: r.size || '',
+      source: r.source || 'manual',
+      ts: r.created_at || null
+    }));
 
-    res.status(200).json({ donors: rows, rev: Number(r2[0].rev || 0) });
+    // Optional "rev" to bust caches
+    res.status(200).json({
+      donors,
+      rev: Date.now()
+    });
   } catch (e) {
     console.error('tracker/list error', e);
-    res.status(500).json({ error: 'tracker list failed' });
+    res.status(500).json({ error: 'tracker list failed', detail: e.message });
   }
 }
