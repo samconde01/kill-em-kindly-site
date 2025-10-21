@@ -339,10 +339,12 @@ React.useEffect(() => {
 
 
 
-  const [showAllDonors, setShowAllDonors] = React.useState(false);
-  const totalRaised = React.useMemo(() => donors.reduce((s,d)=> s + (d.amount || 0), 0), [donors]);
-  const backers = donors.length;
-  const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
+const [showAllDonors, setShowAllDonors] = React.useState(false);
+const totalRaised = React.useMemo(() => donors.reduce((s,d)=> s + (d.amount || 0), 0), [donors]);
+const backers = donors.length;
+const progress = Math.min(totalRaised / FUNDING_GOAL, 1); // <-- add this back
+const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
+
 
   function chooseTier(t){
     setSelectedTier({ cost: t.cost, name: t.name });
@@ -394,18 +396,16 @@ React.useEffect(() => {
           {/* Tracker & Donor List */}
           <div className="pb-panel" style={{ marginTop:16, padding:16 }}>
             {/* Progress */}
-            <div className="pb-panel" style={{ padding:12 }}>
-              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
-                <div className="pb-glow" style={{ fontWeight:700 }}>Funding Progress</div>
-                <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-                  <span className="pb-chip">Ends 11/17</span>
-                  <span style={{ color:'var(--pb-dim)', fontSize:12 }}>{Math.round(progress*100)}% funded</span>
-                </div>
-              </div>
-            </div>
-            <div style={{ marginTop:10, height:14, border:'1px solid var(--pb-border-strong)', borderRadius:10, overflow:'hidden', background:'rgba(77,240,138,.06)' }}>
-              <div style={{ width:`${progress*100}%`, height:'100%', background:'linear-gradient(90deg, rgba(77,240,138,.45), rgba(77,240,138,.15))' }} />
-            </div>
+        <div className="pb-panel" style={{ padding:12 }}>
+  <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
+    <div className="pb-glow" style={{ fontWeight:700 }}>Funding Progress</div>
+    <span className="pb-chip">Ends 11/17</span>
+  </div>
+</div>
+<div style={{ marginTop:10, height:14, border:'1px solid var(--pb-border-strong)', borderRadius:10, overflow:'hidden', background:'rgba(77,240,138,.06)' }}>
+  <div style={{ width:`${progress*100}%`, height:'100%', background:'linear-gradient(90deg, rgba(77,240,138,.45), rgba(77,240,138,.15))' }} />
+</div>
+
             <div style={{ marginTop:10, display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12, fontSize:14 }}>
               <div className="pb-panel" style={{ padding:10, textAlign:'center' }}>
                 <div className="pb-glow" style={{ fontWeight:700 }}>{formatUSD(totalRaised)}</div>
