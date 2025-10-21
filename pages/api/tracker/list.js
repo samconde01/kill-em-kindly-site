@@ -10,30 +10,31 @@ export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).end();
 
   try {
-    // Pull the latest 100 donors. Make sure we SELECT the `id` column explicitly.
+    // Use session_id (aliased to id) because your table doesn't have an `id` column
     const { rows } = await pool.query(`
-      SELECT id, name, amount_cents, message, size, source, created_at
+      SELECT
+        session_id AS id,
+        name,
+        amount_cents,
+        message,
+        size,
+        source,
+        created_at
       FROM donations
-      ORDER BY id DESC
+      ORDER BY session_id DESC
       LIMIT 100
     `);
 
-    // Convert cents -> dollars for the UI
-    const donors = rows.map(r => {
-      const cents = Number(r.amount_cents ?? 0);
-      const dollars = Math.max(0, Number((cents / 100).toFixed(2)));
-      return {
-        id: r.id,
-        name: r.name || 'Anonymous',
-        amount: dollars,
-        message: r.message || '',
-        size: r.size || '',
-        source: r.source || 'manual',
-        ts: r.created_at || null,
-      };
-    });
+    const donors = rows.map(r => ({
+      id: r.id,
+      name: r.name || 'Anonymous',
+      amount: Math.max(0, Number(((Number(r.amount_cents || 0)) / 100).toFixed(2))),
+      message: r.message || '',
+      size: r.size || '',
+      source: r.source || 'manual',
+      ts: r.created_at || null,
+    }));
 
-    // Simple revision so the client can ignore stale responses
     const rev = donors.length ? Number(donors[0].id) : 0;
 
     res.status(200).json({ donors, rev });
