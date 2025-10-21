@@ -342,7 +342,6 @@ React.useEffect(() => {
   const [showAllDonors, setShowAllDonors] = React.useState(false);
   const totalRaised = React.useMemo(() => donors.reduce((s,d)=> s + (d.amount || 0), 0), [donors]);
   const backers = donors.length;
-  const progress = Math.min(totalRaised / FUNDING_GOAL, 1);
   const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
 
   function chooseTier(t){
