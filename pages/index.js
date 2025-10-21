@@ -834,6 +834,10 @@ try {
               q: "How long is the film?",
               a: "We’re targeting a short film runtime of approximately 15–20 minutes. That length gives us enough space to explore new characters and storylines while keeping the production tightly focused, cinematic, and achievable within our budget."
             }
+            {
+  q: "What happens if rewards can’t be fulfilled or there are delays?",
+  a: "All contributions are donations to support the project. We will make every reasonable effort to fulfill rewards after completion, but rewards are not guaranteed and may be delayed, modified, or canceled due to production or unforeseen circumstances."
+},
           ].map((item, idx) => (
             <FaqItem key={idx} idx={idx} q={item.q} a={item.a} />
           ))}
