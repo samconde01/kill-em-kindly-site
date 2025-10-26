@@ -219,6 +219,31 @@ React.useEffect(() => { if (!needsShirtSize) setTShirtSize(''); }, [needsShirtSi
 const canCheckout = Number(amount) > 0 && (!needsShirtSize || !!tShirtSize);
 const sizeOptions = ['XS','S','M','L','XL','2XL','3XL'];
 
+  // --- Donation metadata we collect client-side
+const [email, setEmail] = React.useState('');
+const [addr, setAddr] = React.useState({
+  line1: '', line2: '', city: '', state: '', postal: '', country: 'US'
+});
+const needsShipping = Number(amount) >= 35; // $35+ requires shipping address
+
+function isValidEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+// Generate a unique ID on the client only (avoid SSR errors)
+const [customId, setCustomId] = React.useState('');
+React.useEffect(() => {
+  try {
+    // modern browsers
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+      setCustomId(crypto.randomUUID());
+    } else {
+      // fallback
+      setCustomId(Math.random().toString(36).slice(2));
+    }
+  } catch {
+    setCustomId(Math.random().toString(36).slice(2));
+  }
+}, []);
+
 
  // Tracker – read from our own API (no cache) and ignore stale responses
 const [donors, setDonors] = React.useState([]);
@@ -468,6 +493,34 @@ const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
       />
       Donate without claiming a reward
     </label>
+<div style={{ marginTop:12 }}>
+  <label style={{ display:'block', fontSize:14, fontWeight:600 }}>Email (required)</label>
+  <input
+    type="email"
+    className="pb-input"
+    placeholder="you@example.com"
+    value={email}
+    onChange={e=>setEmail(e.target.value)}
+    style={{ marginTop:6 }}
+    required
+  />
+  <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>We’ll send updates and digital rewards here.</p>
+</div>
+
+{needsShipping && (
+  <div style={{ marginTop:12 }}>
+    <label style={{ display:'block', fontSize:14, fontWeight:600 }}>Shipping address (required for $35+)</label>
+    <input className="pb-input" placeholder="Street address" value={addr.line1} onChange={e=>setAddr({...addr, line1:e.target.value})} style={{ marginTop:6 }} />
+    <input className="pb-input" placeholder="Apt, suite, etc. (optional)" value={addr.line2} onChange={e=>setAddr({...addr, line2:e.target.value})} style={{ marginTop:8 }} />
+    <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr 1fr', gap:8, marginTop:8 }}>
+      <input className="pb-input" placeholder="City" value={addr.city} onChange={e=>setAddr({...addr, city:e.target.value})} />
+      <input className="pb-input" placeholder="State" value={addr.state} onChange={e=>setAddr({...addr, state:e.target.value})} />
+      <input className="pb-input" placeholder="ZIP" value={addr.postal} onChange={e=>setAddr({...addr, postal:e.target.value})} />
+    </div>
+    <input className="pb-input" placeholder="Country (US, CA, ...)" value={addr.country} onChange={e=>setAddr({...addr, country:e.target.value})} style={{ marginTop:8 }} />
+    <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>We only ship physical perks to this address.</p>
+  </div>
+)}
 
   {/* Donate via PayPal (hosted full-page) */}
 <form
@@ -476,15 +529,18 @@ const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
   target="_blank"
   style={{ marginTop: 12 }}
   onSubmit={async (e) => {
-    // Validate before leaving your site
     if (!(Number(amount) > 0)) { e.preventDefault(); alert('Please enter a donation amount first.'); return; }
     if (!isValidEmail(email)) { e.preventDefault(); alert('Please enter a valid email.'); return; }
     if (Number(amount) >= 75 && !tShirtSize) { e.preventDefault(); alert('Please select a T-Shirt size for $75+ donations.'); return; }
     if (needsShipping) {
       const { line1, city, state, postal, country } = addr;
-      if (!line1 || !city || !state || !postal || !country) { e.preventDefault(); alert('Please complete your shipping address for $35+ tiers.'); return; }
+      if (!line1 || !city || !state || !postal || !country) {
+        e.preventDefault(); alert('Please complete your shipping address for $35+ tiers.'); return;
+      }
     }
-    // Save intent server-side (non-blocking if it fails, but we try)
+    if (!customId) { e.preventDefault(); alert('One sec—initializing checkout. Try again.'); return; }
+
+    // save pledge intent (best effort)
     try {
       await fetch('/api/pledge-intent', {
         method:'POST',
@@ -502,6 +558,35 @@ const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
     } catch {}
   }}
 >
+  <input type="hidden" name="hosted_button_id" value="VPRLL2BPRULJ8" />
+  <input type="hidden" name="amount" value={Number(amount) || ''} />
+  <input type="hidden" name="currency_code" value="USD" />
+  <input type="hidden" name="custom" value={customId} />
+  <input type="hidden" name="notify_url" value="https://killemkindly.info/api/paypal/ipn" />
+  <input type="hidden" name="return" value="https://killemkindly.info/thanks" />
+  <input type="hidden" name="cancel_return" value="https://killemkindly.info/cancelled" />
+
+  <button
+    type="submit"
+    className="pb-btn"
+    style={{ display:'inline-block', padding:'12px 18px', borderRadius:14 }}
+    disabled={
+      !customId ||
+      !(Number(amount) > 0) ||
+      !isValidEmail(email) ||
+      (Number(amount) >= 75 && !tShirtSize) ||
+      (needsShipping && (!addr.line1 || !addr.city || !addr.state || !addr.postal || !addr.country))
+    }
+    title="Donate with PayPal"
+  >
+    Donate with PayPal
+  </button>
+
+  <p style={{ marginTop:8, fontSize:12, color:'var(--pb-dim)' }}>
+    You’ll be taken to a secure PayPal page to complete your donation.
+  </p>
+</form>
+
   {/* hosted button id from PayPal (LIVE) */}
   <input type="hidden" name="hosted_button_id" value="VPRLL2BPRULJ8" />
 
