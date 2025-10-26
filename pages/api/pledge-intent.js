@@ -1,3 +1,4 @@
+// pages/api/pledge-intent.js
 import { getSql } from "../../lib/db";
 
 export default async function handler(req, res) {
@@ -8,10 +9,19 @@ export default async function handler(req, res) {
     if (!id || !amount || !email) return res.status(400).json({ error: "Missing id/amount/email" });
 
     const sql = getSql();
+
     await sql`
       insert into pledges (id, amount, email, t_shirt_size, address, tier, no_reward, status)
-      values (${id}::uuid, ${amount}, ${email}, ${tShirtSize || null}, ${address ? JSON.stringify(address) : null}::jsonb,
-              ${tier || null}, ${!!noReward}, 'INTENT')
+      values (
+        ${id}::uuid,
+        ${amount},
+        ${email},
+        ${tShirtSize || null},
+        ${address ? JSON.stringify(address) : null}::jsonb,
+        ${tier || null},
+        ${!!noReward},
+        'INTENT'
+      )
       on conflict (id) do update
         set amount = excluded.amount,
             email = excluded.email,
