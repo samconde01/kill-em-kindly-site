@@ -439,120 +439,157 @@ const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
      <section id="rewards" className="pb-container" style={{ padding:'48px 0' }}>
   <h3 className="pb-glow" style={{ fontSize:18, fontWeight:600 }}>Donate Now</h3>
 
-  {/* Pledge Box */}
- <div className="pb-panel" style={{ marginTop:16, padding:16 }} id="pledge" ref={pledgeRef}>
-    <label style={{ fontSize:12, color:'var(--pb-dim)' }}>Enter your pledge amount</label>
-    <div style={{ marginTop:8, display:'flex', gap:8, alignItems:'center' }}>
-      <span style={{ color:'var(--pb-dim)' }}>$</span>
-      <input
-        type="number"
-        min={1}
-        value={amount}
-        onChange={(e)=>{ setAmount(Number(e.target.value)); setNoReward(false); }}
-        className="pb-input"
-      />
-    </div>
-
-    {needsShirtSize && (
-      <div style={{ marginTop: 12 }}>
-        <label htmlFor="tshirt-size" style={{ display:'block', fontSize:14, fontWeight:600 }}>
-          T-Shirt Size (required for $75+)
-        </label>
-        <select
-          id="tshirt-size"
-          value={tShirtSize}
-          onChange={(e) => setTShirtSize(e.target.value)}
-          className="pb-input"
-          style={{ marginTop: 6 }}
-        >
-          <option value="" disabled>Select a size…</option>
-          {sizeOptions.map(s => <option key={s} value={s}>{s}</option>)}
-        </select>
-        <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>Sizes: XS–3XL • Unisex fit</p>
-      </div>
-    )}
-
-    {amount > 0 && amount < 20 && !noReward && (
-      <div style={{ marginTop:8, fontSize:13 }} className="pb-error">
-        Pledges under $20 require either selecting the $20 tier or checking 'Donate without claiming a reward.'
-      </div>
-    )}
-
-    {!noReward && suggestedTier && (
-      <div style={{ marginTop:8, fontSize:13, color:'var(--pb-dim)' }}>
-        Suggested tier: <strong>{suggestedTier.name}</strong> (${suggestedTier.cost}).
-        <button onClick={() => chooseTier(suggestedTier)} className="pb-btn" style={{ marginLeft:8, padding:'6px 10px', borderRadius:8 }}>Select</button>
-      </div>
-    )}
-
-    <label style={{ display:'flex', alignItems:'center', gap:8, marginTop:10, fontSize:13, color:'var(--pb-dim)' }}>
-      <input
-        type="checkbox"
-        checked={noReward}
-        onChange={(e)=>{ setNoReward(e.target.checked); if (e.target.checked) setSelectedTier(null); }}
-      />
-      Donate without claiming a reward
-    </label>
-<div style={{ marginTop:12 }}>
-  <label style={{ display:'block', fontSize:14, fontWeight:600 }}>Email (required)</label>
-  <input
-    type="email"
-    className="pb-input"
-    placeholder="you@example.com"
-    value={email}
-    onChange={e=>setEmail(e.target.value)}
-    style={{ marginTop:6 }}
-    required
-  />
-  <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>We’ll send updates and digital rewards here.</p>
-</div>
-
-{needsShipping && (
-  <div style={{ marginTop:12 }}>
-    <label style={{ display:'block', fontSize:14, fontWeight:600 }}>Shipping address (required for $35+)</label>
-    <input className="pb-input" placeholder="Street address" value={addr.line1} onChange={e=>setAddr({...addr, line1:e.target.value})} style={{ marginTop:6 }} />
-    <input className="pb-input" placeholder="Apt, suite, etc. (optional)" value={addr.line2} onChange={e=>setAddr({...addr, line2:e.target.value})} style={{ marginTop:8 }} />
-    <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr 1fr', gap:8, marginTop:8 }}>
-      <input className="pb-input" placeholder="City" value={addr.city} onChange={e=>setAddr({...addr, city:e.target.value})} />
-      <input className="pb-input" placeholder="State" value={addr.state} onChange={e=>setAddr({...addr, state:e.target.value})} />
-      <input className="pb-input" placeholder="ZIP" value={addr.postal} onChange={e=>setAddr({...addr, postal:e.target.value})} />
-    </div>
-    <input className="pb-input" placeholder="Country (US, CA, ...)" value={addr.country} onChange={e=>setAddr({...addr, country:e.target.value})} style={{ marginTop:8 }} />
-    <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>We only ship physical perks to this address.</p>
+ {/* Pledge Box */}
+<div className="pb-panel" style={{ marginTop:16, padding:16 }} id="pledge" ref={pledgeRef}>
+  <label style={{ fontSize:12, color:'var(--pb-dim)' }}>Enter your pledge amount</label>
+  <div style={{ marginTop:8, display:'flex', gap:8, alignItems:'center' }}>
+    <span style={{ color:'var(--pb-dim)' }}>$</span>
+    <input
+      type="number"
+      min={1}
+      value={amount}
+      onChange={(e)=>{ setAmount(Number(e.target.value)); setNoReward(false); }}
+      className="pb-input"
+    />
   </div>
-)}
 
-  {/* hosted button id from PayPal (LIVE) */}
-  <input type="hidden" name="hosted_button_id" value="VPRLL2BPRULJ8" />
+  {needsShirtSize && (
+    <div style={{ marginTop: 12 }}>
+      <label htmlFor="tshirt-size" style={{ display:'block', fontSize:14, fontWeight:600 }}>
+        T-Shirt Size (required for $75+)
+      </label>
+      <select
+        id="tshirt-size"
+        value={tShirtSize}
+        onChange={(e) => setTShirtSize(e.target.value)}
+        className="pb-input"
+        style={{ marginTop: 6 }}
+      >
+        <option value="" disabled>Select a size…</option>
+        {sizeOptions.map(s => <option key={s} value={s}>{s}</option>)}
+      </select>
+      <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>Sizes: XS–3XL • Unisex fit</p>
+    </div>
+  )}
 
-  {/* Pass through values */}
-  <input type="hidden" name="amount" value={Number(amount) || ''} />
-  <input type="hidden" name="currency_code" value="USD" />
+  {amount > 0 && amount < 20 && !noReward && (
+    <div style={{ marginTop:8, fontSize:13 }} className="pb-error">
+      Pledges under $20 require either selecting the $20 tier or checking 'Donate without claiming a reward.'
+    </div>
+  )}
 
-  {/* Tie PayPal txn back to your saved intent */}
-  <input type="hidden" name="custom" value={customId} />
+  {!noReward && suggestedTier && (
+    <div style={{ marginTop:8, fontSize:13, color:'var(--pb-dim)' }}>
+      Suggested tier: <strong>{suggestedTier.name}</strong> (${suggestedTier.cost}).
+      <button onClick={() => chooseTier(suggestedTier)} className="pb-btn" style={{ marginLeft:8, padding:'6px 10px', borderRadius:8 }}>Select</button>
+    </div>
+  )}
 
-  {/* IPN callback (server-to-server) */}
-  <input type="hidden" name="notify_url" value="https://killemkindly.info/api/paypal/ipn" />
+  <label style={{ display:'flex', alignItems:'center', gap:8, marginTop:10, fontSize:13, color:'var(--pb-dim)' }}>
+    <input
+      type="checkbox"
+      checked={noReward}
+      onChange={(e)=>{ setNoReward(e.target.checked); if (e.target.checked) setSelectedTier(null); }}
+    />
+    Donate without claiming a reward
+  </label>
 
-  {/* Where to send the user after payment/cancel */}
-  <input type="hidden" name="return" value="https://killemkindly.info/thanks" />
-  <input type="hidden" name="cancel_return" value="https://killemkindly.info/cancelled" />
+  {/* Email */}
+  <div style={{ marginTop:12 }}>
+    <label style={{ display:'block', fontSize:14, fontWeight:600 }}>Email (required)</label>
+    <input
+      type="email"
+      className="pb-input"
+      placeholder="you@example.com"
+      value={email}
+      onChange={e=>setEmail(e.target.value)}
+      style={{ marginTop:6 }}
+      required
+    />
+    <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>We’ll send updates and digital rewards here.</p>
+  </div>
 
-  <button
-    type="submit"
-    className="pb-btn"
-    style={{ display:'inline-block', padding:'12px 18px', borderRadius:14 }}
-    disabled={!(Number(amount) > 0) || !isValidEmail(email) || (Number(amount) >= 75 && !tShirtSize) || (needsShipping && (!addr.line1 || !addr.city || !addr.state || !addr.postal || !addr.country))}
-    title="Donate with PayPal"
+  {/* Address (for $35+) */}
+  {needsShipping && (
+    <div style={{ marginTop:12 }}>
+      <label style={{ display:'block', fontSize:14, fontWeight:600 }}>Shipping address (required for $35+)</label>
+      <input className="pb-input" placeholder="Street address" value={addr.line1} onChange={e=>setAddr({...addr, line1:e.target.value})} style={{ marginTop:6 }} />
+      <input className="pb-input" placeholder="Apt, suite, etc. (optional)" value={addr.line2} onChange={e=>setAddr({...addr, line2:e.target.value})} style={{ marginTop:8 }} />
+      <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr 1fr', gap:8, marginTop:8 }}>
+        <input className="pb-input" placeholder="City" value={addr.city} onChange={e=>setAddr({...addr, city:e.target.value})} />
+        <input className="pb-input" placeholder="State" value={addr.state} onChange={e=>setAddr({...addr, state:e.target.value})} />
+        <input className="pb-input" placeholder="ZIP" value={addr.postal} onChange={e=>setAddr({...addr, postal:e.target.value})} />
+      </div>
+      <input className="pb-input" placeholder="Country (US, CA, ...)" value={addr.country} onChange={e=>setAddr({...addr, country:e.target.value})} style={{ marginTop:8 }} />
+      <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>We only ship physical perks to this address.</p>
+    </div>
+  )}
+
+  {/* Donate via PayPal (hosted full-page) */}
+  <form
+    action="https://www.paypal.com/donate"
+    method="post"
+    target="_blank"
+    style={{ marginTop: 12 }}
+    onSubmit={async (e) => {
+      if (!(Number(amount) > 0)) { e.preventDefault(); alert('Please enter a donation amount first.'); return; }
+      if (!isValidEmail(email)) { e.preventDefault(); alert('Please enter a valid email.'); return; }
+      if (Number(amount) >= 75 && !tShirtSize) { e.preventDefault(); alert('Please select a T-Shirt size for $75+ donations.'); return; }
+      if (needsShipping) {
+        const { line1, city, state, postal, country } = addr;
+        if (!line1 || !city || !state || !postal || !country) {
+          e.preventDefault(); alert('Please complete your shipping address for $35+ tiers.'); return;
+        }
+      }
+      if (!customId) { e.preventDefault(); alert('One sec—initializing checkout. Try again.'); return; }
+
+      try {
+        await fetch('/api/pledge-intent', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({
+            id: customId,
+            amount: Number(amount),
+            tShirtSize: tShirtSize || null,
+            email,
+            address: needsShipping ? addr : null,
+            tier: selectedTier?.name || null,
+            noReward
+          })
+        });
+      } catch {}
+    }}
   >
-    Donate with PayPal
-  </button>
+    {/* Hosted button + passthrough fields */}
+    <input type="hidden" name="hosted_button_id" value="VPRLL2BPRULJ8" />
+    <input type="hidden" name="amount" value={Number(amount) || ''} />
+    <input type="hidden" name="currency_code" value="USD" />
+    <input type="hidden" name="custom" value={customId} />
+    <input type="hidden" name="notify_url" value="https://killemkindly.info/api/paypal/ipn" />
+    <input type="hidden" name="return" value="https://killemkindly.info/thanks" />
+    <input type="hidden" name="cancel_return" value="https://killemkindly.info/cancelled" />
 
-  <p style={{ marginTop:8, fontSize:12, color:'var(--pb-dim)' }}>
-    You’ll be taken to a secure PayPal page to complete your donation.
-  </p>
-</form>
+    <button
+      type="submit"
+      className="pb-btn"
+      style={{ display:'inline-block', padding:'12px 18px', borderRadius:14 }}
+      disabled={
+        !customId ||
+        !(Number(amount) > 0) ||
+        !isValidEmail(email) ||
+        (Number(amount) >= 75 && !tShirtSize) ||
+        (needsShipping && (!addr.line1 || !addr.city || !addr.state || !addr.postal || !addr.country))
+      }
+      title="Donate with PayPal"
+    >
+      Donate with PayPal
+    </button>
+
+    <p style={{ marginTop:8, fontSize:12, color:'var(--pb-dim)' }}>
+      You’ll be taken to a secure PayPal page to complete your donation.
+    </p>
+  </form>
+</div>
 
 
 
