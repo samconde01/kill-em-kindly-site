@@ -1,14 +1,15 @@
+// pages/api/tracker/list.js
 import { getSql } from "../../../lib/db";
 
 export default async function handler(req, res) {
   try {
     const sql = getSql();
 
-    const [{ total }] = await sql`select coalesce(sum(amount),0) as total from pledges where status = 'COMPLETED'`;
-    const [{ count }] = await sql`select count(*)::int as count from pledges where status = 'COMPLETED'`;
+    const [{ total }] =
+      await sql`select coalesce(sum(amount),0) as total from pledges where status = 'COMPLETED'`;
+    const [{ count }] =
+      await sql`select count(*)::int as count from pledges where status = 'COMPLETED'`;
 
-    // recent donors (limit 250)
-    // If you created a 'name' column, include it; else derive from email or show Anonymous.
     const rows = await sql`
       select
         id::text,
@@ -23,10 +24,10 @@ export default async function handler(req, res) {
 
     res.setHeader("Cache-Control", "no-store");
     return res.status(200).json({
-      rev: Date.now(),               // simple revision
+      rev: Date.now(),
       donors: rows.map(r => ({
         id: r.id,
-        name: r.email ? r.email.split("@")[0] : "Anonymous", // or use a 'name' column if you store it
+        name: r.email ? r.email.split("@")[0] : "Anonymous",
         email: r.email,
         amount: r.amount,
         ts: new Date(r.ts).getTime()
