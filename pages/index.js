@@ -475,32 +475,55 @@ const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
   method="post"
   target="_blank"
   style={{ marginTop: 12 }}
-  onSubmit={(e) => {
-    // Basic guards so folks don’t end up on PayPal without a valid amount / size
-    if (!(Number(amount) > 0)) {
-      e.preventDefault();
-      alert('Please enter a donation amount first.');
-      return;
+  onSubmit={async (e) => {
+    // Validate before leaving your site
+    if (!(Number(amount) > 0)) { e.preventDefault(); alert('Please enter a donation amount first.'); return; }
+    if (!isValidEmail(email)) { e.preventDefault(); alert('Please enter a valid email.'); return; }
+    if (Number(amount) >= 75 && !tShirtSize) { e.preventDefault(); alert('Please select a T-Shirt size for $75+ donations.'); return; }
+    if (needsShipping) {
+      const { line1, city, state, postal, country } = addr;
+      if (!line1 || !city || !state || !postal || !country) { e.preventDefault(); alert('Please complete your shipping address for $35+ tiers.'); return; }
     }
-    if (Number(amount) >= 75 && !tShirtSize) {
-      e.preventDefault();
-      alert('Please select a T-Shirt size for $75+ donations.');
-      return;
-    }
+    // Save intent server-side (non-blocking if it fails, but we try)
+    try {
+      await fetch('/api/pledge-intent', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          id: customId,
+          amount: Number(amount),
+          tShirtSize: tShirtSize || null,
+          email,
+          address: needsShipping ? addr : null,
+          tier: selectedTier?.name || null,
+          noReward
+        })
+      });
+    } catch {}
   }}
 >
-  {/* Your hosted button id from PayPal */}
+  {/* hosted button id from PayPal (LIVE) */}
   <input type="hidden" name="hosted_button_id" value="VPRLL2BPRULJ8" />
-  {/* Pass the amount & currency through to PayPal */}
+
+  {/* Pass through values */}
   <input type="hidden" name="amount" value={Number(amount) || ''} />
   <input type="hidden" name="currency_code" value="USD" />
 
-  {/* Pretty button that matches your site */}
+  {/* Tie PayPal txn back to your saved intent */}
+  <input type="hidden" name="custom" value={customId} />
+
+  {/* IPN callback (server-to-server) */}
+  <input type="hidden" name="notify_url" value="https://killemkindly.info/api/paypal/ipn" />
+
+  {/* Where to send the user after payment/cancel */}
+  <input type="hidden" name="return" value="https://killemkindly.info/thanks" />
+  <input type="hidden" name="cancel_return" value="https://killemkindly.info/cancelled" />
+
   <button
     type="submit"
     className="pb-btn"
     style={{ display:'inline-block', padding:'12px 18px', borderRadius:14 }}
-    disabled={!(Number(amount) > 0) || (Number(amount) >= 75 && !tShirtSize)}
+    disabled={!(Number(amount) > 0) || !isValidEmail(email) || (Number(amount) >= 75 && !tShirtSize) || (needsShipping && (!addr.line1 || !addr.city || !addr.state || !addr.postal || !addr.country))}
     title="Donate with PayPal"
   >
     Donate with PayPal
@@ -510,6 +533,7 @@ const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
     You’ll be taken to a secure PayPal page to complete your donation.
   </p>
 </form>
+
 
 
     {/* Selected tier + errors + policy */}
