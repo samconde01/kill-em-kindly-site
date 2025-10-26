@@ -2,96 +2,12 @@
 // Pip-Boy UI reskin, single-page build (no client-side routing)
 
 import React from "react";
-import Head from "next/head";
-import {
-  PayPalScriptProvider,
-  PayPalButtons,
-  PayPalHostedFieldsProvider,
-  PayPalHostedField,
-  usePayPalScriptReducer
-} from "@paypal/react-paypal-js";
 import { motion } from "framer-motion";
 
 
 export default function Home() {
-  // --- existing local UI state you had ---
-  const [pledgeAmount, setPledgeAmount] = React.useState(20);
-  const [tShirtSize, setTShirtSize] = React.useState('');
-  const needsShirtSize = Number(pledgeAmount) >= 75;
-  React.useEffect(() => { if (!needsShirtSize) setTShirtSize(''); }, [needsShirtSize]);
-  const canCheckout = Number(pledgeAmount) > 0 && (!needsShirtSize || !!tShirtSize);
-
-  // NEW: fetch a client token but DO NOT block page render
-  const [clientToken, setClientToken] = React.useState(null);
-  React.useEffect(() => {
-    (async () => {
-      try {
-        const r = await fetch('/api/paypal/generate-client-token', { method: 'POST' });
-        const { clientToken } = await r.json();
-        setClientToken(clientToken || null);
-      } catch (e) {
-        console.error('Failed to fetch PayPal client token', e);
-      }
-    })();
-  }, []);
-
-  // IMPORTANT: include hosted-fields; pass token only when present
-  const paypalOptions = {
-    'client-id'        : process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID,
-    components         : 'buttons,hosted-fields',
-    currency           : process.env.NEXT_PUBLIC_PAYPAL_CURRENCY || 'USD',
-    intent             : 'capture',
-    'enable-funding'   : 'venmo,paylater',
-    // only add data-client-token when we have one; otherwise omit it
-    ...(clientToken ? { 'data-client-token': clientToken } : {})
-  };
-
-  return (
-    <PayPalScriptProvider options={paypalOptions}>
-      <App hasClientToken={!!clientToken} />
-    </PayPalScriptProvider>
-  );
-}
-
-
-
-export function HostedCardSubmit({ canCheckout }) {
-  const [{ isPending }] = usePayPalScriptReducer();
-
-  const onSubmit = async () => {
-    const cardFields = window.paypal?.HostedFields;
-    if (!cardFields) return;
-    try {
-      await cardFields.getState();
-      const { orderId } = await cardFields.submit({});
-      const r = await fetch('/api/paypal/capture-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderID: orderId })
-      });
-      const cap = await r.json();
-      if (!r.ok) throw new Error('Capture failed');
-      alert('Thank you! Your card pledge was captured.');
-    } catch (e) {
-      console.error(e);
-      alert('Card payment failed. Please try again.');
-    }
-  };
-
-  return (
-    <button
-      type="button"
-      onClick={onSubmit}
-      disabled={!canCheckout || isPending}
-      style={{
-        marginTop: 12, width:'100%', padding:'12px 14px',
-        border:'1px solid #555', borderRadius:8, background:'#1b1b1e', color:'#fff',
-        opacity: (!canCheckout || isPending) ? 0.6 : 1
-      }}
-    >
-      {isPending ? 'Loading…' : 'Pay with Card'}
-    </button>
-  );
+  // You can keep your pledgeAmount / tShirtSize stuff if needed
+  return <App hasClientToken={false} />;
 }
 
 
@@ -553,165 +469,48 @@ const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
       Donate without claiming a reward
     </label>
 
-    {/* Payment buttons */}
-    <div style={{ marginTop: 12, display: 'grid', gap: 8 }}>
-      {/* PayPal */}
-      <PayPalButtons
-        fundingSource="paypal"
-        style={{ layout: "horizontal", label: "pay", shape: "rect", height: 45 }}
-        disabled={!canCheckout}
-        createOrder={async () => {
-          const r = await fetch('/api/paypal/create-order', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              amount: Number(amount),
-              tShirtSize: Number(amount) >= 75 ? (tShirtSize || null) : null
-            })
-          });
-          const data = await r.json();
-          const id = data?.id;
-          if (!id) throw new Error('Order creation failed');
-          return id;
-        }}
-        onApprove={async (data) => {
-          try {
-            const r = await fetch('/api/paypal/capture-order', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ orderID: data.orderID })
-            });
-            const cap = await r.json();
-            if (!r.ok) throw new Error(cap?.error || 'Capture failed');
+  {/* Donate via PayPal (hosted full-page) */}
+<form
+  action="https://www.paypal.com/donate"
+  method="post"
+  target="_blank"
+  style={{ marginTop: 12 }}
+  onSubmit={(e) => {
+    // Basic guards so folks don’t end up on PayPal without a valid amount / size
+    if (!(Number(amount) > 0)) {
+      e.preventDefault();
+      alert('Please enter a donation amount first.');
+      return;
+    }
+    if (Number(amount) >= 75 && !tShirtSize) {
+      e.preventDefault();
+      alert('Please select a T-Shirt size for $75+ donations.');
+      return;
+    }
+  }}
+>
+  {/* Your hosted button id from PayPal */}
+  <input type="hidden" name="hosted_button_id" value="VPRLL2BPRULJ8" />
+  {/* Pass the amount & currency through to PayPal */}
+  <input type="hidden" name="amount" value={Number(amount) || ''} />
+  <input type="hidden" name="currency_code" value="USD" />
 
-            const status = cap?.status || cap?.raw?.status || 'UNKNOWN';
-            const captureId = cap?.id || cap?.raw?.purchase_units?.[0]?.payments?.captures?.[0]?.id;
+  {/* Pretty button that matches your site */}
+  <button
+    type="submit"
+    className="pb-btn"
+    style={{ display:'inline-block', padding:'12px 18px', borderRadius:14 }}
+    disabled={!(Number(amount) > 0) || (Number(amount) >= 75 && !tShirtSize)}
+    title="Donate with PayPal"
+  >
+    Donate with PayPal
+  </button>
 
-            if (status !== 'COMPLETED') {
-              console.error('Capture not completed:', cap);
-              alert(`Payment did not complete (status: ${status}). Your card/PayPal was not charged.`);
-              return;
-            }
+  <p style={{ marginTop:8, fontSize:12, color:'var(--pb-dim)' }}>
+    You’ll be taken to a secure PayPal page to complete your donation.
+  </p>
+</form>
 
-            alert(`Thank you! Your pledge was captured. (ID: ${captureId})`);
-      // refresh tracker list
-try {
-  const r2 = await fetch(`/api/tracker/list?t=${Date.now()}`, { cache: 'no-store' });
-  const d2 = await r2.json();
-  lastRevRef.current = Number(d2.rev || 0);
-  setDonors(Array.isArray(d2.donors) ? d2.donors : []);
-} catch {}
-
-
-          } catch (e) {
-            console.error('Capture error', e);
-            alert('Payment could not be completed. Please try again or use a different account.');
-          }
-        }}
-      />
-
-      {/* Venmo */}
-      <PayPalButtons
-        fundingSource="venmo"
-        style={{ layout: "horizontal", shape: "rect", height: 45 }}
-        disabled={!canCheckout}
-        createOrder={async () => {
-          const r = await fetch('/api/paypal/create-order', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              amount: Number(amount),
-              tShirtSize: Number(amount) >= 75 ? (tShirtSize || null) : null
-            })
-          });
-          const data = await r.json();
-          const id = data?.id;
-          if (!id) throw new Error('Order creation failed');
-          return id;
-        }}
-        onApprove={async (data) => {
-          const r = await fetch('/api/paypal/capture-order', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ orderID: data.orderID })
-          });
-          const cap = await r.json();
-          if (!r.ok) throw new Error('Capture failed');
-          alert('Thank you! Your pledge was captured.');
-          // refresh tracker list
-try {
-  const r2 = await fetch(`/api/tracker/list?t=${Date.now()}`, { cache: 'no-store' });
-  const d2 = await r2.json();
-  lastRevRef.current = Number(d2.rev || 0);
-  setDonors(Array.isArray(d2.donors) ? d2.donors : []);
-} catch {}
-
-        }}
-      />
-    </div>
-
-    {/* Card (Hosted Fields) */}
-    <div className="pb-panel" style={{ marginTop: 16, padding: 16 }}>
-      <h4 style={{ margin: 0, fontSize: 14, fontWeight: 600 }}>Pay with Card</h4>
-      <p style={{ fontSize: 12, opacity: 0.8, marginTop: 6 }}>
-        Secure card entry powered by PayPal.
-      </p>
-
-      {hasClientToken && typeof window !== 'undefined' && window.paypal?.HostedFields?.isEligible() ? (
-        <PayPalHostedFieldsProvider
-          createOrder={async () => {
-            const r = await fetch('/api/paypal/create-order', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                amount: Number(amount),
-                tShirtSize: Number(amount) >= 75 ? (tShirtSize || null) : null
-              })
-            });
-            const data = await r.json();
-            const id = data?.id;
-            if (!id) throw new Error('Order creation failed');
-            return id;
-          }}
-        >
-          <div style={{ display:'grid', gap:12, marginTop:12 }}>
-            <label style={{ fontSize:12 }}>Card Number</label>
-            <div id="card-number" style={{ height:40, border:'1px solid var(--pb-border)', borderRadius:8, padding:'8px 10px', background:'#04170f' }} />
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
-              <div>
-                <label style={{ fontSize:12 }}>Expiration</label>
-                <div id="card-expiry" style={{ height:40, border:'1px solid var(--pb-border)', borderRadius:8, padding:'8px 10px', background:'#04170f' }} />
-              </div>
-              <div>
-                <label style={{ fontSize:12 }}>CVV</label>
-                <div id="card-cvv" style={{ height:40, border:'1px solid var(--pb-border)', borderRadius:8, padding:'8px 10px', background:'#04170f' }} />
-              </div>
-            </div>
-          </div>
-
-          <PayPalHostedField
-            hostedFieldType="number"
-            options={{ selector: '#card-number', placeholder: '4111 1111 1111 1111' }}
-          />
-          <PayPalHostedField
-            hostedFieldType="expirationDate"
-            options={{ selector: '#card-expiry', placeholder: 'MM/YY' }}
-          />
-          <PayPalHostedField
-            hostedFieldType="cvv"
-            options={{ selector: '#card-cvv', placeholder: '123' }}
-          />
-
-          <HostedCardSubmit canCheckout={canCheckout} />
-        </PayPalHostedFieldsProvider>
-      ) : (
-        <div style={{ marginTop: 8, fontSize: 12, color: 'var(--pb-dim)' }}>
-          {hasClientToken
-            ? 'Card entry not available in this browser. Please use PayPal or Venmo.'
-            : 'Loading secure card fields… (PayPal token)'}
-        </div>
-      )}
-    </div>
 
     {/* Selected tier + errors + policy */}
     {selectedTier && !noReward && (
