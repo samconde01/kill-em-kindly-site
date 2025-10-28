@@ -343,7 +343,7 @@ const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
         <div className="pb-panel" style={{ padding:12 }}>
   <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
     <div className="pb-glow" style={{ fontWeight:700 }}>Funding Progress</div>
-    <span className="pb-chip">Ends 11/17</span>
+    <span className="pb-chip">Ends 11/30</span>
   </div>
 </div>
 <div style={{ marginTop:10, height:14, border:'1px solid var(--pb-border-strong)', borderRadius:10, overflow:'hidden', background:'rgba(77,240,138,.06)' }}>
@@ -737,14 +737,14 @@ const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
               q: "Is this affiliated with the creators of the original IP?",
               a: "No. Kill 'em Kindly is an entirely independent fan project. We aren’t affiliated with or endorsed by the original rights holders. We’re passionate fans drawing on the familiar lore, aesthetics, and staples that audiences love—but we’re also venturing into brand-new territory. Our goal is to honor what came before while telling stories that have never been told within this universe."
             },
-            {
-              q: "When does the crowdfunding end?",
-              a: "Our crowdfunding campaign ends November 17. The campaign will run for 30 days, giving fans plenty of time to back the project, unlock rewards, and help us reach our funding goals."
-            },
-            {
-              q: "What do I get for pledging?",
-              a: "Every supporter unlocks access to exclusive updates, behind-the-scenes content, and early looks at the world we’re building. You’ll also receive the Digital Pack completely free. Physical rewards and higher-tier perks will be available during the campaign."
-            },
+           {
+  q: "When does the crowdfunding end?",
+  a: "Our crowdfunding campaign now ends November 30, 2025. There’s still time to back the project, unlock rewards, and help us reach our funding goals."
+},
+           {
+  q: "What do I get for pledging?",
+  a: "Every supporter unlocks access to exclusive updates through this site. To redeem a reward tier please ensure you type the proper amount into your donation selection. Rewards are based off of final donation amounts from one single donation. Donations are not stacked. If you'd like to alter your donation in any way please reach out to sconde@samcondedigital.com"
+},
             {
               q: "How long is the film?",
               a: "We’re targeting a short film runtime of approximately 15–20 minutes. That length gives us enough space to explore new characters and storylines while keeping the production tightly focused, cinematic, and achievable within our budget."
