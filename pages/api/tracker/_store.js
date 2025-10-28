@@ -1,101 +1,53 @@
-// /pages/api/tracker/_store.js
-import { neon } from '@neondatabase/serverless';
+// tracker/_store.js
 
-const sql = neon(process.env.DATABASE_URL);
+// …your existing in-memory or file-backed state…
+let state = global._donorState || { rev: 0, donors: [] };
+global._donorState = state;
 
-// Create table once (idempotent)
-async function ensureSchema() {
-  await sql/*sql*/`
-    CREATE TABLE IF NOT EXISTS donations (
-      id        TEXT PRIMARY KEY,
-      name      TEXT NOT NULL,
-      amount    NUMERIC NOT NULL,
-      message   TEXT,
-      size      TEXT,
-      source    TEXT,
-      ts        TIMESTAMPTZ NOT NULL
-    );
-  `;
-  await sql/*sql*/`
-    CREATE INDEX IF NOT EXISTS donations_ts_desc_idx ON donations (ts DESC);
-  `;
+// existing helper you already have
+export function addDonor(d) {
+  state.donors.unshift({
+    // keep prior shape; include optional keys for future
+    id: d.id || null,                // customId from client (if available)
+    paypal_txn_id: d.paypal_txn_id || null,
+    name: d.name || 'Anonymous',
+    first_name: d.first_name || null,
+    is_anonymous: !!d.is_anonymous,
+    amount: d.amount || 0,
+    message: d.message || '',
+    size: d.size || '',
+    source: d.source || 'paypal',
+    ts: d.ts || new Date().toISOString()
+  });
+  state.rev++;
 }
 
-function nowRev() {
-  // simple monotonic-ish revision number for stale-response protection
-  return Date.now();
-}
+// NEW: update name on a single donor; try multiple keys
+export function updateDonorName({ tx, id, firstName, anonymous = false }) {
+  const needle = (v) => (v || '').toString().trim();
+  const match = state.donors.find(d =>
+    (tx && needle(d.paypal_txn_id) === needle(tx)) ||
+    (id && needle(d.id) === needle(id))
+  );
 
-export async function getStoreMode() {
-  return process.env.DATABASE_URL ? 'pg' : 'memory';
-}
+  if (!match) return false;
 
-// If DATABASE_URL is missing, we still expose the same API but with memory fallback
-let memory = { donors: [], rev: nowRev() };
+  // set fields
+  match.first_name  = firstName || match.first_name || null;
+  match.is_anonymous = !!anonymous;
 
-export async function listDonors() {
-  if (!(process.env.DATABASE_URL)) return memory.donors;
-
-  await ensureSchema();
-  const rows = await sql/*sql*/`
-    SELECT id, name, amount, message, size, source, ts
-    FROM donations
-    ORDER BY ts DESC
-    LIMIT 500
-  `;
-  // Convert amount from string -> number
-  return rows.map(r => ({
-    ...r,
-    amount: Number(r.amount)
-  }));
-}
-
-export async function getState() {
-  if (!(process.env.DATABASE_URL)) return memory;
-
-  const donors = await listDonors();
-  return { donors, rev: nowRev() };
-}
-
-export async function saveState(state) {
-  // Not used for Postgres path; present for interface compatibility
-  if (!(process.env.DATABASE_URL)) memory = state;
-}
-
-export async function addDonor(partial) {
-  const rec = {
-    id: cryptoRandomId(),
-    name: (partial.name || 'Anonymous').toString(),
-    amount: Number(partial.amount) || 0,
-    message: (partial.message || '').toString(),
-    size: (partial.size || '').toString(),
-    source: (partial.source || 'manual').toString(),
-    ts: partial.ts ? new Date(partial.ts) : new Date()
-  };
-
-  if (!(process.env.DATABASE_URL)) {
-    // memory fallback
-    const donors = [rec, ...memory.donors];
-    memory = { donors, rev: nowRev() };
-    return memory;
+  // expose a normalized display name for the client
+  if (match.is_anonymous) {
+    match.name = 'Anonymous';
+  } else {
+    match.name = match.first_name || match.name || 'Anonymous';
   }
 
-  await ensureSchema();
-  await sql/*sql*/`
-    INSERT INTO donations (id, name, amount, message, size, source, ts)
-    VALUES (${rec.id}, ${rec.name}, ${rec.amount}, ${rec.message}, ${rec.size}, ${rec.source}, ${rec.ts.toISOString()});
-  `;
-
-  const donors = await listDonors();
-  return { donors, rev: nowRev() };
+  state.rev++;
+  return true;
 }
 
-// Tiny UUID-ish generator that works on Node 18+ without extra deps
-function cryptoRandomId() {
-  // Prefer global crypto if available
-  if (typeof globalThis.crypto?.randomUUID === 'function') {
-    return globalThis.crypto.randomUUID();
-  }
-  // Fallback
-  return 'id-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+// Optional: expose current state for list API
+export function getState() {
+  return state;
 }
