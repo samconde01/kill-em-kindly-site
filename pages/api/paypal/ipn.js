@@ -2,7 +2,7 @@
 export const config = { api: { bodyParser: false } };
 
 import getRawBody from "raw-body";
-import { getSql } from "@/lib/db";
+import { getSql } from "../../../lib/db";
 
 async function verifyIPN(raw) {
   const body = `cmd=_notify-validate&${raw.toString("utf8")}`;
