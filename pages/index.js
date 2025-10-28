@@ -558,71 +558,74 @@ const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
 </div>
 
     {/* Donate via PayPal (hosted full-page) */}
-    <form
-      action="https://www.paypal.com/donate"
-      method="post"
-      target="_blank"
-      style={{ marginTop: 12 }}
-      onSubmit={async (e) => {
-        if (!(Number(amount) > 0)) { e.preventDefault(); alert('Please enter a donation amount first.'); return; }
-        if (!isValidEmail(email)) { e.preventDefault(); alert('Please enter a valid email.'); return; }
-        if (Number(amount) >= 75 && !tShirtSize) { e.preventDefault(); alert('Please select a T-Shirt size for $75+ donations.'); return; }
-        if (needsShipping) {
-          const { line1, city, state, postal, country } = addr;
-          if (!line1 || !city || !state || !postal || !country) {
-            e.preventDefault(); alert('Please complete your shipping address for $35+ tiers.'); return;
-          }
-        }
-        if (!customId) { e.preventDefault(); alert('One sec—initializing checkout. Try again.'); return; }
+  <form
+  action="https://www.paypal.com/donate"
+  method="post"
+  target="_blank"
+  style={{ marginTop: 12 }}
+  onSubmit={async (e) => {
+    if (!(Number(amount) > 0)) { e.preventDefault(); alert('Please enter a donation amount first.'); return; }
+    if (!isValidEmail(email)) { e.preventDefault(); alert('Please enter a valid email.'); return; }
+    if (Number(amount) >= 75 && !tShirtSize) { e.preventDefault(); alert('Please select a T-Shirt size for $75+ donations.'); return; }
+    if (needsShipping) {
+      const { line1, city, state, postal, country } = addr;
+      if (!line1 || !city || !state || !postal || !country) {
+        e.preventDefault(); alert('Please complete your shipping address for $35+ tiers.'); return;
+      }
+    }
+    if (!customId) { e.preventDefault(); alert('One sec—initializing checkout. Try again.'); return; }
 
-        try {
-         await fetch('/api/pledge-intent', {
-  method:'POST',
-  headers:{'Content-Type':'application/json'},
-  body: JSON.stringify({
-    id: customId,
-    amount: Number(amount),
-    tShirtSize: tShirtSize || null,
-    email,
-    address: needsShipping ? addr : null,
-    tier: selectedTier?.name || null,
-    noReward,
+    try {
+      await fetch('/api/pledge-intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: customId,
+          amount: Number(amount),
+          tShirtSize: tShirtSize || null,
+          email,
+          address: needsShipping ? addr : null,
+          tier: selectedTier?.name || null,
+          noReward,
+          // donor display prefs
+          firstName: firstName || null,
+          anon: Boolean(anon),
+        }),
+      });
+    } catch (err) {
+      console.error('pledge-intent failed', err);
+    }
+  }}
+>
+  {/* Hosted button + passthrough fields */}
+  <input type="hidden" name="hosted_button_id" value="VPRLL2BPRULJ8" />
+  <input type="hidden" name="amount" value={Number(amount) || ''} />
+  <input type="hidden" name="currency_code" value="USD" />
+  <input type="hidden" name="custom" value={customId} />
+  <input type="hidden" name="notify_url" value="https://killemkindly.info/api/paypal/ipn" />
+  <input type="hidden" name="return" value="https://killemkindly.info/thanks" />
+  <input type="hidden" name="cancel_return" value="https://killemkindly.info/cancelled" />
 
-    // NEW: donor display preferences for the tracker
-    firstName: firstName || null,
-    anon: Boolean(anon)
-  })
-});
-    >
-      {/* Hosted button + passthrough fields */}
-      <input type="hidden" name="hosted_button_id" value="VPRLL2BPRULJ8" />
-      <input type="hidden" name="amount" value={Number(amount) || ''} />
-      <input type="hidden" name="currency_code" value="USD" />
-      <input type="hidden" name="custom" value={customId} />
-      <input type="hidden" name="notify_url" value="https://killemkindly.info/api/paypal/ipn" />
-      <input type="hidden" name="return" value="https://killemkindly.info/thanks" />
-      <input type="hidden" name="cancel_return" value="https://killemkindly.info/cancelled" />
+  <button
+    type="submit"
+    className="pb-btn"
+    style={{ display:'inline-block', padding:'12px 18px', borderRadius:14 }}
+    disabled={
+      !customId ||
+      !(Number(amount) > 0) ||
+      !isValidEmail(email) ||
+      (Number(amount) >= 75 && !tShirtSize) ||
+      (needsShipping && (!addr.line1 || !addr.city || !addr.state || !addr.postal || !addr.country))
+    }
+    title="Donate with PayPal"
+  >
+    Donate with PayPal
+  </button>
 
-      <button
-        type="submit"
-        className="pb-btn"
-        style={{ display:'inline-block', padding:'12px 18px', borderRadius:14 }}
-        disabled={
-          !customId ||
-          !(Number(amount) > 0) ||
-          !isValidEmail(email) ||
-          (Number(amount) >= 75 && !tShirtSize) ||
-          (needsShipping && (!addr.line1 || !addr.city || !addr.state || !addr.postal || !addr.country))
-        }
-        title="Donate with PayPal"
-      >
-        Donate with PayPal
-      </button>
-
-      <p style={{ marginTop:8, fontSize:12, color:'var(--pb-dim)' }}>
-        You’ll be taken to a secure PayPal page to complete your donation.
-      </p>
-    </form>
+  <p style={{ marginTop:8, fontSize:12, color:'var(--pb-dim)' }}>
+    You’ll be taken to a secure PayPal page to complete your donation.
+  </p>
+</form>
 
     {/* Selected tier + errors + policy */}
     {selectedTier && !noReward && (
