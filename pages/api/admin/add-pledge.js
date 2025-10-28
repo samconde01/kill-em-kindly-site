@@ -1,5 +1,5 @@
 // pages/api/admin/add-pledge.js
-import { getSql } from "../../lib/db"; // <-- relative path to /lib/db.js
+import { getSql } from "../../../lib/db"; // <-- relative path to /lib/db.js
 
 // Protect with a simple header secret in Vercel env
 const ADMIN_KEY = process.env.ADMIN_KEY || "";
