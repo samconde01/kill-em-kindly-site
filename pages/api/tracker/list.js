@@ -5,38 +5,44 @@ export default async function handler(req, res) {
   try {
     const sql = getSql();
 
-    const [{ total }] =
-      await sql`select coalesce(sum(amount),0) as total from pledges where status = 'COMPLETED'`;
-    const [{ count }] =
-      await sql`select count(*)::int as count from pledges where status = 'COMPLETED'`;
+    // Sum only completed pledges
+    const [{ total }] = await sql`
+      select coalesce(sum(amount), 0)::numeric as total
+      from pledges
+      where status = 'COMPLETED'
+    `;
 
-    const rows = await sql`
+    // Recent donors (include name column!)
+    const donors = await sql`
       select
-        id::text,
-        coalesce(nullif(email, ''), 'anonymous@unknown') as email,
-        amount::float as amount,
+        id,
+        amount::numeric as amount,
+        name,                  -- <-- use the name you stored
+        source,
         coalesce(completed_at, created_at) as ts
       from pledges
       where status = 'COMPLETED'
-      order by completed_at desc nulls last
-      limit 250
+      order by coalesce(completed_at, created_at) desc
+      limit 50
     `;
 
-    res.setHeader("Cache-Control", "no-store");
+    // Shape for UI: if name is null/blank, fall back to "Anonymous"
+    const out = donors.map(d => ({
+      id: d.id,
+      amount: Number(d.amount || 0),
+      name: (d.name && String(d.name).trim()) || "Anonymous",
+      source: d.source || null,
+      ts: d.ts
+    }));
+
+    // Simple rev to prevent stale client state
     return res.status(200).json({
-      rev: Date.now(),
-      donors: rows.map(r => ({
-        id: r.id,
-        name: r.email ? r.email.split("@")[0] : "Anonymous",
-        email: r.email,
-        amount: r.amount,
-        ts: new Date(r.ts).getTime()
-      })),
-      totalRaised: Number(total),
-      backers: Number(count)
+      totalRaised: Number(total || 0),
+      donors: out,
+      rev: Date.now()
     });
   } catch (e) {
-    console.error("tracker list error", e);
-    return res.status(500).json({ error: "tracker list failed" });
+    console.error("tracker/list error", e);
+    return res.status(500).json({ error: "server error" });
   }
 }
