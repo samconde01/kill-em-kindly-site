@@ -1,5 +1,5 @@
 // pages/api/admin/add-pledge.js
-import { getSql } from "@/lib/db";
+import { getSql } from "../../lib/db"; // <-- relative path to /lib/db.js
 
 // Protect with a simple header secret in Vercel env
 const ADMIN_KEY = process.env.ADMIN_KEY || "";
@@ -23,8 +23,7 @@ export default async function handler(req, res) {
     const email   = body.email ? String(body.email) : null;
     const address = body.address ? JSON.stringify(body.address) : null;
 
-    // Choose whether this counts immediately:
-    // Use 'COMPLETED' to include in totals now; use 'PLEDGED' if you only want it recorded.
+    // 'COMPLETED' counts now; 'PLEDGED' records without counting (unless your tracker includes it)
     const status  = body.status === "PLEDGED" ? "PLEDGED" : "COMPLETED";
 
     await sql`
