@@ -228,6 +228,9 @@ const needsShipping = Number(amount) >= 35; // $35+ requires shipping address
 
 function isValidEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
 
+  const [firstName, setFirstName] = React.useState('');
+const [anon, setAnon] = React.useState(false);
+  
 // Generate a unique ID on the client only (avoid SSR errors)
 const [customId, setCustomId] = React.useState('');
 React.useEffect(() => {
@@ -521,9 +524,38 @@ const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
           <input className="pb-input" placeholder="ZIP" value={addr.postal} onChange={e=>setAddr({...addr, postal:e.target.value})} />
         </div>
         <input className="pb-input" placeholder="Country (US, CA, ...)" value={addr.country} onChange={e=>setAddr({...addr, country:e.target.value})} style={{ marginTop:8 }} />
-        <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>We only ship physical perks to this address.</p>
+        <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>
+  We only ship physical perks to this address. <em>*Physical rewards can only be shipped to the U.S. at this time.</em>
+</p>
+
       </div>
     )}
+{/* Donor display preferences */}
+<div style={{ marginTop:12 }}>
+  <label style={{ display:'block', fontSize:14, fontWeight:600 }}>
+    First name (for the public tracker)
+  </label>
+  <input
+    type="text"
+    className="pb-input"
+    placeholder="Jane"
+    value={firstName}
+    onChange={e => setFirstName(e.target.value)}
+    style={{ marginTop:6 }}
+  />
+
+  <label style={{ display:'flex', alignItems:'center', gap:8, marginTop:10, fontSize:13, color:'var(--pb-dim)' }}>
+    <input
+      type="checkbox"
+      checked={anon}
+      onChange={e => setAnon(e.target.checked)}
+    />
+    Make my donation anonymous
+  </label>
+  <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>
+    If checked, your name will appear as “Anonymous” on the public tracker.
+  </p>
+</div>
 
     {/* Donate via PayPal (hosted full-page) */}
     <form
@@ -544,21 +576,23 @@ const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
         if (!customId) { e.preventDefault(); alert('One sec—initializing checkout. Try again.'); return; }
 
         try {
-          await fetch('/api/pledge-intent', {
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({
-              id: customId,
-              amount: Number(amount),
-              tShirtSize: tShirtSize || null,
-              email,
-              address: needsShipping ? addr : null,
-              tier: selectedTier?.name || null,
-              noReward
-            })
-          });
-        } catch {}
-      }}
+         await fetch('/api/pledge-intent', {
+  method:'POST',
+  headers:{'Content-Type':'application/json'},
+  body: JSON.stringify({
+    id: customId,
+    amount: Number(amount),
+    tShirtSize: tShirtSize || null,
+    email,
+    address: needsShipping ? addr : null,
+    tier: selectedTier?.name || null,
+    noReward,
+
+    // NEW: donor display preferences for the tracker
+    firstName: firstName || null,
+    anon: Boolean(anon)
+  })
+});
     >
       {/* Hosted button + passthrough fields */}
       <input type="hidden" name="hosted_button_id" value="VPRLL2BPRULJ8" />
