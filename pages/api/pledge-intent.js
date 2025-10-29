@@ -1,8 +1,8 @@
 // pages/api/pledge-intent.js
 // Creates/updates a pledge row BEFORE sending the user to PayPal Donations.
-// Uses Neon via lib/db (no @vercel/postgres).
+// Uses your Neon helper (lib/db). No @vercel/postgres required.
 
-import { getSql } from '../../lib/db'; // NOTE: if your lib path differs, mirror what ipn.js uses
+import { getSql } from '../../lib/db'; // if ipn.js lives at pages/api/paypal/ipn.js it uses '../../../lib/db' — this one is one level higher
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -11,15 +11,15 @@ export default async function handler(req, res) {
 
   try {
     const {
-      id,                 // uuid generated client-side
-      amount,             // number
-      email,              // string
-      address,            // object | null
-      tShirtSize,         // string | null
-      tier,               // string | null
-      noReward,           // boolean
-      firstName,          // string | null (public tracker)
-      anon                // boolean (public tracker anonymity)
+      id,            // uuid generated client-side
+      amount,        // number
+      email,         // string
+      address,       // object | null
+      tShirtSize,    // string | null
+      tier,          // string | null
+      noReward,      // boolean
+      firstName,     // string | null (public tracker)
+      anon           // boolean (public tracker anonymity)
     } = req.body || {};
 
     // Basic validation
@@ -35,4 +35,39 @@ export default async function handler(req, res) {
     const addrJson = address ? JSON.stringify(address) : null;
 
     // Upsert pledge as PENDING; store donor display fields now
-    a
+    await sql`
+      insert into pledges (
+        id, amount, email, address, t_shirt_size, tier, no_reward,
+        name, is_anonymous, source, status, created_at
+      ) values (
+        ${id}::uuid,
+        ${amount},
+        ${email},
+        ${addrJson}::jsonb,
+        ${tShirtSize || null},
+        ${tier || null},
+        ${!!noReward},
+        ${cleanName},
+        ${isAnonymous},
+        'web',
+        'PENDING',
+        now()
+      )
+      on conflict (id) do update
+        set amount        = excluded.amount,
+            email         = coalesce(pledges.email, excluded.email),
+            address       = coalesce(pledges.address, excluded.address),
+            t_shirt_size  = coalesce(pledges.t_shirt_size, excluded.t_shirt_size),
+            tier          = coalesce(pledges.tier, excluded.tier),
+            no_reward     = excluded.no_reward,
+            name          = coalesce(pledges.name, excluded.name),
+            is_anonymous  = coalesce(pledges.is_anonymous, excluded.is_anonymous),
+            source        = coalesce(pledges.source, excluded.source);
+    `;
+
+    return res.status(200).json({ ok: true });
+  } catch (err) {
+    console.error('pledge-intent error', err);
+    return res.status(500).json({ error: 'server error' });
+  }
+}
