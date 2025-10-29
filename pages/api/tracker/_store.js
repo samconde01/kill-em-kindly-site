@@ -1,53 +1,83 @@
-// tracker/_store.js
+// pages/api/tracker/_store.js
+import { getSql } from "../../../lib/db";
 
-// …your existing in-memory or file-backed state…
-let state = global._donorState || { rev: 0, donors: [] };
-global._donorState = state;
-
-// existing helper you already have
-export function addDonor(d) {
-  state.donors.unshift({
-    // keep prior shape; include optional keys for future
-    id: d.id || null,                // customId from client (if available)
-    paypal_txn_id: d.paypal_txn_id || null,
-    name: d.name || 'Anonymous',
-    first_name: d.first_name || null,
-    is_anonymous: !!d.is_anonymous,
-    amount: d.amount || 0,
-    message: d.message || '',
-    size: d.size || '',
-    source: d.source || 'paypal',
-    ts: d.ts || new Date().toISOString()
-  });
-  state.rev++;
+/**
+ * Returns the tracker store mode. If you later add an in-memory fallback,
+ * you can make this conditional. For now, always "db".
+ */
+export function getStoreMode() {
+  return "db";
 }
 
-// NEW: update name on a single donor; try multiple keys
-export function updateDonorName({ tx, id, firstName, anonymous = false }) {
-  const needle = (v) => (v || '').toString().trim();
-  const match = state.donors.find(d =>
-    (tx && needle(d.paypal_txn_id) === needle(tx)) ||
-    (id && needle(d.id) === needle(id))
-  );
-
-  if (!match) return false;
-
-  // set fields
-  match.first_name  = firstName || match.first_name || null;
-  match.is_anonymous = !!anonymous;
-
-  // expose a normalized display name for the client
-  if (match.is_anonymous) {
-    match.name = 'Anonymous';
-  } else {
-    match.name = match.first_name || match.name || 'Anonymous';
+/**
+ * Canonical display-name resolver for a donor row.
+ * - If anonymous: "Anonymous"
+ * - Else prefer name
+ * - Else fall back to local-part of email
+ * - Else "Backer"
+ */
+function resolveDisplayName(row) {
+  if (row.is_anonymous === true) return "Anonymous";
+  if (row.name && row.name.trim().length) return row.name.trim();
+  if (row.email && row.email.includes("@")) {
+    const local = row.email.split("@")[0].trim();
+    if (local) return local;
   }
-
-  state.rev++;
-  return true;
+  return "Backer";
 }
 
-// Optional: expose current state for list API
-export function getState() {
-  return state;
+/**
+ * List donors for the public tracker.
+ * Returns: { donors: [{id,name,amount,ts}], rev }
+ *
+ * Sort: completed_at DESC, then created_at DESC
+ * Note: amount is numeric in your schema; we coerce to Number for JSON.
+ */
+export async function listDonors(limit = 50) {
+  const sql = getSql();
+
+  const rows = await sql`
+    select
+      id,
+      name,
+      email,
+      is_anonymous,
+      amount,
+      coalesce(completed_at, created_at) as ts
+    from pledges
+    where status = 'COMPLETED'
+    order by coalesce(completed_at, created_at) desc, id desc
+    limit ${limit}
+  `;
+
+  const donors = rows.map(r => ({
+    id: String(r.id),
+    name: resolveDisplayName(r),
+    amount: Number(r.amount || 0),
+    ts: (r.ts ? new Date(r.ts).toISOString() : null)
+  }));
+
+  // rev = a monotonic timestamp the client can compare to avoid stale writes
+  const rev = Date.now();
+
+  return { donors, rev };
+}
+
+/**
+ * Admin helper: update donor fields by pledge id (uuid).
+ * Useful for manual fixes via /api/admin/fix-donor.
+ */
+export async function updateDonor({ id, name, is_anonymous }) {
+  const sql = getSql();
+  if (!id) throw new Error("Missing id");
+
+  await sql`
+    update pledges
+    set
+      name = ${typeof name === "string" ? name : null},
+      is_anonymous = ${typeof is_anonymous === "boolean" ? is_anonymous : null}
+    where id = ${id}::uuid
+  `;
+
+  return { ok: true };
 }
