@@ -1,48 +1,49 @@
-// pages/api/tracker/list.js
 import { getSql } from "../../../lib/db";
 
 export default async function handler(req, res) {
   try {
     const sql = getSql();
 
-    // Sum only completed pledges
-    const [{ total }] = await sql`
-      select coalesce(sum(amount), 0)::numeric as total
-      from pledges
-      where status = 'COMPLETED'
-    `;
-
-    // Recent donors (include name column!)
-    const donors = await sql`
+    // Pull the recent completed pledges.
+    // If your column names differ, adjust here.
+    const rows = await sql/*sql*/`
       select
         id,
-        amount::numeric as amount,
-        name,                  -- <-- use the name you stored
-        source,
-        coalesce(completed_at, created_at) as ts
+        amount,
+        coalesce(completed_at, created_at) as ts,
+        is_anonymous,
+        first_name,
+        name
       from pledges
       where status = 'COMPLETED'
-      order by coalesce(completed_at, created_at) desc
-      limit 50
+      order by coalesce(completed_at, created_at) desc, id desc
+      limit 250
     `;
 
-    // Shape for UI: if name is null/blank, fall back to "Anonymous"
-    const out = donors.map(d => ({
-      id: d.id,
-      amount: Number(d.amount || 0),
-      name: (d.name && String(d.name).trim()) || "Anonymous",
-      source: d.source || null,
-      ts: d.ts
-    }));
-
-    // Simple rev to prevent stale client state
-    return res.status(200).json({
-      totalRaised: Number(total || 0),
-      donors: out,
-      rev: Date.now()
+    // Compute display_name by the rules
+    const donors = rows.map(r => {
+      let display = 'Anonymous';
+      if (!r.is_anonymous) {
+        if (r.first_name && r.first_name.trim()) {
+          display = r.first_name.trim();
+        } else if (r.name && r.name.trim()) {
+          display = r.name.trim().split(/\s+/)[0]; // first token
+        }
+      }
+      return {
+        id: r.id,
+        name: display,             // UI will just use this
+        amount: Number(r.amount) || 0,
+        ts: r.ts
+      };
     });
+
+    // Optional revision counter so the UI can ignore stale updates
+    const rev = Date.now();
+
+    res.status(200).json({ donors, rev });
   } catch (e) {
     console.error("tracker/list error", e);
-    return res.status(500).json({ error: "server error" });
+    res.status(500).json({ error: "Tracker list failed" });
   }
 }
