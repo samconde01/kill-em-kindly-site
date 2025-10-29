@@ -398,7 +398,7 @@ const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
         <div className="pb-panel" style={{ padding:20 }}>
           <h3 className="pb-glow" style={{ fontSize:18, fontWeight:600 }}>About the Project</h3>
           <p style={{ color:'var(--pb-dim)', marginTop:6 }}>
-            Kill Em Kindly is a short fan film based on the Fallout universe. This not-for-profit project is solely a passion project developed by dedicated storytellers. Taking place over 200 years after the nuclear disaster of October 27, 2077, this unique short explores parts of the Fallout universe that have never been built off of before. Please support us with donation or by sharing the page to help us bring this exciting story to life.
+            Kill Em Kindly is a short fan film based on the Fallout universe. This not-for-profit project is solely a passion project developed by dedicated storytellers. Taking place over 200 years after the nuclear disaster of October 23, 2077, this unique short explores parts of the Fallout universe that have never been built off of before. Please support us with donation or by sharing the page to help us bring this exciting story to life.
           </p>
 
           {/* Budget Breakdown */}
