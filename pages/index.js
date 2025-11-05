@@ -336,6 +336,20 @@ const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
     if (!selectedTier || nearest.cost !== selectedTier.cost) setSuggestedTier(nearest); else setSuggestedTier(null);
   }, [amount, selectedTier, tiers]);
 
+  // ---- One-time image existence check (remove after confirming) ----
+React.useEffect(() => {
+  const testUrls = [
+    '/images/logos/gunnar-optiks.png',
+    '/images/updates/gunnar-vault33.png',
+  ];
+  testUrls.forEach(u => {
+    const img = new Image();
+    img.onload = () => console.log('OK image:', u);
+    img.onerror = () => console.warn('MISSING image:', u);
+    img.src = `${u}?v=2`; // cache-bust
+  });
+}, []);
+
 
   return (
     <>
