@@ -82,6 +82,26 @@ const MINI_TIMELINE = [
   { label: 'Release', note: 'March 2026' },
 ];
 
+// --- Updates & Sponsors ----------------------------------------------------
+const UPDATES = [
+  {
+    id: '2025-11-05-gunnar',
+    title: 'Product Sponsor Confirmed: GUNNAR Optiks',
+    date: 'November 5, 2025',
+    body: `We're thrilled to announce Gunnar Optiks has been confirmed as a product sponsor for this project! You will see the iconic Vault 33 frames in the film and in behind-the-scenes content.`,
+    image: '/images/updates/gunnar-vault33.png'
+  },
+];
+
+const SPONSORS = [
+  {
+    name: 'GUNNAR Optiks',
+    logo: '/images/logos/gunnar-optiks.png',
+    url: 'https://gunnar.com'
+  },
+];
+
+
 // --- Legal Text (single source of truth) ----------------------------------
 const PRIVACY_TEXT = 'Privacy Policy\n\nEffective Date: October 2025\n\nThis Privacy Policy explains how we collect, use, and protect information from contributors and visitors on this crowdfunding page for our short film project. By contributing to this campaign, you agree to the terms below.\n\n1. Information We Collect\nWe may collect the following information when you contribute or interact with our page:\n\nName and email address\nShipping address (for physical perk fulfillment)\nPayment information (processed securely through our payment partners — we do not store credit card numbers)\nOptional info provided by you (e.g., T-shirt size, social handles, special instructions)\nWe also receive basic technical data automatically (e.g., IP address, browser type, time of visit) to maintain site security and performance.\n\n2. How We Use Your Information\nWe use your information strictly for:\nProcessing and confirming your contributions\nFulfilling and shipping perks\nSending project updates, shipping notifications, and key announcements\nResponding to refund or support inquiries\n\nWe do not sell or rent your information to third parties.\n\n3. How We Share Your Information\nWe may share your information with:\nPayment processors (to handle your transaction securely)\nShipping carriers (to deliver physical perks)\nProject team members (to fulfill perks or communicate with backers)\nWe require all partners to handle your information securely and use it only for the stated purpose.\n\n4. Data Retention\nWe retain contributor information only as long as needed for:\nFulfillment and communication\nLegal, accounting, or tax obligations\nMaintaining campaign records\nYou may request deletion of your personal information after fulfillment by emailing sconde@samcondedigital.com\n\n5. Your Rights\nYou have the right to:\nAccess the personal information we hold about you\nRequest corrections or deletion\nOpt out of non-essential emails (such as promotional updates)\n\n6. Data Security\nWe take reasonable administrative and technical measures to protect your personal information from unauthorized access, loss, or misuse.\n\n7. International Backers\nIf you contribute from outside the U.S., your information will be transferred and processed in the U.S. By contributing, you consent to this transfer.\n\n8. Policy Updates\nWe may update this Privacy Policy from time to time. The effective date at the top of this page reflects the latest version.\n\n9. Contact\nIf you have questions or requests regarding your personal information, contact:\nsconde@samcondedigital.com';
 
@@ -140,7 +160,7 @@ function GlobalStyles(){
       .pb-btn { border:1px solid var(--pb-border-strong); background: radial-gradient(120% 120% at 50% 0%, rgba(77,240,138,.18), rgba(77,240,138,.05)); color: var(--pb-bright); font-weight:800; letter-spacing:.02em; text-shadow: 0 0 6px rgba(185,255,156,.35); }
       .pb-btn:hover { filter: brightness(1.1); }
       .pb-btn-ghost { border:1px solid var(--pb-border); background:transparent; color:var(--pb-text); }
-      .pb-input { width:100%; padding:.6rem .8rem; background:#04170f; border:1px solid var(--pb-border); color:var(--pb-text); border-radius:10px; outline:none; caret-color:var(--pb-accent); }
+      .pb-input { width:100%; padding:.6rem .8rem; background:#04170f; border:1px solid var(--pb-border); color:#fff; border-radius:10px; outline:none; caret-color:var(--pb-accent); }
       .pb-input:focus { box-shadow:0 0 0 2px rgba(77,240,138,.25); border-color:var(--pb-border-strong); }
       .pb-error { color:#ff6b6b; }
       .pb-grid-overlay { position:absolute; inset:0; pointer-events:none; background-image: linear-gradient(var(--pb-grid) 1px, transparent 1px), linear-gradient(90deg, var(--pb-grid) 1px, transparent 1px); background-size:48px 48px; }
@@ -149,9 +169,21 @@ function GlobalStyles(){
       .highlight-paypal { outline: 2px solid var(--pb-accent); outline-offset: 6px; transition: outline .3s ease; }
       .cast-grid { display:grid; grid-template-columns: 1fr; gap:12px; }
       .cast-headshot { width:112px; height:112px; border-radius:12px; border:1px solid var(--pb-border); object-fit:cover; filter:grayscale(20%) contrast(1.1); }
+
+      /* Updates & Sponsors */
+      .updates-grid { display:grid; grid-template-columns: 1fr; gap:12px; }
+      .update-img { width:100%; height:220px; object-fit:cover; border:1px solid var(--pb-border); border-radius:10px; }
+      .sponsors-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:12px; }
+      .sponsor-card { padding:18px; display:flex; align-items:center; justify-content:center; min-height:96px; }
+      .sponsor-logo { max-width: 180px; max-height: 48px; width:auto; height:auto; object-fit:contain; filter: grayscale(15%) contrast(1.1); }
+
       @media (min-width: 720px) {
         .cast-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap:14px; }
         .cast-headshot { width:160px; height:160px; }
+
+        /* Responsive rules for updates/sponsors on larger screens */
+        .updates-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+        .sponsors-grid { grid-template-columns: repeat(4, minmax(0,1fr)); }
       }
     `}</style>
   );
@@ -437,6 +469,30 @@ const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
           </div>
         </div>
       </section>
+{/* Updates (lives under Timeline) */}
+<div style={{ marginTop:16 }}>
+  <h3 className="pb-glow" style={{ fontSize:18, fontWeight:600 }}>Updates</h3>
+  <div className="updates-grid" style={{ marginTop:12 }}>
+    {UPDATES.map((u) => (
+      <article key={u.id} className="pb-panel" style={{ padding:12 }}>
+        {u.image && (
+          <img
+            src={u.image}
+            alt={u.title}
+            className="update-img"
+            onError={(e)=>{ e.currentTarget.style.display='none'; }}
+          />
+        )}
+        <div style={{ marginTop:10 }}>
+          <div className="pb-glow" style={{ fontWeight:700 }}>{u.title}</div>
+          <div style={{ color:'var(--pb-dim)', fontSize:12, marginTop:4 }}>{u.date}</div>
+          <p style={{ color:'var(--pb-dim)', marginTop:8 }}>{u.body}</p>
+        </div>
+      </article>
+    ))}
+  </div>
+</div>
+
 
     {/* Rewards & Pledge Section */}
 <section id="rewards" className="pb-container" style={{ padding:'48px 0' }}>
@@ -727,6 +783,32 @@ const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
           </div>
         </div>
       </section>
+{/* Sponsors (lives under Producers) */}
+<div style={{ marginTop:24 }}>
+  <div className="pb-glow" style={{ fontSize:18, fontWeight:600, marginBottom:8 }}>Sponsors</div>
+  <p style={{ color:'var(--pb-dim)', marginTop:6 }}>
+    Huge thanks to the brands supporting this project with product and resources.
+  </p>
+  <div className="sponsors-grid" style={{ marginTop:12 }}>
+    {SPONSORS.map((s, i) => (
+      <a
+        key={`${s.name}-${i}`}
+        href={s.url || '#'}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="pb-panel sponsor-card"
+        title={s.name}
+      >
+        <img
+          src={s.logo || '/images/placeholder.jpg'}
+          alt={s.name}
+          className="sponsor-logo"
+          onError={(e)=>{ e.currentTarget.src = '/images/placeholder.jpg'; }}
+        />
+      </a>
+    ))}
+  </div>
+</div>
 
       {/* FAQ */}
       <section id="faq" className="pb-container" style={{ padding: '48px 0 72px' }}>
