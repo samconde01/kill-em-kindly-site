@@ -751,7 +751,12 @@ const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
             {CAST.map((person) => (
               <div key={person.key} className="cast-card pb-panel" style={{ padding:12 }}>
                 <div style={{ display:'grid', gridTemplateColumns:'auto 1fr', columnGap:12, alignItems:'center' }}>
-                  <img src={person.img || '/images/placeholder.jpg'} alt={person.name} className="cast-headshot" onError={(e)=>{ e.currentTarget.src = '/images/placeholder.jpg'; }} />
+                  <img
+  src={person.img}
+  alt={person.name}
+  className="cast-headshot"
+  onError={(e)=>{ e.currentTarget.style.display = 'none'; }}
+/>
                   <div>
                     <div className="pb-glow" style={{ fontWeight:700 }}>{person.name}</div>
                     <details>
