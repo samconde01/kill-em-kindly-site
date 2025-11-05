@@ -783,32 +783,42 @@ const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
           </div>
         </div>
       </section>
-{/* Sponsors (lives under Producers) */}
-<div style={{ marginTop:24 }}>
+{/* Sponsors */}
+<section className="pb-container" style={{ padding:'24px 0' }}>
   <div className="pb-glow" style={{ fontSize:18, fontWeight:600, marginBottom:8 }}>Sponsors</div>
-  <p style={{ color:'var(--pb-dim)', marginTop:6 }}>
-    Huge thanks to the brands supporting this project with product and resources.
-  </p>
-  <div className="sponsors-grid" style={{ marginTop:12 }}>
-    {SPONSORS.map((s, i) => (
-      <a
-        key={`${s.name}-${i}`}
-        href={s.url || '#'}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="pb-panel sponsor-card"
-        title={s.name}
-      >
-        <img
-          src={s.logo || '/images/placeholder.jpg'}
-          alt={s.name}
-          className="sponsor-logo"
-          onError={(e)=>{ e.currentTarget.src = '/images/placeholder.jpg'; }}
-        />
-      </a>
-    ))}
+
+  <div className="pb-panel" style={{ padding:16 }}>
+    <div className="sponsors-grid">
+      {SPONSORS.map((s, i) => (
+        <a
+          key={`${s.name}-${i}`}
+          className="pb-panel sponsor-card"
+          href={s.url || '#'}
+          target={s.url ? '_blank' : undefined}
+          rel={s.url ? 'noopener noreferrer' : undefined}
+          style={{ textDecoration:'none' }}
+        >
+          <div className="sponsor-card-inner" style={{display:'grid', placeItems:'center', width:'100%'}}>
+            <img
+              src={`${s.logo}?v=1`}           // cache-bust
+              alt={s.name}
+              className="sponsor-logo"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+                const fb = e.currentTarget.nextElementSibling;
+                if (fb) fb.style.display = 'block';
+              }}
+            />
+            <span className="sponsor-fallback" style={{display:'none', color:'var(--pb-dim)', fontSize:14}}>
+              {s.name}
+            </span>
+          </div>
+        </a>
+      ))}
+    </div>
   </div>
-</div>
+</section>
+
 
       {/* FAQ */}
       <section id="faq" className="pb-container" style={{ padding: '48px 0 72px' }}>
