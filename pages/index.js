@@ -97,7 +97,7 @@ const UPDATES = [
     title: 'Evike has stepped into the wastes with us.',
     date: 'November 18, 2025',
     body: `Their gear becomes part of the Oklahoma wasteland: worn, weathered, and woven into the struggle of anyone trying to survive the Plains Commonwealth. You’ll see their presence both in the film and behind the scenes as we build this story piece by piece.`,
-    image: '/images/updates/evike-announcement.png'
+    image: '/images/updates/evike-announcement.jpg'
   }
 ];
 
@@ -105,7 +105,7 @@ const UPDATES = [
 const SPONSORS = [
   {
     name: 'Gunnar Optiks',
-    logo: '/images/logos/gunnar-optiks.webp',
+    logo: '/images/logos/gunnar-optiks.png',
     url: 'https://gunnar.com'
   },
   {
