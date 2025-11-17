@@ -85,21 +85,21 @@ const MINI_TIMELINE = [
 // --- Updates & Sponsors ----------------------------------------------------
 const UPDATES = [
   {
-    id: '2025-11-05-gunnar',
-    title: 'Product Sponsor Confirmed: GUNNAR Optiks',
-    date: 'November 5, 2025',
-    body: `We're thrilled to announce Gunnar Optiks has been confirmed as a product sponsor for this project! You will see the iconic Vault 33 frames in the film and in behind-the-scenes content.`,
+    id: '2025-11-17-gunnar',
+    title: 'Gunnar Optiks is officially on board.',
+    date: 'November 17, 2025',
+    body: `The Vault 33 frames have become canon for this project — a perfect fit for the tone, the world, and the vault-dweller’s journey. You’ll see them throughout the film and behind the scenes.`,
     image: '/images/updates/gunnar-vault33.png'
   },
-];
 
-{
-  id: '2025-11-18-evike',
-  title: 'Evike has stepped into the wastes with us.',
-  date: 'November 18, 2025',
-  body: `Their gear becomes part of the Oklahoma wasteland: worn, weathered, and woven into the struggle of anyone trying to survive the Plains Commonwealth. You’ll see their presence both in the film and behind the scenes as we build this story piece by piece.`,
-  image: '/images/updates/evike-announcement.png'
-},
+  {
+    id: '2025-11-18-evike',
+    title: 'Evike has stepped into the wastes with us.',
+    date: 'November 18, 2025',
+    body: `Their gear becomes part of the Oklahoma wasteland: worn, weathered, and woven into the struggle of anyone trying to survive the Plains Commonwealth. You’ll see their presence both in the film and behind the scenes as we build this story piece by piece.`,
+    image: '/images/updates/evike-announcement.png'
+  }
+];
 
 
 const SPONSORS = [
