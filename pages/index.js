@@ -104,17 +104,17 @@ const UPDATES = [
 
 const SPONSORS = [
   {
-    name: 'GUNNAR Optiks',
-    logo: '/images/logos/gunnar-optiks.png',
+    name: 'Gunnar Optiks',
+    logo: '/images/logos/gunnar-optiks.webp',
     url: 'https://gunnar.com'
   },
+  {
+    name: 'Evike.com',
+    logo: '/images/logos/evike.png',
+    url: 'https://www.evike.com'
+  }
 ];
 
-{
-  name: 'Evike.com',
-  logo: '/images/logos/evike.png',
-  url: 'https://www.evike.com'
-},
 
 
 
