@@ -87,7 +87,7 @@ const UPDATES = [
   {
     id: '2025-11-17-gunnar',
     title: 'Gunnar Optiks is officially on board.',
-    date: 'November 17, 2025',
+    date: 'November 5, 2025',
     body: `The Vault 33 frames have become canon for this project — a perfect fit for the tone, the world, and the vault-dweller’s journey. You’ll see them throughout the film and behind the scenes.`,
     image: '/images/updates/gunnar-vault33.png'
   },
