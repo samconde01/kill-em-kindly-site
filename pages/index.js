@@ -99,6 +99,15 @@ const UPDATES = [
     body: `Their gear becomes part of the Oklahoma wasteland: worn, weathered, and woven into the struggle of anyone trying to survive the Plains Commonwealth. You’ll see their presence both in the film and behind the scenes as we build this story piece by piece.`,
     image: '/images/updates/evike-announcement.jpg'
   }
+
+  {
+  id: '2025-11-18-fanzilla',
+  title: 'Fanzilla Jackets enters the wasteland.',
+  date: 'November 18, 2025',
+  body: `A custom Fanzilla leather jacket will be worn by our lead character, stitched and built for the harsh world of the Plains Commonwealth. Their craftsmanship adds real-world weight and lore accuracy to every frame.`,
+  image: '/images/updates/fanzilla-announcement.png'
+}
+
 ];
 
 
@@ -113,6 +122,13 @@ const SPONSORS = [
     logo: '/images/logos/evike.png',
     url: 'https://www.evike.com'
   }
+
+  {
+  name: 'Fanzilla Jackets',
+  logo: '/images/logos/fanzilla.png',
+  url: 'https://fanzillajackets.com'
+}
+
 ];
 
 
