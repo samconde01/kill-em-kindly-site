@@ -103,7 +103,7 @@ const UPDATES = [
   {
   id: '2025-11-18-fanzilla',
   title: 'Fanzilla Jackets enters the wasteland.',
-  date: 'November 18, 2025',
+  date: 'November 19, 2025',
   body: `A custom Fanzilla leather jacket will be worn by our lead character, stitched and built for the harsh world of the Plains Commonwealth. Their craftsmanship adds real-world weight and lore accuracy to every frame.`,
   image: '/images/updates/fanzilla-announcement.png'
 }
