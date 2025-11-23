@@ -106,7 +106,15 @@ const UPDATES = [
   date: 'November 19, 2025',
   body: `A custom Fanzilla leather jacket will be worn by our lead character, stitched and built for the harsh world of the Plains Commonwealth. Their craftsmanship adds real-world weight and lore accuracy to every frame.`,
   image: '/images/updates/fanzilla-announcement.png'
+},
+  {
+  id: '2025-11-23-goontape',
+  title: 'GØØNTAPE marches into the Plains Commonwealth.',
+  date: 'November 23, 2025',
+  body: `GØØNTAPE’s raid-ready grip tape becomes part of the vault-dweller’s kit! Built to steady weapons, fight moisture, and survive the chaos of close quarters in the Oklahoma wastes. You’ll see their product in the film and behind the scenes.`,
+  image: '/images/updates/goontape-announcement.png'
 }
+
 
 ];
 
@@ -127,7 +135,13 @@ const SPONSORS = [
   name: 'Fanzilla Jackets',
   logo: '/images/logos/fanzilla.png',
   url: 'https://fanzillajackets.com'
+},
+  {
+  name: 'GØØNTAPE',
+  logo: '/images/logos/goontape.png',
+  url: 'https://goontape.com'
 }
+
 
 ];
 
@@ -824,6 +838,7 @@ React.useEffect(() => {
               { label: 'SC Digital' },
               { label: 'Direct Action Media' },
               { label: 'Slaughter Project' },
+               { label: 'GØØNTAPE' },
             ].map((p) => (
               <div
                 key={p.label}
