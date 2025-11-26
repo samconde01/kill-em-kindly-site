@@ -117,7 +117,7 @@ const UPDATES = [
     {
     id: '2025-11-26-bones',
     title: 'Bones Coffee Feuls the Wastelanders',
-    date: 'November 16, 2025',
+    date: 'November 26, 2025',
     body: `Bones Coffee Co. is now our official caffeine sponsor. Their blends will be fueling the cast and crew in behind the scenes updates as we grind through the Oklahoma wasteland and bring this story to life.`,
     image: '/images/updates/bones-announcement.png'
   }
@@ -151,7 +151,7 @@ const SPONSORS = [
 },
     {
     name: 'Bones Coffee Co.',
-    logo: '/images/logos/bones-coffee.png',
+    logo: '/images/logos/bonescoffee.png',
     url: 'https://www.bonescoffee.com'
   }
 
