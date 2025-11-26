@@ -44,11 +44,11 @@ const CAST = [
     bio: 'With a diverse background in on-camera work spanning short films, commercial content, and digital media, Sam excels at it all. While new to narrative acting, her ease in front of the lens and instinct for storytelling make her a standout presence. "Kill \'em Kindly" is a thrilling step into a lead role that channels her experience, passion, and sharp creative eye.'
   },
   {
-    name: 'James Choi',
-    key: 'james-choi',
-    img: '/images/james-choi.jpg',
-    bio: 'With over 30 film credits across indie features, shorts, and genre projects, this Korean American actor brings both range and presence to the screen. Trained in method and Meisner techniques, his performances balance intensity with nuance—whether he’s playing a conflicted lead or a ruthless antagonist. His background includes military tactical training, CQB, and weapons handling, making him a natural fit for action-heavy roles. Fluent in English, Korean, and Chinese, he brings an international versatility and grounded authenticity to every role he takes on.'
-  },
+  name: 'Daniel Cutts',
+  key: 'daniel-cutts',
+  img: '/images/daniel-cutts.jpg',
+  bio: 'Daniel Cutts has spent nearly a decade carving out a place in film and theatre, bringing a grounded, physical approach to every character he builds. Known for roles such as Doug in Kenneled and George in The Third Saturday in October Part V, he blends traditional acting with movement-based training to create performances that feel lived-in and emotionally precise. His work carries the texture of someone who builds characters from the inside out.'
+},
   {
     name: 'Cole Thornton',
     key: 'cole-thornton',
@@ -62,11 +62,11 @@ const CAST = [
     bio: 'Austin has been a Voice Actor for the last 11 years, appearing most notably in large scale fan films such as SCP: Overlord, SCP: Dollhouse as well as dozens of digital short films, Machinima, animated series, indie games and advertising. Austin recently debuted in his first live action film: STALKER: Shadow of the Zone, which led to a continued interest in pursuing live action acting. He plans to continue to work in the industry and participate in large scale projects while continuing voice over work.'
   },
   {
-    name: 'Eric Cummins',
-    key: 'eric-cummins',
-    img: '/images/eric-cummins.jpg',
-    bio: 'New to acting, Eric brings his true personality with a fun sense of whimsy to the production. Traveling the country to network and build his brand has helped him develop exceptional character and on-camera presence.'
-  },
+  name: 'Joshua Gray',
+  key: 'joshua-gray',
+  img: '/images/joshua-gray.jpg',
+  bio: 'Joshua Gray is an American actor and producer whose path began in the U.S. Army as an Airborne Infantryman before shifting into filmmaking. His work spans indie films, shorts, and narrative projects shaped by a mix of military discipline, sharp instincts, and a dry sense of humor. A co-founder of the New York-based studio Fabian Gray, he now leads Gray Matter Media and continues to build character-driven stories with grit and authenticity.'
+},
   {
     name: 'Scott Crabb',
     key: 'scott-crabb',
