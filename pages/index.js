@@ -64,7 +64,7 @@ const CAST = [
   {
   name: 'Joshua Gray',
   key: 'joshua-gray',
-  img: '/images/joshua-gray.jpg',
+  img: '/images/joshua-gray.png',
   bio: 'Joshua Gray is an American actor and producer whose path began in the U.S. Army as an Airborne Infantryman before shifting into filmmaking. His work spans indie films, shorts, and narrative projects shaped by a mix of military discipline, sharp instincts, and a dry sense of humor. A co-founder of the New York-based studio Fabian Gray, he now leads Gray Matter Media and continues to build character-driven stories with grit and authenticity.'
 },
   {
