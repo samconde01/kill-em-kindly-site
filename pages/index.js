@@ -113,7 +113,15 @@ const UPDATES = [
   date: 'November 23, 2025',
   body: `GØØNTAPE’s raid-ready grip tape becomes part of the vault-dweller’s kit! Built to steady weapons, fight moisture, and survive the chaos of close quarters in the Oklahoma wastes. You’ll see their product in the film and behind the scenes.`,
   image: '/images/updates/goontape-announcement.png'
-}
+},
+    {
+    id: '2025-11-26-bones',
+    title: 'Bones Coffee Feuls the Wastelanders',
+    date: 'November 16, 2025',
+    body: `Bones Coffee Co. is now our official caffeine sponsor. Their blends will be fueling the cast and crew in behind the scenes updates as we grind through the Oklahoma wasteland and bring this story to life.`,
+    image: '/images/updates/bones-announcement.png'
+  }
+
 
 
 ];
@@ -140,7 +148,13 @@ const SPONSORS = [
   name: 'GØØNTAPE',
   logo: '/images/logos/goontape.png',
   url: 'https://goontape.com'
-}
+},
+    {
+    name: 'Bones Coffee Co.',
+    logo: '/images/logos/bones-coffee.png',
+    url: 'https://www.bonescoffee.com'
+  }
+
 
 
 ];
