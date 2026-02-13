@@ -725,15 +725,11 @@ React.useEffect(() => {
 {/* Video */}
 <section className="pb-container" style={{ padding:'0 0 24px' }}>
   <div className="pb-panel" style={{ marginTop:16, padding:16 }}>
-    <div style={{ aspectRatio:'16/9', border:'1px solid var(--pb-border)', borderRadius:12, overflow:'hidden', position:'relative' }}>
-      
-      <img
-        src="/images/youtube-thumb.jpg?v=1"
-        alt="Kill ’em Kindly Crowdfunding Video"
-        style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}
-      />
-
-    </div>
+    <VideoEmbed
+      videoId="uQTAh-MuzgA"
+      poster="/images/youtube-thumb.jpg?v=2"
+      title="Kill ’em Kindly Crowdfunding Video"
+    />
   </div>
 </section>
 
