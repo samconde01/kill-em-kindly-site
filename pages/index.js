@@ -25,7 +25,7 @@ function nearestTier(amount, tiers) {
 
 // --- Data ------------------------------------------------------------------
 const TIER_DEFS = [
-  { cost: 20,  name: 'LIFEGIVER',           rewards: 'Digital Wallpaper Pack (3 phone & 3 desktop) & Soundtrack Downloads' },
+  { cost: 20,  name: 'LORECAST LISTENER',           rewards: 'Digital Wallpaper Pack (3 phone & 3 desktop) & Soundtrack Downloads' },
   { cost: 35,  name: 'CAP COLLECTOR',       rewards: 'Slaughter Project Nuka Sodapop Patch & Early Access to Behind the Scenes footage' },
   { cost: 55,  name: 'NUKA CAP COLLECTOR',  rewards: 'Slaughter Project Nuka Quantum Sodapop Patch & past rewards' },
   { cost: 75,  name: 'ARMORER',             rewards: 'T-Shirt and past rewards' },
