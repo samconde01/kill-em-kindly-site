@@ -88,8 +88,8 @@ const CAST = [
 const MINI_TIMELINE = [
   { label: 'Pre-production', note: 'October & November 2025' },
   { label: 'Filming', note: 'December 2025' },
-  { label: 'Post', note: 'January & February 2026' },
-  { label: 'Release', note: 'March 2026' },
+  { label: 'Post-production', note: 'January – March 2026', glow: true },
+  { label: 'Release', note: 'April 2026' },
 ];
 
 // --- Updates & Sponsors ----------------------------------------------------
@@ -696,10 +696,22 @@ React.useEffect(() => {
           <div style={{ marginTop:16 }}>
             <div className="pb-glow" style={{ fontWeight:600, marginBottom:6 }}>Timeline</div>
             <div style={{ display:'grid', gap:8 }}>
-              {MINI_TIMELINE.map((m, i) => (
-                <div key={`${m.label}-${i}`} className="pb-panel" style={{ padding:10 }}>
-                  <strong>{m.label}</strong> — <span style={{ color:'var(--pb-dim)' }}>{m.note}</span>
-                </div>
+             {MINI_TIMELINE.map((m, i) => (
+  <div
+    key={`${m.label}-${i}`}
+    className="pb-panel"
+    style={{
+      padding: 10,
+      boxShadow: m.glow
+        ? '0 0 0 2px var(--pb-border-strong), inset 0 0 24px rgba(255,156,43,0.18)'
+        : undefined,
+    }}
+  >
+    <strong className={m.glow ? 'pb-glow' : undefined}>{m.label}</strong>{' '}
+    — <span style={{ color:'var(--pb-dim)' }}>{m.note}</span>
+  </div>
+))}
+
               ))}
             </div>
           </div>
