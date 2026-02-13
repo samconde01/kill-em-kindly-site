@@ -581,91 +581,122 @@ React.useEffect(() => {
     <div className="pb-grid-overlay" />
     <Header />
 
-    {/* Hero */}
-    <section className="relative" style={{ overflow:'hidden' }}>
-      <div className="pb-container" style={{ padding:'72px 0 32px' }}>
-        <div className="pb-container" style={{ padding:'72px 0 32px' }}>
-          <motion.h1 initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} transition={{duration:.6}} className="pb-glow" style={{ fontSize: 'clamp(32px, 6vw, 64px)', fontWeight: 800, letterSpacing:'-.02em' }}>Kill 'em Kindly</motion.h1>
-          <motion.p initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} transition={{delay:.1,duration:.6}} style={{ marginTop: 12, maxWidth: 720, color: 'var(--pb-dim)' }}>
-            In this fan film a collision of western style and post-apocalyptic ruin come together to tell the story of a woman searching for her family. Along the way a deadly alter ego born from an experiment gone wrong… or maybe exactly right, may just save her life.
-          </motion.p>
-          <div style={{ marginTop: 24, display:'flex', gap:12, flexWrap:'wrap' }}>
-            <a href="#pledge" className="pb-btn" style={{ padding:'12px 18px', borderRadius:14 }}>Pledge Now</a>
-            <button className="pb-btn pb-btn-ghost" style={{ padding:'12px 18px', borderRadius:14 }} onClick={() => document.getElementById('details')?.scrollIntoView({behavior:'smooth'})}>Learn More</button>
-          </div>
-  {/* Tracker & Donor List */}
-          <div className="pb-panel" style={{ marginTop:16, padding:16 }}>
-            {/* Progress */}
-        <div className="pb-panel" style={{ padding:12 }}>
-  <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
-    <div className="pb-glow" style={{ fontWeight:700 }}>Funding Progress</div>
-<span className="pb-chip">Fundraising Ongoing</span>
-  </div>
-</div>
-<div style={{ marginTop:10, height:14, border:'1px solid var(--pb-border-strong)', borderRadius:10, overflow:'hidden', background:'rgba(77,240,138,.06)' }}>
-  <div style={{ width:`${progress*100}%`, height:'100%', background:'linear-gradient(90deg, rgba(77,240,138,.45), rgba(77,240,138,.15))' }} />
-</div>
+ {/* Hero */}
+<section className="relative" style={{ overflow:'hidden' }}>
+  <div className="pb-container" style={{ padding:'72px 0 32px' }}>
+    <motion.h1
+      initial={{opacity:0,y:10}}
+      animate={{opacity:1,y:0}}
+      transition={{duration:.6}}
+      className="pb-glow"
+      style={{ fontSize: 'clamp(32px, 6vw, 64px)', fontWeight: 800, letterSpacing:'-.02em' }}
+    >
+      Kill 'em Kindly
+    </motion.h1>
 
-            <div style={{ marginTop:10, display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12, fontSize:14 }}>
-              <div className="pb-panel" style={{ padding:10, textAlign:'center' }}>
-                <div className="pb-glow" style={{ fontWeight:700 }}>{formatUSD(totalRaised)}</div>
-                <div style={{ color:'var(--pb-dim)', fontSize:12 }}>Raised</div>
-              </div>
-              <div className="pb-panel" style={{ padding:10, textAlign:'center' }}>
-                <div className="pb-glow" style={{ fontWeight:700 }}>{formatUSD(FUNDING_GOAL)}</div>
-                <div style={{ color:'var(--pb-dim)', fontSize:12 }}>Goal</div>
-              </div>
-              <div className="pb-panel" style={{ padding:10, textAlign:'center' }}>
-                <div className="pb-glow" style={{ fontWeight:700 }}>{backers}</div>
-                <div style={{ color:'var(--pb-dim)', fontSize:12 }}>Backers</div>
-              </div>
-            </div>
-            <div style={{ display:'flex', gap:12, marginTop:12 }}>
-              <a href="#pledge" className="pb-btn" style={{ padding:'10px 14px', borderRadius:12 }}>Back this project</a>
-              <button className="pb-btn pb-btn-ghost" style={{ padding:'10px 14px', borderRadius:12 }} onClick={()=>document.getElementById('rewards')?.scrollIntoView({behavior:'smooth'})}>View rewards</button>
-            </div>
+    <motion.p
+      initial={{opacity:0,y:10}}
+      animate={{opacity:1,y:0}}
+      transition={{delay:.1,duration:.6}}
+      style={{ marginTop: 12, maxWidth: 720, color: 'var(--pb-dim)' }}
+    >
+      In this fan film a collision of western style and post-apocalyptic ruin come together to tell the story of a woman searching for her family. Along the way a deadly alter ego born from an experiment gone wrong… or maybe exactly right, may just save her life.
+    </motion.p>
 
-            {/* Donor list */}
-            <div className="pb-panel" style={{ padding:12, marginTop:12 }}>
-              <div className="pb-glow" style={{ fontWeight:700, marginBottom:8 }}>Recent Supporters</div>
-              <div style={{ display:'grid', gap:8 }}>
-                {visibleDonors.map((d, i) => (
-                  <div key={`${d.name || 'Anon'}-${i}`} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', border:'1px solid var(--pb-border)', borderRadius:10, padding:'8px 10px', background:'var(--pb-bg-2)' }}>
-                    <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-                      <div style={{ width:8, height:8, borderRadius:99, background:'rgba(255,156,43,.65)' }} />
-                      <span>{d.name || 'Anonymous'}</span>
-                    </div>
-                    <div className="pb-glow" style={{ fontWeight:600 }}>{formatUSD(d.amount || 0)}</div>
-                  </div>
-                ))}
-              </div>
-              {donors.length > 6 && (
-                <button className="pb-btn" style={{ marginTop:10, padding:'8px 12px', borderRadius:10 }} onClick={()=>setShowAllDonors(v=>!v)}>
-                  {showAllDonors ? 'Hide list' : `View more (${donors.length - 6} more)`}
-                </button>
-              )}
-            </div>
-          </div>
+    <div style={{ marginTop: 24, display:'flex', gap:12, flexWrap:'wrap' }}>
+      <a href="#pledge" className="pb-btn" style={{ padding:'12px 18px', borderRadius:14 }}>Pledge Now</a>
+      <button
+        className="pb-btn pb-btn-ghost"
+        style={{ padding:'12px 18px', borderRadius:14 }}
+        onClick={() => document.getElementById('details')?.scrollIntoView({behavior:'smooth'})}
+      >
+        Learn More
+      </button>
+    </div>
+
+    {/* Tracker & Donor List */}
+    <div className="pb-panel" style={{ marginTop:16, padding:16 }}>
+      {/* Progress */}
+      <div className="pb-panel" style={{ padding:12 }}>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
+          <div className="pb-glow" style={{ fontWeight:700 }}>Funding Progress</div>
+          <span className="pb-chip">Fundraising Ongoing</span>
         </div>
-      </section>
+      </div>
 
-    {/* Video */}
-<section className="pb-container" style={{ padding:'0 0 24px' }}>
-  <div className="pb-panel" style={{ marginTop:16, padding:16 }}>
-    <div className="pb-panel" style={{ padding:12 }}>
-      <div style={{ aspectRatio:'16/9', border:'1px solid var(--pb-border)', borderRadius:12, overflow:'hidden' }}>
-        <iframe
-          src="https://www.youtube.com/embed/uQTAh-MuzgA?si=P5IG0i0hmeDRny8G"
-          title="Kill ’em Kindly Crowdfunding Video"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-          style={{ width:'100%', height:'100%', display:'block' }}
-        />
+      <div style={{ marginTop:10, height:14, border:'1px solid var(--pb-border-strong)', borderRadius:10, overflow:'hidden', background:'rgba(77,240,138,.06)' }}>
+        <div style={{ width:`${progress*100}%`, height:'100%', background:'linear-gradient(90deg, rgba(77,240,138,.45), rgba(77,240,138,.15))' }} />
+      </div>
+
+      <div style={{ marginTop:10, display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12, fontSize:14 }}>
+        <div className="pb-panel" style={{ padding:10, textAlign:'center' }}>
+          <div className="pb-glow" style={{ fontWeight:700 }}>{formatUSD(totalRaised)}</div>
+          <div style={{ color:'var(--pb-dim)', fontSize:12 }}>Raised</div>
+        </div>
+
+        <div className="pb-panel" style={{ padding:10, textAlign:'center' }}>
+          <div className="pb-glow" style={{ fontWeight:700 }}>{formatUSD(FUNDING_GOAL)}</div>
+          <div style={{ color:'var(--pb-dim)', fontSize:12 }}>Goal</div>
+        </div>
+
+        <div className="pb-panel" style={{ padding:10, textAlign:'center' }}>
+          <div className="pb-glow" style={{ fontWeight:700 }}>{backers}</div>
+          <div style={{ color:'var(--pb-dim)', fontSize:12 }}>Backers</div>
+        </div>
+      </div>
+
+      <div style={{ display:'flex', gap:12, marginTop:12 }}>
+        <a href="#pledge" className="pb-btn" style={{ padding:'10px 14px', borderRadius:12 }}>Back this project</a>
+        <button
+          className="pb-btn pb-btn-ghost"
+          style={{ padding:'10px 14px', borderRadius:12 }}
+          onClick={()=>document.getElementById('rewards')?.scrollIntoView({behavior:'smooth'})}
+        >
+          View rewards
+        </button>
+      </div>
+
+      {/* Donor list */}
+      <div className="pb-panel" style={{ padding:12, marginTop:12 }}>
+        <div className="pb-glow" style={{ fontWeight:700, marginBottom:8 }}>Recent Supporters</div>
+
+        <div style={{ display:'grid', gap:8 }}>
+          {visibleDonors.map((d, i) => (
+            <div
+              key={`${d.name || 'Anon'}-${i}`}
+              style={{
+                display:'flex',
+                alignItems:'center',
+                justifyContent:'space-between',
+                border:'1px solid var(--pb-border)',
+                borderRadius:10,
+                padding:'8px 10px',
+                background:'var(--pb-bg-2)'
+              }}
+            >
+              <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+                <div style={{ width:8, height:8, borderRadius:99, background:'rgba(255,156,43,.65)' }} />
+                <span>{d.name || 'Anonymous'}</span>
+              </div>
+              <div className="pb-glow" style={{ fontWeight:600 }}>{formatUSD(d.amount || 0)}</div>
+            </div>
+          ))}
+        </div>
+
+        {donors.length > 6 && (
+          <button
+            className="pb-btn"
+            style={{ marginTop:10, padding:'8px 12px', borderRadius:10 }}
+            onClick={()=>setShowAllDonors(v=>!v)}
+          >
+            {showAllDonors ? 'Hide list' : `View more (${donors.length - 6} more)`}
+          </button>
+        )}
       </div>
     </div>
   </div>
 </section>
+
 
         
       {/* About / Details Section */}
