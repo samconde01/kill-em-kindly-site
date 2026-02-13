@@ -648,15 +648,24 @@ React.useEffect(() => {
  {/* Hero */}
 <section className="relative" style={{ overflow:'hidden' }}>
   <div className="pb-container" style={{ padding:'72px 0 32px' }}>
-    <motion.h1
-      initial={{opacity:0,y:10}}
-      animate={{opacity:1,y:0}}
-      transition={{duration:.6}}
-      className="pb-glow"
-      style={{ fontSize: 'clamp(32px, 6vw, 64px)', fontWeight: 800, letterSpacing:'-.02em' }}
-    >
-      Kill 'em Kindly
-    </motion.h1>
+   <motion.div
+  initial={{opacity:0,y:10}}
+  animate={{opacity:1,y:0}}
+  transition={{duration:.6}}
+  style={{ marginBottom: 12 }}
+>
+  <img
+    src="/images/NEW-LOGO.png?v=3"
+    alt="Kill ’em Kindly"
+    style={{
+      width: 'min(520px, 90%)',
+      height: 'auto',
+      display: 'block',
+      filter: 'drop-shadow(0 0 18px rgba(255,156,43,.45))'
+    }}
+  />
+</motion.div>
+
 
     <motion.p
       initial={{opacity:0,y:10}}
