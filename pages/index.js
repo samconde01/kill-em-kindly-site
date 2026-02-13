@@ -759,31 +759,31 @@ React.useEffect(() => {
 {/* Updates (under Timeline) */}
 <section className="pb-container" style={{ padding:'16px 0' }}>
   <h3 className="pb-glow" style={{ fontSize:18, fontWeight:600 }}>Updates</h3>
-  <div className="updates-grid" style={{ marginTop:12 }}>
- {[...UPDATES].reverse().map((u) => ((u) => (
-      <article key={u.id} className="pb-panel" style={{ padding:12 }}>
-        {u.image && (
-          <img
-            src={`${u.image}?v=2`}
-            alt={u.title}
-            className="update-img"
-            onError={(e) => {
-              console.warn('Update image failed to load:', u.image);
-              e.currentTarget.style.display = 'none';
-              const fb = e.currentTarget.nextElementSibling;
-              if (fb) fb.style.display = 'block';
-            }}
-          />
-        )}
-        <div style={{ display:'none', color:'var(--pb-dim)', fontSize:14 }}>(Image coming soon)</div>
 
-        <div style={{ marginTop:10 }}>
-          <div className="pb-glow" style={{ fontWeight:700 }}>{u.title}</div>
-          <div style={{ color:'var(--pb-dim)', fontSize:12, marginTop:4 }}>{u.date}</div>
-          <p style={{ color:'var(--pb-dim)', marginTop:8 }}>{u.body}</p>
-        </div>
-      </article>
-    ))}
+  <div className="updates-grid" style={{ marginTop:12 }}>
+    {UPDATES.map((u) => {
+      return (
+        <article key={u.id} className="pb-panel" style={{ padding:12 }}>
+          {u.image ? (
+            <img
+              src={`${u.image}?v=2`}
+              alt={u.title}
+              className="update-img"
+              onError={(e) => {
+                console.warn('Update image failed to load:', u.image);
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+          ) : null}
+
+          <div style={{ marginTop:10 }}>
+            <div className="pb-glow" style={{ fontWeight:700 }}>{u.title}</div>
+            <div style={{ color:'var(--pb-dim)', fontSize:12, marginTop:4 }}>{u.date}</div>
+            <p style={{ color:'var(--pb-dim)', marginTop:8 }}>{u.body}</p>
+          </div>
+        </article>
+      );
+    })}
   </div>
 </section>
 
