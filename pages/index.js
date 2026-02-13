@@ -727,7 +727,7 @@ React.useEffect(() => {
   <div className="pb-panel" style={{ marginTop:16, padding:16 }}>
     <div style={{ aspectRatio:'16/9', border:'1px solid var(--pb-border)', borderRadius:12, overflow:'hidden' }}>
       <iframe
-        src="https://www.youtube.com/embed/uQTAh-MuzgA?si=P5IG0i0hmeDRny8G"
+src="https://www.youtube.com/embed/uQTAh-MuzgA?rel=0&modestbranding=1"
         title="Kill ’em Kindly Crowdfunding Video"
         frameBorder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
