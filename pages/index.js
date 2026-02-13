@@ -136,7 +136,7 @@ const UPDATES = [
   title: 'We’re officially in post-production.',
   date: 'February 12, 2026',
   body: `Filming is wrapped and the project is now in post. We’re editing, shaping the sound, and locking in the final tone — everything that makes the wasteland feel real. Donations from here forward directly support post costs and reward fulfillment.`,
-  image: '/images/updates/post-production.PNG'
+  image: '/images/post-production.PNG'
 },
 
 
