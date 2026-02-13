@@ -136,7 +136,7 @@ const UPDATES = [
   title: 'We’re officially in post-production.',
   date: 'February 12, 2026',
   body: `Filming is wrapped and the project is now in post. We’re editing, shaping the sound, and locking in the final tone — everything that makes the wasteland feel real. Donations from here forward directly support post costs and reward fulfillment.`,
-  image: '/images/updates/post-production.jpg'
+  image: '/images/updates/post-production.PNG'
 },
 
 
@@ -775,29 +775,30 @@ React.useEffect(() => {
   <h3 className="pb-glow" style={{ fontSize:18, fontWeight:600 }}>Updates</h3>
 
   <div className="updates-grid" style={{ marginTop:12 }}>
-    {UPDATES.map((u) => {
-      return (
-        <article key={u.id} className="pb-panel" style={{ padding:12 }}>
-          {u.image ? (
-            <img
-              src={`${u.image}?v=2`}
-              alt={u.title}
-              className="update-img"
-              onError={(e) => {
-                console.warn('Update image failed to load:', u.image);
-                e.currentTarget.style.display = 'none';
-              }}
-            />
-          ) : null}
+ {[...UPDATES].sort((a, b) => new Date(b.date) - new Date(a.date)).map((u) => {
+  return (
+    <article key={u.id} className="pb-panel" style={{ padding:12 }}>
+      {u.image ? (
+        <img
+          src={`${u.image}?v=2`}
+          alt={u.title}
+          className="update-img"
+          onError={(e) => {
+            console.warn('Update image failed to load:', u.image);
+            e.currentTarget.style.display = 'none';
+          }}
+        />
+      ) : null}
 
-          <div style={{ marginTop:10 }}>
-            <div className="pb-glow" style={{ fontWeight:700 }}>{u.title}</div>
-            <div style={{ color:'var(--pb-dim)', fontSize:12, marginTop:4 }}>{u.date}</div>
-            <p style={{ color:'var(--pb-dim)', marginTop:8 }}>{u.body}</p>
-          </div>
-        </article>
-      );
-    })}
+      <div style={{ marginTop:10 }}>
+        <div className="pb-glow" style={{ fontWeight:700 }}>{u.title}</div>
+        <div style={{ color:'var(--pb-dim)', fontSize:12, marginTop:4 }}>{u.date}</div>
+        <p style={{ color:'var(--pb-dim)', marginTop:8 }}>{u.body}</p>
+      </div>
+    </article>
+  );
+})}
+
   </div>
 </section>
 
