@@ -215,12 +215,32 @@ export function App({ hasClientToken = false }){
 function GlobalStyles(){
   return (
     <style>{`
-      :root {
-        --pb-bg: #041b11; --pb-bg-2: #072417; --pb-grid: rgba(110,255,141,.06);
-        --pb-text: #9efc6a; --pb-dim: #73c96a; --pb-bright: #b9ff9c; --pb-accent:#4df08a;
-        --pb-border: rgba(158,252,106,.35); --pb-border-strong: rgba(158,252,106,.6);
-        --pb-shadow: 0 0 0 1px var(--pb-border), 0 0 24px rgba(110,255,141,.12) inset;
-      }
+     :root {
+  /* Backgrounds */
+  --pb-bg: #140a02;
+  --pb-bg-2: #1c0f03;
+
+  /* Grid overlay */
+  --pb-grid: rgba(255, 170, 60, .06);
+
+  /* Text */
+  --pb-text: #ffb347;
+  --pb-dim: #d98a2a;
+  --pb-bright: #ffd27a;
+
+  /* Accent glow */
+  --pb-accent: #ff9c2b;
+
+  /* Borders */
+  --pb-border: rgba(255, 179, 71, .30);
+  --pb-border-strong: rgba(255, 179, 71, .55);
+
+  /* Inner glow */
+  --pb-shadow: 
+    0 0 0 1px var(--pb-border),
+    0 0 28px rgba(255, 156, 43, .12) inset;
+}
+
       html, body, .pipboy { height:100%; background:var(--pb-bg); color:var(--pb-text); }
       .pipboy { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
       .pb-container { max-width: 1120px; margin: 0 auto; padding: 0 1.25rem; }
