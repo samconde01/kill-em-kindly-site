@@ -1162,17 +1162,7 @@ React.useEffect(() => {
             ))}
           </div>
         </div>
-{person.ig && (
-  <a
-    href={`https://instagram.com/${person.ig}`}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="pb-ig-btn"
-    style={{ display:'inline-block', marginTop:6 }}
-  >
-    @{person.ig}
-  </a>
-)}
+
 
         {/* Producers */}
         <div style={{ marginTop:24 }}>
