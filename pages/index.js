@@ -442,45 +442,43 @@ html, body, .pipboy {
 function Header(){
   return (
     <header className="pb-header">
-      <div className="pb-container" style={{ height: 64, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+      <div
+        className="pb-container"
+        style={{ height: 64, display:'flex', alignItems:'center', justifyContent:'space-between' }}
+      >
         <div style={{ display:'flex', alignItems:'center', gap:12 }}>
-         <img
-  src="/images/NEW-LOGO.png?v=2"
-  alt="Kill ’em Kindly"
-  style={{
-    height: '48px',
-    width: 'auto',
-    display: 'block',
-    filter: 'drop-shadow(0 0 10px rgba(255,156,43,.45))'
-  }}
-/>
+          <img
+            src="/images/NEW-LOGO.png?v=2"
+            alt="Kill ’em Kindly"
+            style={{
+              height: '48px',
+              width: 'auto',
+              display: 'block',
+              filter: 'drop-shadow(0 0 10px rgba(255,156,43,.45))'
+            }}
+          />
+        </div>
 
-  </div>
-<nav style={{ display:'flex', gap:12 }}>
-  <a
-    href="#details"
-    className="pb-btn mobile-hide"
-    style={{ padding:'8px 12px', borderRadius:10 }}
-  >
-    About
-  </a>
+        <nav style={{ display:'flex', gap:12, flexWrap:'wrap', justifyContent:'flex-end' }}>
+          <a
+            href="#details"
+            className="pb-btn mobile-hide"
+            style={{ padding:'8px 12px', borderRadius:10 }}
+          >
+            About
+          </a>
+          <a href="#rewards" className="pb-btn" style={{ padding:'8px 12px', borderRadius:10 }}>
+            Rewards
+          </a>
+          <a href="#pledge" className="pb-btn" style={{ padding:'8px 12px', borderRadius:10 }}>
+            Pledge
+          </a>
+        </nav>
+      </div>
+    </header>
+  );
+}
 
-  <a
-    href="#rewards"
-    className="pb-btn"
-    style={{ padding:'8px 12px', borderRadius:10 }}
-  >
-    Rewards
-  </a>
-
-  <a
-    href="#pledge"
-    className="pb-btn"
-    style={{ padding:'8px 12px', borderRadius:10 }}
-  >
-    Pledge
-  </a>
-</nav>
 
 function Footer(){
   return (
