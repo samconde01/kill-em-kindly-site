@@ -642,24 +642,23 @@ React.useEffect(() => {
         </div>
       </section>
 
-       {/* Video */}
-<div className="pb-panel" style={{ marginTop:16, padding:16 }}>
-  <div
-    className="pb-panel"
-    style={{ padding:12 }}
-  >
-    <div style={{ aspectRatio:'16/9', border:'1px solid var(--pb-border)', borderRadius:12, overflow:'hidden' }}>
-      <iframe
-        src="https://www.youtube.com/embed/uQTAh-MuzgA?si=P5IG0i0hmeDRny8G"
-        title="Kill ’em Kindly Crowdfunding Video"
-        frameBorder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowFullScreen
-        style={{ width:'100%', height:'100%', display:'block' }}
-      />
+    {/* Video */}
+<section className="pb-container" style={{ padding:'0 0 24px' }}>
+  <div className="pb-panel" style={{ marginTop:16, padding:16 }}>
+    <div className="pb-panel" style={{ padding:12 }}>
+      <div style={{ aspectRatio:'16/9', border:'1px solid var(--pb-border)', borderRadius:12, overflow:'hidden' }}>
+        <iframe
+          src="https://www.youtube.com/embed/uQTAh-MuzgA?si=P5IG0i0hmeDRny8G"
+          title="Kill ’em Kindly Crowdfunding Video"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+          style={{ width:'100%', height:'100%', display:'block' }}
+        />
+      </div>
     </div>
   </div>
-</div>
+</section>
 
         
       {/* About / Details Section */}
