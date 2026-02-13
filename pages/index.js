@@ -567,9 +567,11 @@ React.useEffect(() => {
 
 
   return (
-    <>
-      <div className="pb-scanlines" />
-      <Header />
+   <>
+  <div className="pb-scanlines" />
+  <div className="pb-grid-overlay" />
+  <Header />
+
 
       {/* Hero */}
       <section className="relative" style={{ overflow:'hidden' }}>
