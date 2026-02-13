@@ -130,7 +130,14 @@ const UPDATES = [
     date: 'November 26, 2025',
     body: `Bones Coffee Co. is now our official caffeine sponsor. Their blends will be fueling the cast and crew in behind the scenes updates as we grind through the Oklahoma wasteland and bring this story to life.`,
     image: '/images/updates/bones-announcement.png'
-  }
+  },
+{
+  id: '2026-02-12-post',
+  title: 'We’re officially in post-production.',
+  date: 'February 12, 2026',
+  body: `Filming is wrapped and the project is now in post. We’re editing, shaping the sound, and locking in the final tone — everything that makes the wasteland feel real. Donations from here forward directly support post costs and reward fulfillment.`,
+  image: '/images/updates/post-production.jpg'
+},
 
 
 
@@ -437,7 +444,7 @@ function Footer(){
     <footer style={{ borderTop:'1px solid var(--pb-border)' }}>
       <div className="pb-container" style={{ padding:'24px 0', display:'flex', flexWrap:'wrap', alignItems:'center', justifyContent:'space-between', gap:16, fontSize:14, color:'var(--pb-dim)' }}>
         <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-          <div style={{ height: 22, width: 22, borderRadius: 6, background: 'linear-gradient(135deg,#2df57e,#52ffa3)' }} />
+          <div style={{ height: 22, width: 22, borderRadius: 6, background: 'linear-gradient(135deg,#ff9c2b,#ffd27a)' }} />
           <span>© {new Date().getFullYear()} Kill 'em Kindly</span>
         </div>
         <div style={{ display:'flex', alignItems:'center', gap:18 }}>
@@ -568,15 +575,15 @@ React.useEffect(() => {
 }, []);
 
 
-  return (
-   <>
-  <div className="pb-scanlines" />
-  <Header />
+ return (
+  <>
+    <div className="pb-scanlines" />
+    <div className="pb-grid-overlay" />
+    <Header />
 
-
-      {/* Hero */}
-      <section className="relative" style={{ overflow:'hidden' }}>
-        <div className="pb-grid-overlay" />
+    {/* Hero */}
+    <section className="relative" style={{ overflow:'hidden' }}>
+      <div className="pb-container" style={{ padding:'72px 0 32px' }}>
         <div className="pb-container" style={{ padding:'72px 0 32px' }}>
           <motion.h1 initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} transition={{duration:.6}} className="pb-glow" style={{ fontSize: 'clamp(32px, 6vw, 64px)', fontWeight: 800, letterSpacing:'-.02em' }}>Kill 'em Kindly</motion.h1>
           <motion.p initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} transition={{delay:.1,duration:.6}} style={{ marginTop: 12, maxWidth: 720, color: 'var(--pb-dim)' }}>
@@ -625,7 +632,7 @@ React.useEffect(() => {
                 {visibleDonors.map((d, i) => (
                   <div key={`${d.name || 'Anon'}-${i}`} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', border:'1px solid var(--pb-border)', borderRadius:10, padding:'8px 10px', background:'var(--pb-bg-2)' }}>
                     <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-                      <div style={{ width:8, height:8, borderRadius:99, background:'rgba(77,240,138,.6)' }} />
+                      <div style={{ width:8, height:8, borderRadius:99, background:'rgba(255,156,43,.65)' }} />
                       <span>{d.name || 'Anonymous'}</span>
                     </div>
                     <div className="pb-glow" style={{ fontWeight:600 }}>{formatUSD(d.amount || 0)}</div>
@@ -715,12 +722,14 @@ React.useEffect(() => {
     ))}
   </div>
 </div>
+</div>     {/* closes pb-panel inside #details */}
+</section> {/* closes #details section */}
 
 {/* Updates (under Timeline) */}
 <section className="pb-container" style={{ padding:'16px 0' }}>
   <h3 className="pb-glow" style={{ fontSize:18, fontWeight:600 }}>Updates</h3>
   <div className="updates-grid" style={{ marginTop:12 }}>
-    {UPDATES.map((u) => (
+ {[...UPDATES].reverse().map((u) => ((u) => (
       <article key={u.id} className="pb-panel" style={{ padding:12 }}>
         {u.image && (
           <img
@@ -973,7 +982,7 @@ React.useEffect(() => {
           cursor: 'pointer',
           boxShadow:
             selectedTier?.cost === t.cost
-              ? '0 0 0 2px var(--pb-border-strong), inset 0 0 24px rgba(110,255,141,0.15)'
+              ? '0 0 0 2px var(--pb-border-strong), inset 0 0 24px rgba(255,156,43,0.18)'
               : undefined
         }}
         onClick={() => chooseTier(t)}
