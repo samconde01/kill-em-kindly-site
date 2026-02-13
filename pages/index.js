@@ -435,6 +435,13 @@ function GlobalStyles(){
       }
     `}</style>
   );
+/* Hide About button on mobile */
+@media (max-width: 520px) {
+  .mobile-hide {
+    display: none !important;
+  }
+}
+
 }
 
 function Header(){
@@ -453,22 +460,32 @@ function Header(){
   }}
 />
 
-        </div>
-      <nav style={{ display:'flex', gap:12 }}>
+  </div>
+<nav style={{ display:'flex', gap:12 }}>
   <a
     href="#details"
-    className="pb-btn pb-nav-about"
+    className="pb-btn mobile-hide"
     style={{ padding:'8px 12px', borderRadius:10 }}
   >
     About
   </a>
-  <a href="#rewards" className="pb-btn" style={{ padding:'8px 12px', borderRadius:10 }}>Rewards</a>
-  <a href="#pledge" className="pb-btn" style={{ padding:'8px 12px', borderRadius:10 }}>Pledge</a>
+
+  <a
+    href="#rewards"
+    className="pb-btn"
+    style={{ padding:'8px 12px', borderRadius:10 }}
+  >
+    Rewards
+  </a>
+
+  <a
+    href="#pledge"
+    className="pb-btn"
+    style={{ padding:'8px 12px', borderRadius:10 }}
+  >
+    Pledge
+  </a>
 </nav>
-      </div>
-    </header>
-  );
-}
 
 function Footer(){
   return (
