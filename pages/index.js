@@ -55,6 +55,7 @@ const CAST = [
     img: '/images/cole-thornton.jpg',
     bio: 'Cole is an actor and model whose work often places him in high-intensity, action-driven roles. Best known for his performances in Stalker: Shadow of the Zone and Ten of Swords, Thornton has consistently brought a physical, commanding presence to screen. Recently, he has been exploring layered characters and more dramatic storytelling through collaborative projects. With a background that combines discipline, physicality, and a sharp instinct for performance, Thornton is carving a path as a versatile actor ready to tackle both action and character-driven roles.'
   },
+  
   {
     name: 'Austin Rearden',
     key: 'austin-rearden',
@@ -74,6 +75,15 @@ const CAST = [
     bio: 'Michael Scott Crabb, known professionally as Scott Crabb, is most recognized for his work in STALKER: Shadow of the Zone, for which his portrayal of the character, "Monk" received a nomination for best supporting actor at the 2024 Tampa Bay Underground Film Festival. Scott also played the role of “Topper’s Dad” in two episodes of the Netflix series Outer Banks, Season 3. Prior to stepping into the world of acting, Scott had a storied 25-year international career as a special agent with the U.S. government. Scott\'s unique background brings a deep sense of authenticity and intensity to his performances.'
   },
 ];
+      const DIRECTOR = {
+  name: 'Cory Haynes',
+  key: 'cory-haynes',
+  img: '/images/cory-haynes.jpg',
+  ig: 'https://instagram.com/tacticooldork',
+  igHandle: '@tacticooldork',
+  bio: 'Cory Haynes is the director of Kill ’em Kindly and the creative lead behind Direct Action Media. His work centers on grounded action, strong atmosphere, and character-first tension. With a focus on practical execution and cinematic realism, Cory builds worlds that feel lived-in, dangerous, and emotionally sharp.'
+};
+
 
 const MINI_TIMELINE = [
   { label: 'Pre-production', note: 'October & November 2025' },
