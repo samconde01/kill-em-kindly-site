@@ -178,7 +178,7 @@ const PRIVACY_TEXT = 'Privacy Policy\n\nEffective Date: October 2025\n\nThis Pri
 const REFUNDS_TEXT = 'Refunds & Responsibility Policy\nEffective date: October 2025\n\nNature of Contributions\nAll payments are contributions to support production of the short film.\n\nPerks/rewards are good-faith thank-yous, not retail purchases. Delivery timelines may shift due to production realities.\n\nDonations & Rewards\nBy making a contribution to this campaign, you acknowledge that your payment is a donation to support the production of the project. While we will make every reasonable effort to deliver rewards associated with your donation after the project is completed, fulfillment is not guaranteed and may be delayed, modified, or canceled due to factors outside of our control (including production constraints, vendor issues, or force majeure). Your donation does not grant ownership, equity, or any right to receive a specific product or service.\n\nRefunds\nNo refunds will be issued once a contribution is processed.\nExceptions (extenuating circumstances only): If you believe your case qualifies (e.g., duplicate charge, obvious processing error, verified non-delivery after project wrap), email sconde@samcondedigital.com within 14 days of the issue. We\'ll review and respond in writing.\n\nOur Responsibilities\nUse funds solely for the project (e.g., travel, lodging, food, locations, costuming, set design, logistics, contingency).\nMake commercially reasonable efforts to deliver listed perks and communicate schedule changes.\nPost periodic updates on progress, setbacks, and delivery windows.\nProtect contributor data and use it only for fulfillment and project communications. See our Privacy Notice for details.\n\nContributor Responsibilities\nProvide accurate shipping info, email, and sizes (if applicable) at checkout; update us promptly if anything changes.\nMonitor project updates and email notifications for fulfillment steps.\nCover any applicable taxes, customs, or import fees in your country/region.\nUnderstand that production schedules can change due to weather, location access, safety, or force majeure.\n\nPerk Fulfillment\nPhysical items ship to the address you provide; digital items deliver to your email.\nIf a listed perk becomes impracticable (e.g., vendor discontinuation), we may substitute an item of equal or greater value or adjust delivery timing.\nUnclaimed or undeliverable perks after 60 days of our delivery notice may be forfeited.\n\nChargebacks & Disputes\nPlease contact us first at sconde@samcondedigital.com so we can resolve issues quickly. Filing a chargeback without contacting us may delay resolution.\n\nContact\nQuestions, extenuating-circumstance refunds, or address changes: sconde@samcondedigital.com';
 
 // --- Crowdfunding (live or mock) ---------------------------------
-const FUNDING_GOAL = 15000; // USD
+const FUNDING_GOAL = 10000; // USD
 function formatUSD(n){
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(n);
 }
@@ -583,28 +583,13 @@ React.useEffect(() => {
             <a href="#pledge" className="pb-btn" style={{ padding:'12px 18px', borderRadius:14 }}>Pledge Now</a>
             <button className="pb-btn pb-btn-ghost" style={{ padding:'12px 18px', borderRadius:14 }} onClick={() => document.getElementById('details')?.scrollIntoView({behavior:'smooth'})}>Learn More</button>
           </div>
-
-          {/* Video */}
-          <div className="pb-panel" style={{ marginTop:16, padding:12 }}>
-            <div style={{ aspectRatio:'16/9', border:'1px solid var(--pb-border)', borderRadius:12, overflow:'hidden' }}>
-              <iframe
-                src="https://www.youtube.com/embed/uQTAh-MuzgA?si=P5IG0i0hmeDRny8G"
-                title="Kill 'Em Kindly Crowdfunding Video"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                style={{ width:'100%', height:'100%', display:'block' }}
-              />
-            </div>
-          </div>
-
-          {/* Tracker & Donor List */}
+  {/* Tracker & Donor List */}
           <div className="pb-panel" style={{ marginTop:16, padding:16 }}>
             {/* Progress */}
         <div className="pb-panel" style={{ padding:12 }}>
   <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
     <div className="pb-glow" style={{ fontWeight:700 }}>Funding Progress</div>
-    <span className="pb-chip">Ends 11/30</span>
+<span className="pb-chip">Fundraising Ongoing</span>
   </div>
 </div>
 <div style={{ marginTop:10, height:14, border:'1px solid var(--pb-border-strong)', borderRadius:10, overflow:'hidden', background:'rgba(77,240,138,.06)' }}>
@@ -654,6 +639,21 @@ React.useEffect(() => {
         </div>
       </section>
 
+          {/* Video */}
+          <div className="pb-panel" style={{ marginTop:16, padding:12 }}>
+            <div style={{ aspectRatio:'16/9', border:'1px solid var(--pb-border)', borderRadius:12, overflow:'hidden' }}>
+              <iframe
+                src="https://www.youtube.com/embed/uQTAh-MuzgA?si=P5IG0i0hmeDRny8G"
+                title="Kill 'Em Kindly Crowdfunding Video"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                style={{ width:'100%', height:'100%', display:'block' }}
+              />
+            </div>
+          </div>
+
+        
       {/* About / Details Section */}
       <section id="details" className="pb-container" style={{ padding:'24px 0' }}>
         <div className="pb-panel" style={{ padding:20 }}>
