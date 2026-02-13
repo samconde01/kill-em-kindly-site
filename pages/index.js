@@ -1280,10 +1280,11 @@ React.useEffect(() => {
               q: "Is this affiliated with the creators of the original IP?",
               a: "No. Kill 'em Kindly is an entirely independent fan project. We aren’t affiliated with or endorsed by the original rights holders. We’re passionate fans drawing on the familiar lore, aesthetics, and staples that audiences love—but we’re also venturing into brand-new territory. Our goal is to honor what came before while telling stories that have never been told within this universe."
             },
-           {
-  q: "When does the crowdfunding end?",
-  a: "Our crowdfunding campaign now ends November 30, 2025. There’s still time to back the project, unlock rewards, and help us reach our funding goals."
+ {
+  q: "Is fundraising still open?",
+  a: "Yes. While principal fundraising wrapped in November 2025, donations remain open to help cover post-production, distribution, and reward fulfillment costs. Every contribution from this point forward directly supports editing, sound design, final delivery, and getting the film in front of audiences."
 },
+
            {
   q: "What do I get for pledging?",
   a: "Every supporter unlocks access to exclusive updates through this site. To redeem a reward tier please ensure you type the proper amount into your donation selection. Rewards are based off of final donation amounts from one single donation. Donations are not stacked. If you'd like to alter your donation in any way please reach out to sconde@samcondedigital.com"
