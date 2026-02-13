@@ -454,11 +454,17 @@ function Header(){
 />
 
         </div>
-        <nav style={{ display:'flex', gap:12 }}>
-          <a href="#details" className="pb-btn" style={{ padding:'8px 12px', borderRadius:10 }}>About</a>
-          <a href="#rewards" className="pb-btn" style={{ padding:'8px 12px', borderRadius:10 }}>Rewards</a>
-          <a href="#pledge" className="pb-btn" style={{ padding:'8px 12px', borderRadius:10 }}>Pledge</a>
-        </nav>
+      <nav style={{ display:'flex', gap:12 }}>
+  <a
+    href="#details"
+    className="pb-btn pb-nav-about"
+    style={{ padding:'8px 12px', borderRadius:10 }}
+  >
+    About
+  </a>
+  <a href="#rewards" className="pb-btn" style={{ padding:'8px 12px', borderRadius:10 }}>Rewards</a>
+  <a href="#pledge" className="pb-btn" style={{ padding:'8px 12px', borderRadius:10 }}>Pledge</a>
+</nav>
       </div>
     </header>
   );
