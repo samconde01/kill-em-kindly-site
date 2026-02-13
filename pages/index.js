@@ -828,6 +828,58 @@ React.useEffect(() => {
 
       {/* Cast & Producers */}
       <section className="pb-container" style={{ padding:'24px 0' }}>
+{/* Director */}
+<div style={{ marginBottom:32 }}>
+  <div className="pb-glow" style={{ fontSize:18, fontWeight:600, marginBottom:8 }}>
+    Director
+  </div>
+
+  <div className="pb-panel" style={{ padding:12 }}>
+    <div style={{ display:'grid', gridTemplateColumns:'auto 1fr', columnGap:12, alignItems:'center' }}>
+      <img
+        src={DIRECTOR.img}
+        alt={DIRECTOR.name}
+        className="cast-headshot"
+        onError={(e)=>{ e.currentTarget.style.display = 'none'; }}
+      />
+
+      <div>
+        <div className="pb-glow" style={{ fontWeight:700 }}>
+          {DIRECTOR.name}
+        </div>
+
+        {DIRECTOR.ig && (
+          <a
+            href={DIRECTOR.ig}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="pb-btn pb-btn-ghost"
+            style={{
+              display:'inline-block',
+              marginTop:8,
+              padding:'6px 10px',
+              borderRadius:10,
+              textDecoration:'none',
+              fontSize:12
+            }}
+          >
+            {DIRECTOR.igHandle}
+          </a>
+        )}
+
+        <details style={{ marginTop:8 }}>
+          <summary style={{ cursor:'pointer', color:'var(--pb-dim)' }}>
+            View Bio
+          </summary>
+          <p style={{ color:'var(--pb-dim)', marginTop:8 }}>
+            {DIRECTOR.bio}
+          </p>
+        </details>
+      </div>
+    </div>
+  </div>
+</div>
+
         {/* Cast */}
         <div>
           <div className="pb-glow" style={{ fontSize:18, fontWeight:600, marginBottom:8 }}>Cast</div>
