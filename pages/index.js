@@ -334,14 +334,16 @@ function GlobalStyles(){
 }
 
 .pb-grid-overlay {
-  position:absolute;
-  inset:0;
-  pointer-events:none;
+  position: fixed;     /* IMPORTANT */
+  inset: 0;            /* full screen */
+  pointer-events: none;
+  z-index: 0;          /* behind everything */
   background-image:
     linear-gradient(var(--pb-grid) 1px, transparent 1px),
     linear-gradient(90deg, var(--pb-grid) 1px, transparent 1px);
-  background-size:48px 48px;
+  background-size: 48px 48px;
 }
+
 
 .pb-scanlines {
   position:fixed;
@@ -569,7 +571,6 @@ React.useEffect(() => {
   return (
    <>
   <div className="pb-scanlines" />
-  <div className="pb-grid-overlay" />
   <Header />
 
 
