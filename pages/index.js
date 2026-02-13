@@ -706,6 +706,7 @@ React.useEffect(() => {
         ? '0 0 0 2px var(--pb-border-strong), inset 0 0 24px rgba(255,156,43,0.18)'
         : undefined,
     }}
+}
   >
     <strong className={m.glow ? 'pb-glow' : undefined}>{m.label}</strong>{' '}
     — <span style={{ color:'var(--pb-dim)' }}>{m.note}</span>
