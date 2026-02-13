@@ -391,6 +391,32 @@ html, body, .pipboy {
 .pb-glow {
   text-shadow: 0 0 12px rgba(255,156,43,.45);
 }
+.pb-nav{
+  display:flex;
+  gap:12px;
+  flex-wrap:nowrap;          /* IMPORTANT: prevents stacking */
+  align-items:center;
+}
+
+.pb-nav .pb-btn{
+  padding:8px 12px;
+  white-space:nowrap;        /* IMPORTANT: keeps button text on one line */
+}
+
+@media (max-width: 520px){
+  .pb-nav-about{
+    display:none !important; /* hides About on mobile */
+  }
+
+  .pb-nav{
+    gap:8px;
+  }
+
+  .pb-nav .pb-btn{
+    padding:6px 10px;
+    font-size:13px;
+  }
+}
 
 .highlight-paypal {
   outline: 2px solid var(--pb-accent);
@@ -459,21 +485,18 @@ function Header(){
           />
         </div>
 
-        <nav style={{ display:'flex', gap:12, flexWrap:'wrap', justifyContent:'flex-end' }}>
-          <a
-            href="#details"
-            className="pb-btn mobile-hide"
-            style={{ padding:'8px 12px', borderRadius:10 }}
-          >
-            About
-          </a>
-          <a href="#rewards" className="pb-btn" style={{ padding:'8px 12px', borderRadius:10 }}>
-            Rewards
-          </a>
-          <a href="#pledge" className="pb-btn" style={{ padding:'8px 12px', borderRadius:10 }}>
-            Pledge
-          </a>
-        </nav>
+       <nav className="pb-nav" style={{ justifyContent:'flex-end' }}>
+  <a href="#details" className="pb-btn pb-nav-about" style={{ borderRadius:10 }}>
+    About
+  </a>
+  <a href="#rewards" className="pb-btn" style={{ borderRadius:10 }}>
+    Rewards
+  </a>
+  <a href="#pledge" className="pb-btn" style={{ borderRadius:10 }}>
+    Pledge
+  </a>
+</nav>
+
       </div>
     </header>
   );
