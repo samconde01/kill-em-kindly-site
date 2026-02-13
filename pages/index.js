@@ -1137,8 +1137,22 @@ React.useEffect(() => {
   onError={(e)=>{ e.currentTarget.style.display = 'none'; }}
 />
                   <div>
-                    <div className="pb-glow" style={{ fontWeight:700 }}>{person.name}</div>
-                    <details>
+                   <div className="pb-glow" style={{ fontWeight:700 }}>{person.name}</div>
+
+{person.ig && (
+  <a
+    href={`https://instagram.com/${person.ig}`}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="pb-ig-btn"
+    style={{ display:'inline-block', marginTop:6 }}
+  >
+    @{person.ig}
+  </a>
+)}
+
+<details>
+
                       <summary style={{ cursor:'pointer', color:'var(--pb-dim)', marginTop:4 }}>View Bio</summary>
                       <p style={{ color:'var(--pb-dim)', marginTop:8 }}>{person.bio}</p>
                     </details>
