@@ -41,40 +41,46 @@ const CAST = [
     name: 'Sam Conde',
     key: 'sam-conde',
     img: '/images/sam-conde.jpg',
+    ig: 'goodgame_sam',
     bio: 'With a diverse background in on-camera work spanning short films, commercial content, and digital media, Sam excels at it all. While new to narrative acting, her ease in front of the lens and instinct for storytelling make her a standout presence. "Kill \'em Kindly" is a thrilling step into a lead role that channels her experience, passion, and sharp creative eye.'
   },
   {
-  name: 'Daniel Cutts',
-  key: 'daniel-cutts',
-  img: '/images/daniel-cutts.jpg',
-  bio: 'Daniel Cutts has spent nearly a decade carving out a place in film and theatre, bringing a grounded, physical approach to every character he builds. Known for roles such as Doug in Kenneled and George in The Third Saturday in October Part V, he blends traditional acting with movement-based training to create performances that feel lived-in and emotionally precise. His work carries the texture of someone who builds characters from the inside out.'
-},
+    name: 'Daniel Cutts',
+    key: 'daniel-cutts',
+    img: '/images/daniel-cutts.jpg',
+    ig: 'dancutts',
+    bio: 'Daniel Cutts has spent nearly a decade carving out a place in film and theatre...'
+  },
   {
     name: 'Cole Thornton',
     key: 'cole-thornton',
     img: '/images/cole-thornton.jpg',
-    bio: 'Cole is an actor and model whose work often places him in high-intensity, action-driven roles. Best known for his performances in Stalker: Shadow of the Zone and Ten of Swords, Thornton has consistently brought a physical, commanding presence to screen. Recently, he has been exploring layered characters and more dramatic storytelling through collaborative projects. With a background that combines discipline, physicality, and a sharp instinct for performance, Thornton is carving a path as a versatile actor ready to tackle both action and character-driven roles.'
+    ig: 'accuratesails',
+    bio: 'Cole is an actor and model whose work often places him in high-intensity, action-driven roles...'
   },
-  
   {
     name: 'Austin Rearden',
     key: 'austin-rearden',
     img: '/images/austin-rearden.jpg',
-    bio: 'Austin has been a Voice Actor for the last 11 years, appearing most notably in large scale fan films such as SCP: Overlord, SCP: Dollhouse as well as dozens of digital short films, Machinima, animated series, indie games and advertising. Austin recently debuted in his first live action film: STALKER: Shadow of the Zone, which led to a continued interest in pursuing live action acting. He plans to continue to work in the industry and participate in large scale projects while continuing voice over work.'
+    ig: 'officialaustinrearden',
+    bio: 'Austin has been a Voice Actor for the last 11 years...'
   },
   {
-  name: 'Joshua Gray',
-  key: 'joshua-gray',
-  img: '/images/joshua-gray.png',
-  bio: 'Joshua Gray is an American actor and producer whose path began in the U.S. Army as an Airborne Infantryman before shifting into filmmaking. His work spans indie films, shorts, and narrative projects shaped by a mix of military discipline, sharp instincts, and a dry sense of humor. A co-founder of the New York-based studio Fabian Gray, he now leads Gray Matter Media and continues to build character-driven stories with grit and authenticity.'
-},
+    name: 'Joshua Gray',
+    key: 'joshua-gray',
+    img: '/images/joshua-gray.png',
+    ig: 'joshuagraynyc',
+    bio: 'Joshua Gray is an American actor and producer whose path began in the U.S. Army...'
+  },
   {
     name: 'Scott Crabb',
     key: 'scott-crabb',
     img: '/images/scott-crabb.jpg',
-    bio: 'Michael Scott Crabb, known professionally as Scott Crabb, is most recognized for his work in STALKER: Shadow of the Zone, for which his portrayal of the character, "Monk" received a nomination for best supporting actor at the 2024 Tampa Bay Underground Film Festival. Scott also played the role of “Topper’s Dad” in two episodes of the Netflix series Outer Banks, Season 3. Prior to stepping into the world of acting, Scott had a storied 25-year international career as a special agent with the U.S. government. Scott\'s unique background brings a deep sense of authenticity and intensity to his performances.'
+    ig: 'crabb0710',
+    bio: 'Michael Scott Crabb, known professionally as Scott Crabb...'
   },
 ];
+
       const DIRECTOR = {
   name: 'Cory Haynes',
   key: 'cory-haynes',
@@ -317,6 +323,25 @@ function GlobalStyles(){
   background:transparent;
   color:var(--pb-text);
 }
+
+/* Instagram Button */
+.pb-ig-btn {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  border: 1px solid var(--pb-border-strong);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--pb-bright);
+  background: rgba(255,156,43,.08);
+  transition: all .2s ease;
+}
+
+.pb-ig-btn:hover {
+  background: rgba(255,156,43,.18);
+}
+
 
 /* INPUT — remove green interior */
 .pb-input {
@@ -1123,6 +1148,17 @@ React.useEffect(() => {
             ))}
           </div>
         </div>
+{person.ig && (
+  <a
+    href={`https://instagram.com/${person.ig}`}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="pb-ig-btn"
+    style={{ display:'inline-block', marginTop:6 }}
+  >
+    @{person.ig}
+  </a>
+)}
 
         {/* Producers */}
         <div style={{ marginTop:24 }}>
