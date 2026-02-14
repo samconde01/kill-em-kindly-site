@@ -182,6 +182,25 @@ const SPONSORS = [
 
 ];
 
+// --- Video Station (Pip-Boy Radio style) -----------------------------------
+const VIDEO_STATIONS = [
+  {
+    key: 'teaser',
+    label: 'TEASER (LINK PENDING)',
+    note: 'Signal pending…',
+    videoId: null, // <-- replace with the YouTube ID later
+    poster: '/images/youtube-thumb.jpg?v=1', // <-- replace when you have teaser thumb
+    title: "Kill ’em Kindly — Teaser",
+  },
+  {
+    key: 'crowdfunding',
+    label: 'CROWDFUNDING VIDEO',
+    note: 'Now broadcasting',
+    videoId: 'uQTAh-MuzgA',
+    poster: '/images/youtube-thumb.jpg?v=1', // you can swap to a dedicated thumb if you want
+    title: "Kill ’em Kindly — Crowdfunding Video",
+  },
+];
 
 
 
@@ -460,6 +479,81 @@ html, body, .pipboy {
     display: none !important;
   }
 }
+/* --- Video Station (Pip-Boy Radio style) -------------------------------- */
+.video-station {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* big screen, slim station list */
+  gap: 12px;
+  align-items: start;
+}
+
+.video-screen {
+  padding: 12px;
+}
+
+.video-menu {
+  padding: 12px;
+}
+
+.video-menu-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.station-list {
+  display: grid;
+  gap: 8px;
+  max-height: 340px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.station-btn {
+  width: 100%;
+  text-align: left;
+  border: 1px solid var(--pb-border);
+  background: var(--pb-bg-2);
+  border-radius: 12px;
+  padding: 10px 10px;
+  cursor: pointer;
+}
+
+.station-btn:hover {
+  filter: brightness(1.08);
+}
+
+.station-btn[aria-disabled="true"] {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.station-active {
+  box-shadow: 0 0 0 2px var(--pb-border-strong), inset 0 0 18px rgba(255,156,43,0.18);
+}
+
+.station-label {
+  font-weight: 800;
+  letter-spacing: .02em;
+}
+
+.station-note {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--pb-dim);
+}
+
+@media (max-width: 720px) {
+  .video-station {
+    grid-template-columns: 1fr; /* stack on mobile */
+  }
+  .station-list {
+    max-height: 240px;
+  }
+}
+
     `}</style>
   );
 }
@@ -770,16 +864,13 @@ React.useEffect(() => {
   </div>
 </section>
 
-{/* Video */}
+{/* Video Station */}
 <section className="pb-container" style={{ padding:'0 0 24px' }}>
   <div className="pb-panel" style={{ marginTop:16, padding:16 }}>
-    <VideoEmbed
-      videoId="uQTAh-MuzgA"
-      poster="/images/youtube-thumb.jpg?v=2"
-      title="Kill ’em Kindly Crowdfunding Video"
-    />
+    <VideoStation />
   </div>
 </section>
+
 
         
       {/* About / Details Section */}
@@ -1307,6 +1398,93 @@ React.useEffect(() => {
     </>
   );
 }
+function VideoStation(){
+  // Default to crowdfunding video (second item)
+  const defaultStation = VIDEO_STATIONS.find(v => v.key === 'crowdfunding') || VIDEO_STATIONS[0];
+  const [active, setActive] = React.useState(defaultStation);
+
+  const isPlayable = Boolean(active?.videoId);
+
+  return (
+    <div className="video-station">
+      {/* Big screen */}
+      <div className="pb-panel video-screen">
+        <div className="pb-glow" style={{ fontWeight:700, marginBottom:8 }}>
+          RADIO FEED
+        </div>
+
+        {isPlayable ? (
+          <VideoEmbed
+            videoId={active.videoId}
+            poster={active.poster}
+            title={active.title}
+          />
+        ) : (
+          <div
+            style={{
+              aspectRatio:'16/9',
+              border:'1px solid var(--pb-border)',
+              borderRadius:12,
+              overflow:'hidden',
+              position:'relative',
+              background:'var(--pb-bg-2)',
+              display:'grid',
+              placeItems:'center',
+              padding:16
+            }}
+          >
+            <div style={{ textAlign:'center' }}>
+              <div className="pb-glow" style={{ fontWeight:800, fontSize:16 }}>
+                SIGNAL NOT AVAILABLE
+              </div>
+              <div style={{ marginTop:6, color:'var(--pb-dim)', fontSize:13 }}>
+                Teaser link pending — drop it in and this station goes live.
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div style={{ marginTop:10, color:'var(--pb-dim)', fontSize:12 }}>
+          Now tuned: <span className="pb-glow" style={{ fontWeight:700 }}>{active.label}</span>
+        </div>
+      </div>
+
+      {/* Station list */}
+      <div className="pb-panel video-menu">
+        <div className="video-menu-title">
+          <div className="pb-glow" style={{ fontWeight:800 }}>MyRadio</div>
+          <span className="pb-chip">GOODSPRINGS</span>
+        </div>
+
+        <div className="station-list">
+          {VIDEO_STATIONS.map((v) => {
+            const disabled = !v.videoId; // teaser pending
+            const activeNow = active?.key === v.key;
+
+            return (
+              <button
+                key={v.key}
+                type="button"
+                className={`station-btn ${activeNow ? 'station-active' : ''}`}
+                onClick={() => { if (!disabled) setActive(v); }}
+                aria-disabled={disabled ? 'true' : 'false'}
+                title={disabled ? 'Link pending' : 'Select station'}
+              >
+                <div className="station-label">{v.label}</div>
+                <div className="station-note">{v.note}</div>
+              </button>
+            );
+          })}
+        </div>
+
+        <div style={{ marginTop:10, fontSize:12, color:'var(--pb-dim)' }}>
+          Add more stations anytime (teaser, BTS, interviews, etc.).
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function VideoEmbed({ videoId, poster, title }) {
   const [playing, setPlaying] = React.useState(false);
 
