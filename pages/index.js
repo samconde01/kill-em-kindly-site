@@ -48,7 +48,7 @@ const CAST = [
     name: 'Daniel Cutts',
     key: 'daniel-cutts',
     img: '/images/daniel-cutts.jpg',
-    ig: 'dancutts',
+    ig: 'dancutts_',
     bio: 'Daniel Cutts has spent nearly a decade carving out a place in film and theatre...'
   },
   {
@@ -573,6 +573,19 @@ html, body, .pipboy {
 .station-live .station-note {
   color: var(--pb-bright);
   text-shadow: 0 0 12px rgba(255,156,43,.35);
+}
+/* --- Fix: Bio text getting truncated (override any line-clamp) --- */
+.cast-card details p,
+.cast-card details summary + p,
+.cast-card details div p {
+  display: block !important;
+  overflow: visible !important;
+  white-space: normal !important;
+  -webkit-line-clamp: unset !important;
+  line-clamp: unset !important;
+  -webkit-box-orient: unset !important;
+  max-height: none !important;
+  height: auto !important;
 }
 
 
