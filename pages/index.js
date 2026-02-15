@@ -775,8 +775,71 @@ React.useEffect(() => {
     <Header />
 
  {/* Hero */}
-<section className="relative" style={{ overflow:'hidden' }}>
-  <div className="pb-container" style={{ padding:'72px 0 32px' }}>
+<div
+  className="pb-container"
+  style={{
+padding: '96px 0 48px',
+    textAlign: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center'
+  }}
+>
+
+  {/* Logo */}
+  <img
+    src="/images/your-logo.png"
+    alt="Kill 'em Kindly"
+    style={{
+      width: 'clamp(240px, 40vw, 520px)',
+      height: 'auto',
+      marginBottom: 18
+    }}
+  />
+
+  {/* Project Description */}
+  <p
+    style={{
+      maxWidth: 720,
+      color: 'var(--pb-dim)',
+      lineHeight: 1.6,
+      margin: 0
+    }}
+  >
+    In this fan film a collision of western style and post-apocalyptic ruin come together to tell the story of a woman searching for her family. Along the way a deadly alter ego born from an experiment gone wrong or maybe exactly right may just save her life.
+  </p>
+
+  {/* Buttons */}
+  <div
+    style={{
+      marginTop: 28,
+      display: 'flex',
+      gap: 12,
+      flexWrap: 'wrap',
+      justifyContent: 'center'
+    }}
+  >
+    <a
+      href="#pledge"
+      className="pb-btn"
+      style={{ padding: '12px 18px', borderRadius: 14 }}
+    >
+      Pledge Now
+    </a>
+
+    <button
+      className="pb-btn pb-btn-ghost"
+      style={{ padding: '12px 18px', borderRadius: 14 }}
+      onClick={() =>
+        document.getElementById('details')?.scrollIntoView({ behavior: 'smooth' })
+      }
+    >
+      Learn More
+    </button>
+</div>
+</section>
+
+
    <motion.div
   initial={{opacity:0,y:10}}
   animate={{opacity:1,y:0}}
