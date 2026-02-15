@@ -1513,7 +1513,7 @@ function VideoStation() {
           className="pb-glow"
           style={{ fontWeight: 800, marginBottom: 8, letterSpacing: ".02em" }}
         >
-          BROADCASTS
+          BROADCAST
         </div>
 
         {isPlayable ? (
