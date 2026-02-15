@@ -1514,9 +1514,7 @@ function VideoStation(){
           </div>
         )}
 
-        <div style={{ marginTop:10, color:'var(--pb-dim)', fontSize:12 }}>
-          Now tuned: <span className="pb-glow" style={{ fontWeight:700 }}>{active.label}</span>
-        </div>
+        
       </div>
 
       {/* Station list */}
