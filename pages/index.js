@@ -188,14 +188,12 @@ const VIDEO_STATIONS = [
   {
     key: 'teaser',
     label: 'TEASER',
-    note: 'Now broadcasting',
     videoId: 'vWk6iyifXgg',
     title: "Kill ’em Kindly — Teaser",
   },
   {
     key: 'crowdfunding',
     label: 'CROWDFUNDING VIDEO',
-    note: 'Now broadcasting',
     videoId: 'uQTAh-MuzgA',
     title: "Kill ’em Kindly — Crowdfunding Video",
   },
