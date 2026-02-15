@@ -81,14 +81,15 @@ const CAST = [
   },
 ];
 
-      const DIRECTOR = {
+   const DIRECTOR = {
   name: 'Cory Haynes',
   key: 'cory-haynes',
   img: '/images/cory-haynes.jpg',
   ig: 'https://instagram.com/tacticooldork',
-  igHandle: '@tacticooldork',
+  yt: 'https://youtube.com/@tacticooldork_', // replace if different
   bio: 'Cory Haynes is the director of Kill ’em Kindly and the creative lead behind Direct Action Media. His work centers on grounded action, strong atmosphere, and character-first tension. With a focus on practical execution and cinematic realism, Cory builds worlds that feel lived-in, dangerous, and emotionally sharp.'
 };
+
 
 
 const MINI_TIMELINE = [
