@@ -49,35 +49,35 @@ const CAST = [
     key: 'daniel-cutts',
     img: '/images/daniel-cutts.jpg',
     ig: 'dancutts_',
-    bio: 'Daniel Cutts has spent nearly a decade carving out a place in film and theatre...'
+bio: 'Daniel Cutts began his creative path nearly a decade ago, stepping into filmmaking over the last seven years. His notable roles include Doug in Kenneled and George in The Third Saturday in October Part V. With roots in theatre and ongoing training in movement-based performance, Daniel builds characters from the inside out with a grounded, physical approach.'
   },
   {
     name: 'Cole Thornton',
     key: 'cole-thornton',
     img: '/images/cole-thornton.jpg',
     ig: 'accuratesails',
-    bio: 'Cole is an actor and model whose work often places him in high-intensity, action-driven roles...'
+bio: 'Cole Thornton, a Fort Worth native and U.S. Navy veteran, is best known for his roles in STALKER: Shadow of the Zone and Ten of Swords, along with collaborations with director Cory Haynes. Drawn to physically demanding roles and character-driven stories, he brings discipline, grit, and a commanding presence to screen. Outside of film, he is a father and roofing sales professional who thrives on “Type 2 fun.”'
   },
   {
     name: 'Austin Rearden',
     key: 'austin-rearden',
     img: '/images/austin-rearden.jpg',
     ig: 'officialaustinrearden',
-    bio: 'Austin has been a Voice Actor for the last 11 years...'
+bio: 'Austin Rearden has spent over 11 years as a voice actor, appearing in large-scale fan films such as SCP: Overlord and SCP: Dollhouse, along with dozens of digital shorts, animated series, indie games, and commercial projects. He recently made his live-action debut in STALKER: Shadow of the Zone and continues to pursue both on-camera roles and voice performance in ambitious, story-driven projects.'
   },
   {
     name: 'Joshua Gray',
     key: 'joshua-gray',
     img: '/images/joshua-gray.png',
     ig: 'joshuagraynyc',
-    bio: 'Joshua Gray is an American actor and producer whose path began in the U.S. Army...'
+bio: 'Joshua Gray is an actor and producer whose path began as an Army Airborne Infantryman before shifting into filmmaking. Originally from New Hampshire, he co-founded the New York-based studio Fabian Gray and later launched Gray Matter Media. His work spans indie films and narrative projects shaped by military discipline, grounded realism, and a dry, understated edge.'
   },
   {
     name: 'Scott Crabb',
     key: 'scott-crabb',
     img: '/images/scott-crabb.jpg',
     ig: 'crabb0710',
-    bio: 'Michael Scott Crabb, known professionally as Scott Crabb...'
+bio: 'Scott Crabb is recognized for his role as Monk in STALKER: Shadow of the Zone, earning a Best Supporting Actor nomination at the 2024 Tampa Bay Underground Film Festival. He also appeared as Topper’s Dad in Netflix’s Outer Banks (Season 3). A retired U.S. government special agent with 25 years of international service, Scott brings real-world intensity, discipline, and authenticity to every performance.'
   },
 ];
 
