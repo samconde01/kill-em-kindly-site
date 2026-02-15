@@ -788,7 +788,7 @@ React.useEffect(() => {
   >
     {/* Logo */}
     <img
-      src="/images/your-logo.png"
+      src="/images/NEW-LOGO.png"
       alt="Kill 'em Kindly"
       style={{
         width: 'clamp(240px, 40vw, 520px)',
@@ -843,45 +843,6 @@ React.useEffect(() => {
 </section>
 
 
-
-   <motion.div
-  initial={{opacity:0,y:10}}
-  animate={{opacity:1,y:0}}
-  transition={{duration:.6}}
-  style={{ marginBottom: 12 }}
->
-  <img
-    src="/images/NEW-LOGO.png?v=3"
-    alt="Kill ’em Kindly"
-    style={{
-      width: 'min(520px, 90%)',
-      height: 'auto',
-      display: 'block',
-      filter: 'drop-shadow(0 0 18px rgba(255,156,43,.45))'
-    }}
-  />
-</motion.div>
-
-
-    <motion.p
-      initial={{opacity:0,y:10}}
-      animate={{opacity:1,y:0}}
-      transition={{delay:.1,duration:.6}}
-      style={{ marginTop: 12, maxWidth: 720, color: 'var(--pb-dim)' }}
-    >
-      In this fan film a collision of western style and post-apocalyptic ruin come together to tell the story of a woman searching for her family. Along the way a deadly alter ego born from an experiment gone wrong… or maybe exactly right, may just save her life.
-    </motion.p>
-
-    <div style={{ marginTop: 24, display:'flex', gap:12, flexWrap:'wrap' }}>
-      <a href="#pledge" className="pb-btn" style={{ padding:'12px 18px', borderRadius:14 }}>Pledge Now</a>
-      <button
-        className="pb-btn pb-btn-ghost"
-        style={{ padding:'12px 18px', borderRadius:14 }}
-        onClick={() => document.getElementById('details')?.scrollIntoView({behavior:'smooth'})}
-      >
-        Learn More
-      </button>
-    </div>
 
   {/* Tracker & Donor List */}
 <section className="pb-container" style={{ padding: '0 0 24px' }}>
