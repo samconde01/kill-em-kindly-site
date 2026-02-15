@@ -1331,7 +1331,36 @@ React.useEffect(() => {
 
 <details>
 
-                      <summary style={{ cursor:'pointer', color:'var(--pb-dim)', marginTop:4 }}>View Bio</summary>
+                    <details style={{ marginTop: 8 }}>
+  <summary style={{ cursor:'pointer', color:'var(--pb-dim)' }}>
+    View Bio
+  </summary>
+
+  <div
+    style={{
+      marginTop: 8,
+      color: 'var(--pb-dim)',
+      lineHeight: 1.55,
+      overflow: 'visible',
+      maxHeight: 'none',
+    }}
+  >
+    <p
+      style={{
+        margin: 0,
+        display: 'block',
+        overflow: 'visible',
+        whiteSpace: 'normal',
+        maxHeight: 'none',
+        WebkitLineClamp: 'unset',
+        WebkitBoxOrient: 'unset',
+      }}
+    >
+      {person.bio}
+    </p>
+  </div>
+</details>
+
                       <p style={{ color:'var(--pb-dim)', marginTop:8 }}>{person.bio}</p>
                     </details>
                   </div>
