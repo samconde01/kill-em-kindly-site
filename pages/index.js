@@ -519,7 +519,12 @@ html, body, .pipboy {
   border-radius: 12px;
   padding: 10px 10px;
   cursor: pointer;
+
+  /* ✅ force Pip-Boy orange + match site typography */
+  color: var(--pb-text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
 }
+
 
 .station-btn:hover {
   filter: brightness(1.08);
@@ -537,6 +542,8 @@ html, body, .pipboy {
 .station-label {
   font-weight: 800;
   letter-spacing: .02em;
+  color: var(--pb-bright);
+  text-shadow: 0 0 12px rgba(255,156,43,.35);
 }
 
 .station-note {
@@ -544,6 +551,7 @@ html, body, .pipboy {
   font-size: 12px;
   color: var(--pb-dim);
 }
+
 
 @media (max-width: 720px) {
   .video-station {
@@ -553,6 +561,19 @@ html, body, .pipboy {
     max-height: 240px;
   }
 }
+.station-live {
+  box-shadow: 0 0 0 2px var(--pb-border-strong), inset 0 0 24px rgba(255,156,43,0.22);
+}
+
+.station-live .station-label {
+  text-shadow: 0 0 16px rgba(255,156,43,.55);
+}
+
+.station-live .station-note {
+  color: var(--pb-bright);
+  text-shadow: 0 0 12px rgba(255,156,43,.35);
+}
+
 
     `}</style>
   );
@@ -1409,9 +1430,10 @@ function VideoStation(){
     <div className="video-station">
       {/* Big screen */}
       <div className="pb-panel video-screen">
-        <div className="pb-glow" style={{ fontWeight:700, marginBottom:8 }}>
-          RADIO FEED
-        </div>
+       <div className="pb-glow" style={{ fontWeight:800, marginBottom:8, letterSpacing:'.02em' }}>
+  BROADCAST UPDATES
+</div>
+
 
         {isPlayable ? (
           <VideoEmbed
@@ -1452,9 +1474,10 @@ function VideoStation(){
       {/* Station list */}
       <div className="pb-panel video-menu">
         <div className="video-menu-title">
-          <div className="pb-glow" style={{ fontWeight:800 }}>MyRadio</div>
-          <span className="pb-chip">GOODSPRINGS</span>
-        </div>
+  <div className="pb-glow" style={{ fontWeight:800, letterSpacing:'.06em' }}>STATIONS</div>
+  <span className="pb-chip">VAULT 151</span>
+</div>
+
 
         <div className="station-list">
           {VIDEO_STATIONS.map((v) => {
@@ -1465,7 +1488,7 @@ function VideoStation(){
               <button
                 key={v.key}
                 type="button"
-                className={`station-btn ${activeNow ? 'station-active' : ''}`}
+className={`station-btn ${activeNow ? 'station-active station-live' : ''}`}
                 onClick={() => { if (!disabled) setActive(v); }}
                 aria-disabled={disabled ? 'true' : 'false'}
                 title={disabled ? 'Link pending' : 'Select station'}
@@ -1477,9 +1500,6 @@ function VideoStation(){
           })}
         </div>
 
-        <div style={{ marginTop:10, fontSize:12, color:'var(--pb-dim)' }}>
-          Add more stations anytime (teaser, BTS, interviews, etc.).
-        </div>
       </div>
     </div>
   );
