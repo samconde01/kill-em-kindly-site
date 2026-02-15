@@ -1498,7 +1498,7 @@ React.useEffect(() => {
 }
 function VideoStation() {
   const defaultStation =
-    VIDEO_STATIONS.find((v) => v.key === "crowdfunding") || VIDEO_STATIONS[0];
+  VIDEO_STATIONS.find((v) => v.key === "teaser") || VIDEO_STATIONS[0];
 
   const [active, setActive] = React.useState(defaultStation);
 
