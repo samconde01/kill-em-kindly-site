@@ -1497,121 +1497,68 @@ React.useEffect(() => {
   );
 }
 function VideoStation(){
-  // Default to crowdfunding video (second item)
+  // Default to crowdfunding (second item) if it exists, otherwise first
   const defaultStation =
-  VIDEO_STATIONS.find(v => v.key === 'teaser') || VIDEO_STATIONS[0];
-const [active, setActive] = React.useState(defaultStation);
+    VIDEO_STATIONS.find(v => v.key === 'crowdfunding') || VIDEO_STATIONS[0];
 
+  const [active, setActive] = React.useState(defaultStation);
 
   const isPlayable = Boolean(active?.videoId);
+
+  const poster = active?.videoId
+    ? `https://img.youtube.com/vi/${active.videoId}/maxresdefault.jpg`
+    : null;
 
   return (
     <div className="video-station">
       {/* Big screen */}
       <div className="pb-panel video-screen">
-       <div className="pb-glow" style={{ fontWeight:800, marginBottom:8, letterSpacing:'.02em' }}>
-  BROADCASTS
-</div>
+        <div className="pb-glow" style={{ fontWeight: 800, marginBottom: 8, letterSpacing: '.02em' }}>
+          BROADCASTS
+        </div>
 
-
-        {isPlayable ? (
-     function VideoEmbed({ videoId, title }) {
-  const [playing, setPlaying] = React.useState(false);
-  const [thumb, setThumb] = React.useState(
-    `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
-  );
-
-  React.useEffect(() => {
-    setPlaying(false); // reset play state when switching stations
-    setThumb(`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`);
-  }, [videoId]);
-
-  return (
-    <div
-      style={{
-        aspectRatio: '16/9',
-        border: '1px solid var(--pb-border)',
-        borderRadius: 12,
-        overflow: 'hidden',
-        position: 'relative',
-        background: 'var(--pb-bg-2)',
-        cursor: playing ? 'auto' : 'pointer',
-      }}
-    >
-      {!playing ? (
-        <button
-          type="button"
-          onClick={() => setPlaying(true)}
-          style={{
-            all: 'unset',
-            cursor: 'pointer',
-            display: 'block',
-            width: '100%',
-            height: '100%',
-            position: 'relative',
-          }}
-          aria-label="Play video"
-        >
-          <img
-            src={thumb}
-            alt={title}
-            onError={() =>
-              setThumb(`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`)
-            }
-            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-          />
-
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.55))',
-            }}
-          />
-
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              display: 'grid',
-              placeItems: 'center',
-            }}
+      
           >
-            <div
-              style={{
-                width: 74,
-                height: 74,
-                borderRadius: 999,
-                border: '1px solid var(--pb-border-strong)',
-                background: 'rgba(20,10,2,.65)',
-                boxShadow: '0 0 24px rgba(255,156,43,.18)',
-                display: 'grid',
-                placeItems: 'center',
-              }}
-            >
-              <div
-                style={{
-                  width: 0,
-                  height: 0,
-                  borderTop: '10px solid transparent',
-                  borderBottom: '10px solid transparent',
-                  borderLeft: '16px solid var(--pb-bright)',
-                  marginLeft: 4,
-                }}
-              />
+            <div style={{ textAlign:'center' }}>
+              <div className="pb-glow" style={{ fontWeight:800, fontSize:16 }}>
+                SIGNAL NOT AVAILABLE
+              </div>
+              <div style={{ marginTop:6, color:'var(--pb-dim)', fontSize:13 }}>
+                Broadcast link pending — add a videoId to enable playback.
+              </div>
             </div>
           </div>
-        </button>
-      ) : (
-        <iframe
-          src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`}
-          title={title}
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-          style={{ width: '100%', height: '100%', display: 'block' }}
-        />
-      )}
+        )}
+      </div>
+
+      {/* Station list */}
+      <div className="pb-panel video-menu">
+        <div className="video-menu-title">
+          <div className="pb-glow" style={{ fontWeight:800, letterSpacing:'.06em' }}>STATIONS</div>
+          <span className="pb-chip">VAULT 151</span>
+        </div>
+
+        <div className="station-list">
+          {VIDEO_STATIONS.map((v) => {
+            const disabled = !v.videoId;
+            const activeNow = active?.key === v.key;
+
+            return (
+              <button
+                key={v.key}
+                type="button"
+                className={`station-btn ${activeNow ? 'station-active station-live' : ''}`}
+                onClick={() => { if (!disabled) setActive(v); }}
+                aria-disabled={disabled ? 'true' : 'false'}
+                title={disabled ? 'Link pending' : 'Select station'}
+              >
+                <div className="station-label">{v.label}</div>
+                <div className="station-note">{v.note}</div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
