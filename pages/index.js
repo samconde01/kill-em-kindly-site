@@ -842,6 +842,16 @@ React.useEffect(() => {
 
 
 
+
+
+
+{/* Video Station */}
+<section className="pb-container" style={{ padding:'0 0 24px' }}>
+  <div className="pb-panel" style={{ marginTop:16, padding:16 }}>
+    <VideoStation />
+  </div>
+</section>
+
   {/* Tracker & Donor List */}
 <section className="pb-container" style={{ padding: '0 0 24px' }}>
   <div className="pb-panel" style={{ marginTop: 16, padding: 16 }}>
@@ -924,16 +934,6 @@ React.useEffect(() => {
     </div>
   </div>
 </section>
-
-
-{/* Video Station */}
-<section className="pb-container" style={{ padding:'0 0 24px' }}>
-  <div className="pb-panel" style={{ marginTop:16, padding:16 }}>
-    <VideoStation />
-  </div>
-</section>
-
-
         
       {/* About / Details Section */}
       <section id="details" className="pb-container" style={{ padding:'24px 0' }}>
