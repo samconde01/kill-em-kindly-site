@@ -1329,8 +1329,6 @@ React.useEffect(() => {
   </a>
 )}
 
-<details>
-
 <details style={{ marginTop: 8 }}>
   <summary style={{ cursor:'pointer', color:'var(--pb-dim)' }}>
     View Bio
@@ -1360,6 +1358,7 @@ React.useEffect(() => {
     </p>
   </div>
 </details>
+
 
                   </div>
                 </div>
