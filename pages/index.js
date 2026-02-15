@@ -1586,208 +1586,19 @@ function VideoStation() {
   );
 }
 
-  
-
-      {/* Station list */}
-      <div className="pb-panel video-menu">
-        <div className="video-menu-title">
-          <div className="pb-glow" style={{ fontWeight:800, letterSpacing:'.06em' }}>STATIONS</div>
-          <span className="pb-chip">VAULT 151</span>
-        </div>
-
-        <div className="station-list">
-          {VIDEO_STATIONS.map((v) => {
-            const disabled = !v.videoId;
-            const activeNow = active?.key === v.key;
-
-            return (
-              <button
-                key={v.key}
-                type="button"
-                className={`station-btn ${activeNow ? 'station-active station-live' : ''}`}
-                onClick={() => { if (!disabled) setActive(v); }}
-                aria-disabled={disabled ? 'true' : 'false'}
-                title={disabled ? 'Link pending' : 'Select station'}
-              >
-                <div className="station-label">{v.label}</div>
-                <div className="station-note">{v.note}</div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
-  // Highest quality thumb available. If "maxresdefault" doesn't exist on a video,
-  // YouTube will still return an image; it just may not be max-res.
-  const poster = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
-
-  return (
-    <div
-      style={{
-        aspectRatio: '16/9',
-        border: '1px solid var(--pb-border)',
-        borderRadius: 12,
-        overflow: 'hidden',
-        position: 'relative',
-        background: 'var(--pb-bg-2)',
-        cursor: playing ? 'auto' : 'pointer',
-      }}
-    >
-      {!playing ? (
-        <button
-          type="button"
-          onClick={() => setPlaying(true)}
-          style={{
-            all: 'unset',
-            cursor: 'pointer',
-            display: 'block',
-            width: '100%',
-            height: '100%',
-            position: 'relative',
-          }}
-          aria-label="Play video"
-        >
-          <img
-            src={poster}
-            alt={title}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-          />
-
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.55))',
-            }}
-          />
-
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              display: 'grid',
-              placeItems: 'center',
-            }}
-          >
-            <div
-              style={{
-                width: 74,
-                height: 74,
-                borderRadius: 999,
-                border: '1px solid var(--pb-border-strong)',
-                background: 'rgba(20,10,2,.65)',
-                boxShadow: '0 0 24px rgba(255,156,43,.18)',
-                display: 'grid',
-                placeItems: 'center',
-              }}
-            >
-              <div
-                style={{
-                  width: 0,
-                  height: 0,
-                  borderTop: '10px solid transparent',
-                  borderBottom: '10px solid transparent',
-                  borderLeft: '16px solid var(--pb-bright)',
-                  marginLeft: 4,
-                }}
-              />
-            </div>
-          </div>
-        </button>
-      ) : (
-        <iframe
-          src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`}
-          title={title}
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-          style={{ width: '100%', height: '100%', display: 'block' }}
-        />
-      )}
-    </div>
-  );
-}
-
-
-        ) : (
-          <div
-            style={{
-              aspectRatio:'16/9',
-              border:'1px solid var(--pb-border)',
-              borderRadius:12,
-              overflow:'hidden',
-              position:'relative',
-              background:'var(--pb-bg-2)',
-              display:'grid',
-              placeItems:'center',
-              padding:16
-            }}
-          >
-            <div style={{ textAlign:'center' }}>
-              <div className="pb-glow" style={{ fontWeight:800, fontSize:16 }}>
-                SIGNAL NOT AVAILABLE
-              </div>
-              <div style={{ marginTop:6, color:'var(--pb-dim)', fontSize:13 }}>
-                Teaser link pending — drop it in and this station goes live.
-              </div>
-            </div>
-          </div>
-        )}
-
-        
-      </div>
-
-      {/* Station list */}
-      <div className="pb-panel video-menu">
-        <div className="video-menu-title">
-  <div className="pb-glow" style={{ fontWeight:800, letterSpacing:'.06em' }}>STATIONS</div>
-  <span className="pb-chip">VAULT 151</span>
-</div>
-
-
-        <div className="station-list">
-          {VIDEO_STATIONS.map((v) => {
-            const disabled = !v.videoId; // teaser pending
-            const activeNow = active?.key === v.key;
-
-            return (
-              <button
-                key={v.key}
-                type="button"
-className={`station-btn ${activeNow ? 'station-active station-live' : ''}`}
-                onClick={() => { if (!disabled) setActive(v); }}
-                aria-disabled={disabled ? 'true' : 'false'}
-                title={disabled ? 'Link pending' : 'Select station'}
-              >
-                <div className="station-label">{v.label}</div>
-                <div className="station-note">{v.note}</div>
-              </button>
-            );
-          })}
-        </div>
-
-      </div>
-    </div>
-  );
-}
-
 function VideoEmbed({ videoId, poster, title }) {
   const [playing, setPlaying] = React.useState(false);
 
   return (
     <div
       style={{
-        aspectRatio: '16/9',
-        border: '1px solid var(--pb-border)',
+        aspectRatio: "16/9",
+        border: "1px solid var(--pb-border)",
         borderRadius: 12,
-        overflow: 'hidden',
-        position: 'relative',
-        background: 'var(--pb-bg-2)',
-        cursor: playing ? 'auto' : 'pointer',
+        overflow: "hidden",
+        position: "relative",
+        background: "var(--pb-bg-2)",
+        cursor: playing ? "auto" : "pointer",
       }}
     >
       {!playing ? (
@@ -1795,35 +1606,38 @@ function VideoEmbed({ videoId, poster, title }) {
           type="button"
           onClick={() => setPlaying(true)}
           style={{
-            all: 'unset',
-            cursor: 'pointer',
-            display: 'block',
-            width: '100%',
-            height: '100%',
-            position: 'relative',
+            all: "unset",
+            cursor: "pointer",
+            display: "block",
+            width: "100%",
+            height: "100%",
+            position: "relative",
           }}
           aria-label="Play video"
         >
           <img
             src={poster}
             alt={title}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            onError={(e) => {
+              e.currentTarget.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+            }}
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
           />
 
           <div
             style={{
-              position: 'absolute',
+              position: "absolute",
               inset: 0,
-              background: 'linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.55))',
+              background: "linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.55))",
             }}
           />
 
           <div
             style={{
-              position: 'absolute',
+              position: "absolute",
               inset: 0,
-              display: 'grid',
-              placeItems: 'center',
+              display: "grid",
+              placeItems: "center",
             }}
           >
             <div
@@ -1831,20 +1645,20 @@ function VideoEmbed({ videoId, poster, title }) {
                 width: 74,
                 height: 74,
                 borderRadius: 999,
-                border: '1px solid var(--pb-border-strong)',
-                background: 'rgba(20,10,2,.65)',
-                boxShadow: '0 0 24px rgba(255,156,43,.18)',
-                display: 'grid',
-                placeItems: 'center',
+                border: "1px solid var(--pb-border-strong)",
+                background: "rgba(20,10,2,.65)",
+                boxShadow: "0 0 24px rgba(255,156,43,.18)",
+                display: "grid",
+                placeItems: "center",
               }}
             >
               <div
                 style={{
                   width: 0,
                   height: 0,
-                  borderTop: '10px solid transparent',
-                  borderBottom: '10px solid transparent',
-                  borderLeft: '16px solid var(--pb-bright)',
+                  borderTop: "10px solid transparent",
+                  borderBottom: "10px solid transparent",
+                  borderLeft: "16px solid var(--pb-bright)",
                   marginLeft: 4,
                 }}
               />
@@ -1858,7 +1672,7 @@ function VideoEmbed({ videoId, poster, title }) {
           frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
-          style={{ width: '100%', height: '100%', display: 'block' }}
+          style={{ width: "100%", height: "100%", display: "block" }}
         />
       )}
     </div>
