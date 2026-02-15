@@ -188,20 +188,19 @@ const VIDEO_STATIONS = [
   {
     key: 'teaser',
     label: 'TEASER',
-    note: 'Please stand by.',
-    videoId: null, // <-- replace with the YouTube ID later
-    poster: '/images/youtube-thumb.jpg?v=1', // <-- replace when you have teaser thumb
+    videoId: 'FqYrwsukzrA',            // ✅ from your link
+    poster: '/images/youtube-thumb.jpg?v=2', // optional placeholder thumb
     title: "Kill ’em Kindly — Teaser",
   },
   {
     key: 'crowdfunding',
     label: 'CROWDFUNDING VIDEO',
-    note: 'Now broadcasting',
     videoId: 'uQTAh-MuzgA',
-    poster: '/images/youtube-thumb.jpg?v=1', // you can swap to a dedicated thumb if you want
+    poster: '/images/youtube-thumb.jpg?v=1',
     title: "Kill ’em Kindly — Crowdfunding Video",
   },
 ];
+
 
 
 
