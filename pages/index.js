@@ -1248,24 +1248,32 @@ React.useEffect(() => {
           {DIRECTOR.name}
         </div>
 
-        {DIRECTOR.ig && (
-          <a
-            href={DIRECTOR.ig}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="pb-btn pb-btn-ghost"
-            style={{
-              display:'inline-block',
-              marginTop:8,
-              padding:'6px 10px',
-              borderRadius:10,
-              textDecoration:'none',
-              fontSize:12
-            }}
-          >
-            {DIRECTOR.igHandle}
-          </a>
-        )}
+    <div style={{ display:'flex', gap:8, marginTop:8, flexWrap:'wrap' }}>
+  {DIRECTOR.ig && (
+    <a
+      href={DIRECTOR.ig}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="pb-btn"
+      style={{ padding:'6px 10px', borderRadius:8, fontSize:12 }}
+    >
+      Instagram
+    </a>
+  )}
+
+  {DIRECTOR.yt && (
+    <a
+      href={DIRECTOR.yt}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="pb-btn"
+      style={{ padding:'6px 10px', borderRadius:8, fontSize:12 }}
+    >
+      YouTube
+    </a>
+  )}
+</div>
+
 
         <details style={{ marginTop:8 }}>
           <summary style={{ cursor:'pointer', color:'var(--pb-dim)' }}>
