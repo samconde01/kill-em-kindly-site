@@ -1496,40 +1496,97 @@ React.useEffect(() => {
     </>
   );
 }
-function VideoStation(){
-  // Default to crowdfunding (second item) if it exists, otherwise first
+function VideoStation() {
   const defaultStation =
-    VIDEO_STATIONS.find(v => v.key === 'crowdfunding') || VIDEO_STATIONS[0];
+    VIDEO_STATIONS.find((v) => v.key === "crowdfunding") || VIDEO_STATIONS[0];
 
   const [active, setActive] = React.useState(defaultStation);
 
   const isPlayable = Boolean(active?.videoId);
-
   const poster = active?.videoId
     ? `https://img.youtube.com/vi/${active.videoId}/maxresdefault.jpg`
-    : null;
+    : "";
 
   return (
     <div className="video-station">
       {/* Big screen */}
       <div className="pb-panel video-screen">
-        <div className="pb-glow" style={{ fontWeight: 800, marginBottom: 8, letterSpacing: '.02em' }}>
+        <div
+          className="pb-glow"
+          style={{ fontWeight: 800, marginBottom: 8, letterSpacing: ".02em" }}
+        >
           BROADCASTS
         </div>
 
-      
+        {isPlayable ? (
+          <VideoEmbed
+            videoId={active.videoId}
+            poster={poster}
+            title={active.title || active.label}
+          />
+        ) : (
+          <div
+            style={{
+              aspectRatio: "16/9",
+              border: "1px solid var(--pb-border)",
+              borderRadius: 12,
+              overflow: "hidden",
+              position: "relative",
+              background: "var(--pb-bg-2)",
+              display: "grid",
+              placeItems: "center",
+              padding: 16,
+            }}
           >
-            <div style={{ textAlign:'center' }}>
-              <div className="pb-glow" style={{ fontWeight:800, fontSize:16 }}>
+            <div style={{ textAlign: "center" }}>
+              <div className="pb-glow" style={{ fontWeight: 800, fontSize: 16 }}>
                 SIGNAL NOT AVAILABLE
               </div>
-              <div style={{ marginTop:6, color:'var(--pb-dim)', fontSize:13 }}>
+              <div style={{ marginTop: 6, color: "var(--pb-dim)", fontSize: 13 }}>
                 Broadcast link pending — add a videoId to enable playback.
               </div>
             </div>
           </div>
         )}
       </div>
+
+      {/* Station list */}
+      <div className="pb-panel video-menu">
+        <div className="video-menu-title">
+          <div className="pb-glow" style={{ fontWeight: 800, letterSpacing: ".06em" }}>
+            STATIONS
+          </div>
+          <span className="pb-chip">VAULT 151</span>
+        </div>
+
+        <div className="station-list">
+          {VIDEO_STATIONS.map((v) => {
+            const disabled = !v.videoId;
+            const activeNow = active?.key === v.key;
+
+            return (
+              <button
+                key={v.key}
+                type="button"
+                className={`station-btn ${activeNow ? "station-active station-live" : ""}`}
+                onClick={() => {
+                  if (!disabled) setActive(v);
+                }}
+                aria-disabled={disabled ? "true" : "false"}
+                title={disabled ? "Link pending" : "Select station"}
+              >
+                <div className="station-label">{v.label}</div>
+                <div className="station-note">{v.note}</div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+  
 
       {/* Station list */}
       <div className="pb-panel video-menu">
