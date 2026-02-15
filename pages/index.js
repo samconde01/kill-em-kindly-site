@@ -186,8 +186,8 @@ const SPONSORS = [
 const VIDEO_STATIONS = [
   {
     key: 'teaser',
-    label: 'TEASER (LINK PENDING)',
-    note: 'Signal pending…',
+    label: 'TEASER',
+    note: 'Please stand by.',
     videoId: null, // <-- replace with the YouTube ID later
     poster: '/images/youtube-thumb.jpg?v=1', // <-- replace when you have teaser thumb
     title: "Kill ’em Kindly — Teaser",
@@ -1431,7 +1431,7 @@ function VideoStation(){
       {/* Big screen */}
       <div className="pb-panel video-screen">
        <div className="pb-glow" style={{ fontWeight:800, marginBottom:8, letterSpacing:'.02em' }}>
-  BROADCAST UPDATES
+  BROADCASTS
 </div>
 
 
