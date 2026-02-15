@@ -837,6 +837,7 @@ padding: '96px 0 48px',
       Learn More
     </button>
 </div>
+     </div>   
 </section>
 
 
