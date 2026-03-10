@@ -25,14 +25,10 @@ function nearestTier(amount, tiers) {
 
 // --- Data ------------------------------------------------------------------
 const TIER_DEFS = [
-  { cost: 20,  name: 'LORECAST LISTENER',           rewards: 'Digital Wallpaper Pack (3 phone & 3 desktop) & Soundtrack Downloads' },
-  { cost: 35,  name: 'CAP COLLECTOR',       rewards: 'Slaughter Project Nuka Sodapop Patch & Early Access to Behind the Scenes footage' },
-  { cost: 55,  name: 'NUKA CAP COLLECTOR',  rewards: 'Slaughter Project Nuka Quantum Sodapop Patch & past rewards' },
-  { cost: 75,  name: 'ARMORER',             rewards: 'T-Shirt and past rewards' },
-  { cost: 100, name: 'FOUR LEAF CLOVER',    rewards: 'Live Online Advance Screening and Q&A, and past rewards' },
-  { cost: 500, name: 'LOCAL LEADER',        rewards: 'Credit as Executive Backer, Private Q&A call with Production Team' },
-  { cost: 1000,name: 'STRONG BACK',         rewards: 'Prop Package, and past rewards' },
-  { cost: 5000,name: 'OVERSEER',            rewards: 'Invite on Set, Producer Credit, and past rewards' },
+  { cost: 15,  name: 'PREMIERE TICKET', rewards: 'Premiere ticket reward for in-person screening access' },
+  { cost: 40,  name: 'PREMIERE TICKET + SHIRT', rewards: 'Premiere ticket reward + T-shirt' },
+  { cost: 75,  name: 'WASTELAND BUNDLE', rewards: 'Digital downloads + Nuka patch + Nuka Quantum patch + T-shirt' },
+  { cost: 100, name: 'FOUR LEAF CLOVER', rewards: 'Live Online Advance Screening and Q&A, and Wasteland Bundle rewards' },
 ];
 
 // Cast with bios + image paths (revised bios)
@@ -619,9 +615,9 @@ function Header(){
   <a href="#rewards" className="pb-btn" style={{ borderRadius:10 }}>
     Rewards
   </a>
-  <a href="#pledge" className="pb-btn" style={{ borderRadius:10 }}>
-    Pledge
-  </a>
+ <a href="#pledge" className="pb-btn" style={{ borderRadius:10 }}>
+  Tickets
+</a>
 </nav>
 
       </div>
@@ -651,31 +647,40 @@ function Footer(){
 // --- Page ---------------------------------------------------------
 function HomePage({ hasClientToken }){
   const tiers = TIER_DEFS;
-  const [amount, setAmount] = React.useState(20);
+  const [amount, setAmount] = React.useState(15);
   const [loading, setLoading] = React.useState(false);
   const [errorMsg, setErrorMsg] = React.useState("");
   const [selectedTier, setSelectedTier] = React.useState(null);
   const [noReward, setNoReward] = React.useState(false);
   const [suggestedTier, setSuggestedTier] = React.useState(null);
-  const pledgeRef = React.useRef(null);
+const pledgeRef = React.useRef(null);
+const amountInputRef = React.useRef(null);
   
-  // --- PayPal sizing / validation (must live in HomePage)
+// --- PayPal sizing / validation (must live in HomePage)
 const [tShirtSize, setTShirtSize] = React.useState('');
-const needsShirtSize = Number(amount) >= 75;
+const needsShirtSize = !noReward && Number(amount) >= 40;
 React.useEffect(() => { if (!needsShirtSize) setTShirtSize(''); }, [needsShirtSize]);
 const canCheckout = Number(amount) > 0 && (!needsShirtSize || !!tShirtSize);
 const sizeOptions = ['XS','S','M','L','XL','2XL','3XL'];
 
-  // --- Donation metadata we collect client-side
+// --- Donation metadata we collect client-side
 const [email, setEmail] = React.useState('');
+const [willAttend, setWillAttend] = React.useState('');
+const [needsAda, setNeedsAda] = React.useState('');
+const showAdaQuestion = willAttend === 'yes';
+
+React.useEffect(() => {
+  if (!showAdaQuestion) setNeedsAda('');
+}, [showAdaQuestion]);
+
 const [addr, setAddr] = React.useState({
   line1: '', line2: '', city: '', state: '', postal: '', country: 'US'
 });
-const needsShipping = Number(amount) >= 35; // $35+ requires shipping address
+const needsShipping = !noReward && Number(amount) >= 75; // $75+ requires shipping address
 
 function isValidEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
 
-  const [firstName, setFirstName] = React.useState('');
+const [firstName, setFirstName] = React.useState('');
 const [anon, setAnon] = React.useState(false);
   
 // Generate a unique ID on the client only (avoid SSR errors)
@@ -822,7 +827,7 @@ React.useEffect(() => {
         className="pb-btn"
         style={{ padding: '12px 18px', borderRadius: 14 }}
       >
-        Pledge Now
+        Get Tickets Now
       </a>
 
       <button
@@ -885,7 +890,7 @@ React.useEffect(() => {
     </div>
 
     <div style={{ display:'flex', gap:12, marginTop:12 }}>
-      <a href="#pledge" className="pb-btn" style={{ padding:'10px 14px', borderRadius:12 }}>Back this project</a>
+<a href="#pledge" className="pb-btn" style={{ padding:'10px 14px', borderRadius:12 }}>Get Tickets Now</a>
       <button
         className="pb-btn pb-btn-ghost"
         style={{ padding:'10px 14px', borderRadius:12 }}
@@ -943,28 +948,7 @@ React.useEffect(() => {
             Kill Em Kindly is a short fan film based on the Fallout universe. This not-for-profit project is solely a passion project developed by dedicated storytellers. Taking place over 200 years after the nuclear disaster of October 23, 2077, this unique short explores parts of the Fallout universe that have never been built off of before. Please support us with donation or by sharing the page to help us bring this exciting story to life.
           </p>
 
-          {/* Budget Breakdown */}
-          <div style={{ marginTop:16 }}>
-            <div className="pb-glow" style={{ fontWeight:600, marginBottom:6 }}>Budget Breakdown</div>
-            <div className="pb-panel" style={{ padding:12 }}>
-              <div><strong>Production Operations (66%)</strong></div>
-              <ul style={{ marginTop:6, paddingLeft:18, color:'var(--pb-dim)' }}>
-                <li>Travel – 24%</li>
-                <li>Lodging – 20%</li>
-                <li>Logistics – 22%</li>
-              </ul>
-              <div style={{ marginTop:10 }}><strong>Creative & Design (18%)</strong></div>
-              <ul style={{ marginTop:6, paddingLeft:18, color:'var(--pb-dim)' }}>
-                <li>Costuming – 11%</li>
-                <li>Set Design – 7%</li>
-              </ul>
-              <div style={{ marginTop:10 }}><strong>On-Set Essentials (17%)</strong></div>
-              <ul style={{ marginTop:6, paddingLeft:18, color:'var(--pb-dim)' }}>
-                <li>Food – 13%</li>
-                <li>Location – 4%</li>
-              </ul>
-            </div>
-          </div>
+      
 
        {/* Timeline */}
 <div style={{ marginTop:16 }}>
@@ -1027,27 +1011,66 @@ React.useEffect(() => {
 
     {/* Rewards & Pledge Section */}
 <section id="rewards" className="pb-container" style={{ padding:'48px 0' }}>
-  <h3 className="pb-glow" style={{ fontSize:18, fontWeight:600 }}>Donate Now</h3>
+<h3 className="pb-glow" style={{ fontSize:18, fontWeight:600 }}>Donate for Premiere Access</h3>
 
   {/* Pledge Box */}
-  <div className="pb-panel" style={{ marginTop:16, padding:16 }} id="pledge" ref={pledgeRef}>
-    <label style={{ fontSize:12, color:'var(--pb-dim)' }}>Enter your pledge amount</label>
+   <div className="pb-panel" style={{ marginTop:16, padding:16 }} id="pledge" ref={pledgeRef}>
+    <div className="pb-panel" style={{ padding:12, marginBottom:12 }}>
+      <div className="pb-glow" style={{ fontWeight:700 }}>Only 100 seats available</div>
+      <p style={{ color:'var(--pb-dim)', marginTop:8, marginBottom:0 }}>
+        All past donors still qualify for a premiere ticket. Existing donors keep the rewards tied to their original donation and should expect an email soon with screening details.
+      </p>
+      <p style={{ color:'var(--pb-dim)', marginTop:8, marginBottom:0 }}>
+        Premiere-related rewards are for in-person attendance only. Travel, lodging, and other accommodations will not be provided.
+      </p>
+    </div>
+
+    <label style={{ fontSize:12, color:'var(--pb-dim)' }}>Enter your donation amount</label>
+
+    <div style={{ marginTop:10, display:'flex', gap:8, flexWrap:'wrap' }}>
+      {tiers.filter(t => [15, 40, 75].includes(t.cost)).map((t) => (
+        <button
+          key={t.cost}
+          type="button"
+          className="pb-btn"
+          style={{ padding:'8px 12px', borderRadius:10 }}
+          onClick={() => chooseTier(t)}
+        >
+          ${t.cost}
+        </button>
+      ))}
+
+      <button
+        type="button"
+        className="pb-btn pb-btn-ghost"
+        style={{ padding:'8px 12px', borderRadius:10 }}
+        onClick={() => {
+          setSelectedTier(null);
+          setNoReward(false);
+          setTimeout(() => amountInputRef.current?.focus(), 0);
+        }}
+      >
+        Custom donation
+      </button>
+    </div>
+
     <div style={{ marginTop:8, display:'flex', gap:8, alignItems:'center' }}>
       <span style={{ color:'var(--pb-dim)' }}>$</span>
       <input
+        ref={amountInputRef}
         type="number"
         min={1}
         value={amount}
-        onChange={(e)=>{ setAmount(Number(e.target.value)); setNoReward(false); }}
+        onChange={(e)=>{ setAmount(e.target.value === '' ? '' : Number(e.target.value)); setNoReward(false); }}
         className="pb-input"
       />
     </div>
 
     {needsShirtSize && (
       <div style={{ marginTop: 12 }}>
-        <label htmlFor="tshirt-size" style={{ display:'block', fontSize:14, fontWeight:600 }}>
-          T-Shirt Size (required for $75+)
-        </label>
+       <label htmlFor="tshirt-size" style={{ display:'block', fontSize:14, fontWeight:600 }}>
+  T-Shirt Size (required for shirt tiers)
+</label>
         <select
           id="tshirt-size"
           value={tShirtSize}
@@ -1062,11 +1085,11 @@ React.useEffect(() => {
       </div>
     )}
 
-    {amount > 0 && amount < 20 && !noReward && (
-      <div style={{ marginTop:8, fontSize:13 }} className="pb-error">
-        Pledges under $20 require either selecting the $20 tier or checking 'Donate without claiming a reward.'
-      </div>
-    )}
+   {amount > 0 && amount < 15 && !noReward && (
+  <div style={{ marginTop:8, fontSize:13 }} className="pb-error">
+    Donations under $15 require either selecting the $15 tier or checking 'Donate without claiming a reward.'
+  </div>
+)}
 
     {!noReward && suggestedTier && (
       <div style={{ marginTop:8, fontSize:13, color:'var(--pb-dim)' }}>
@@ -1084,7 +1107,7 @@ React.useEffect(() => {
       Donate without claiming a reward
     </label>
 
-    {/* Email */}
+      {/* Email */}
     <div style={{ marginTop:12 }}>
       <label style={{ display:'block', fontSize:14, fontWeight:600 }}>Email (required)</label>
       <input
@@ -1096,13 +1119,78 @@ React.useEffect(() => {
         style={{ marginTop:6 }}
         required
       />
-      <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>We’ll send updates and digital rewards here.</p>
+      <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>
+        We’ll send screening info, updates, and any digital rewards here.
+      </p>
     </div>
 
-    {/* Address (for $35+) */}
-    {needsShipping && (
+    {/* Screening attendance */}
+    <div style={{ marginTop:12 }}>
+      <label style={{ display:'block', fontSize:14, fontWeight:600 }}>
+        Do you plan to attend the screening? (required)
+      </label>
+
+      <div style={{ display:'flex', gap:16, flexWrap:'wrap', marginTop:8 }}>
+        <label style={{ display:'flex', alignItems:'center', gap:8, color:'var(--pb-dim)' }}>
+          <input
+            type="radio"
+            name="willAttend"
+            value="yes"
+            checked={willAttend === 'yes'}
+            onChange={(e) => setWillAttend(e.target.value)}
+          />
+          Yes
+        </label>
+
+        <label style={{ display:'flex', alignItems:'center', gap:8, color:'var(--pb-dim)' }}>
+          <input
+            type="radio"
+            name="willAttend"
+            value="no"
+            checked={willAttend === 'no'}
+            onChange={(e) => setWillAttend(e.target.value)}
+          />
+          No
+        </label>
+      </div>
+    </div>
+
+    {showAdaQuestion && (
       <div style={{ marginTop:12 }}>
-        <label style={{ display:'block', fontSize:14, fontWeight:600 }}>Shipping address (required for $35+)</label>
+        <label style={{ display:'block', fontSize:14, fontWeight:600 }}>
+          Will you need ADA accommodation? (required if attending)
+        </label>
+
+        <div style={{ display:'flex', gap:16, flexWrap:'wrap', marginTop:8 }}>
+          <label style={{ display:'flex', alignItems:'center', gap:8, color:'var(--pb-dim)' }}>
+            <input
+              type="radio"
+              name="needsAda"
+              value="yes"
+              checked={needsAda === 'yes'}
+              onChange={(e) => setNeedsAda(e.target.value)}
+            />
+            Yes
+          </label>
+
+          <label style={{ display:'flex', alignItems:'center', gap:8, color:'var(--pb-dim)' }}>
+            <input
+              type="radio"
+              name="needsAda"
+              value="no"
+              checked={needsAda === 'no'}
+              onChange={(e) => setNeedsAda(e.target.value)}
+            />
+            No
+          </label>
+        </div>
+      </div>
+    )}
+
+   {/* Address (for $75+) */}
+{needsShipping && (
+  <div style={{ marginTop:12 }}>
+    <label style={{ display:'block', fontSize:14, fontWeight:600 }}>Shipping address (required for $75+)</label>
         <input className="pb-input" placeholder="Street address" value={addr.line1} onChange={e=>setAddr({...addr, line1:e.target.value})} style={{ marginTop:6 }} />
         <input className="pb-input" placeholder="Apt, suite, etc. (optional)" value={addr.line2} onChange={e=>setAddr({...addr, line2:e.target.value})} style={{ marginTop:8 }} />
         <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr 1fr', gap:8, marginTop:8 }}>
@@ -1153,13 +1241,17 @@ React.useEffect(() => {
   onSubmit={async (e) => {
     if (!(Number(amount) > 0)) { e.preventDefault(); alert('Please enter a donation amount first.'); return; }
     if (!isValidEmail(email)) { e.preventDefault(); alert('Please enter a valid email.'); return; }
-    if (Number(amount) >= 75 && !tShirtSize) { e.preventDefault(); alert('Please select a T-Shirt size for $75+ donations.'); return; }
+    if (!willAttend) { e.preventDefault(); alert('Please let us know if you plan to attend the screening.'); return; }
+    if (showAdaQuestion && !needsAda) { e.preventDefault(); alert('Please let us know whether ADA accommodation is needed.'); return; }
+    if (needsShirtSize && !tShirtSize) { e.preventDefault(); alert('Please select a T-Shirt size for shirt tiers.'); return; }
+
     if (needsShipping) {
       const { line1, city, state, postal, country } = addr;
       if (!line1 || !city || !state || !postal || !country) {
-        e.preventDefault(); alert('Please complete your shipping address for $35+ tiers.'); return;
+        e.preventDefault(); alert('Please complete your shipping address for $75+ donations.'); return;
       }
     }
+
     if (!customId) { e.preventDefault(); alert('One sec—initializing checkout. Try again.'); return; }
 
     try {
@@ -1171,10 +1263,11 @@ React.useEffect(() => {
           amount: Number(amount),
           tShirtSize: tShirtSize || null,
           email,
+          willAttend,
+          needsAda: showAdaQuestion ? needsAda : null,
           address: needsShipping ? addr : null,
           tier: selectedTier?.name || null,
           noReward,
-          // donor display prefs
           firstName: firstName || null,
           anon: Boolean(anon),
         }),
@@ -1193,7 +1286,7 @@ React.useEffect(() => {
   <input type="hidden" name="return" value="https://killemkindly.info/thanks" />
   <input type="hidden" name="cancel_return" value="https://killemkindly.info/cancelled" />
 
-  <button
+    <button
     type="submit"
     className="pb-btn"
     style={{ display:'inline-block', padding:'12px 18px', borderRadius:14 }}
@@ -1201,16 +1294,18 @@ React.useEffect(() => {
       !customId ||
       !(Number(amount) > 0) ||
       !isValidEmail(email) ||
-      (Number(amount) >= 75 && !tShirtSize) ||
+      !willAttend ||
+      (showAdaQuestion && !needsAda) ||
+      (needsShirtSize && !tShirtSize) ||
       (needsShipping && (!addr.line1 || !addr.city || !addr.state || !addr.postal || !addr.country))
     }
     title="Donate with PayPal"
   >
-    Donate with PayPal
+    Get Tickets Now
   </button>
 
-  <p style={{ marginTop:8, fontSize:12, color:'var(--pb-dim)' }}>
-    You’ll be taken to a secure PayPal page to complete your donation.
+   <p style={{ marginTop:8, fontSize:12, color:'var(--pb-dim)' }}>
+    You’ll be taken to a secure PayPal page to complete your donation. Previous supporters still qualify for premiere access and will receive an email soon with details.
   </p>
 </form>
 
@@ -1472,9 +1567,9 @@ React.useEffect(() => {
   a: "Yes. While principal fundraising wrapped in November 2025, donations remain open to help cover post-production, distribution, and reward fulfillment costs. Every contribution from this point forward directly supports editing, sound design, final delivery, and getting the film in front of audiences."
 },
 
-           {
-  q: "What do I get for pledging?",
-  a: "Every supporter unlocks access to exclusive updates through this site. To redeem a reward tier please ensure you type the proper amount into your donation selection. Rewards are based off of final donation amounts from one single donation. Donations are not stacked. If you'd like to alter your donation in any way please reach out to sconde@samcondedigital.com"
+        {
+  q: "What do I get for donating?",
+  a: "Donation rewards are tied to the amount of a single donation. Current premiere-focused donation options include premiere access rewards and select merchandise or digital items depending on tier. Past donors still qualify for a premiere ticket, keep the rewards tied to their original donation, and will receive an email soon with more details."
 },
             {
               q: "How long is the film?",
