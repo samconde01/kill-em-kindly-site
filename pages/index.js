@@ -24,12 +24,7 @@ function nearestTier(amount, tiers) {
 
 
 // --- Data ------------------------------------------------------------------
-const TIER_DEFS = [
-  { cost: 15,  name: 'PREMIERE TICKET', rewards: 'Premiere ticket reward for in-person screening access' },
-  { cost: 40,  name: 'PREMIERE TICKET + SHIRT', rewards: 'Premiere ticket reward + T-shirt' },
-  { cost: 75,  name: 'WASTELAND BUNDLE', rewards: 'Digital downloads + Nuka patch + Nuka Quantum patch + T-shirt' },
-  { cost: 100, name: 'FOUR LEAF CLOVER', rewards: 'Live Online Advance Screening and Q&A, and Wasteland Bundle rewards' },
-];
+const TIER_DEFS = [];
 
 // Cast with bios + image paths (revised bios)
 const CAST = [
@@ -647,41 +642,53 @@ function Footer(){
 // --- Page ---------------------------------------------------------
 function HomePage({ hasClientToken }){
   const tiers = TIER_DEFS;
-  const [amount, setAmount] = React.useState(15);
   const [loading, setLoading] = React.useState(false);
   const [errorMsg, setErrorMsg] = React.useState("");
-  const [selectedTier, setSelectedTier] = React.useState(null);
-  const [noReward, setNoReward] = React.useState(false);
-  const [suggestedTier, setSuggestedTier] = React.useState(null);
-const pledgeRef = React.useRef(null);
-const amountInputRef = React.useRef(null);
-  
-// --- PayPal sizing / validation (must live in HomePage)
-const [tShirtSize, setTShirtSize] = React.useState('');
-const needsShirtSize = !noReward && Number(amount) >= 40;
-React.useEffect(() => { if (!needsShirtSize) setTShirtSize(''); }, [needsShirtSize]);
-const canCheckout = Number(amount) > 0 && (!needsShirtSize || !!tShirtSize);
-const sizeOptions = ['XS','S','M','L','XL','2XL','3XL'];
+  const pledgeRef = React.useRef(null);
 
-// --- Donation metadata we collect client-side
-const [email, setEmail] = React.useState('');
-const [willAttend, setWillAttend] = React.useState('');
-const [needsAda, setNeedsAda] = React.useState('');
-const showAdaQuestion = willAttend === 'yes';
+  const [ticketCount, setTicketCount] = React.useState(1);
+  const [shirtCount, setShirtCount] = React.useState(0);
+  const sizeOptions = ['XS','S','M','L','XL','2XL','3XL'];
+  const [shirtSizes, setShirtSizes] = React.useState([]);
 
-React.useEffect(() => {
-  if (!showAdaQuestion) setNeedsAda('');
-}, [showAdaQuestion]);
+  const TICKET_PRICE = 15;
+  const SHIRT_PRICE = 25;
 
-const [addr, setAddr] = React.useState({
-  line1: '', line2: '', city: '', state: '', postal: '', country: 'US'
-});
-const needsShipping = !noReward && Number(amount) >= 75; // $75+ requires shipping address
+  const ticketSubtotal = ticketCount * TICKET_PRICE;
+  const shirtSubtotal = shirtCount * SHIRT_PRICE;
+  const amount = ticketSubtotal + shirtSubtotal;
 
-function isValidEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+  React.useEffect(() => {
+    if (ticketCount < 1 && shirtCount > 0) {
+      setShirtCount(0);
+    }
+  }, [ticketCount, shirtCount]);
 
-const [firstName, setFirstName] = React.useState('');
-const [anon, setAnon] = React.useState(false);
+  React.useEffect(() => {
+    setShirtSizes((prev) => {
+      const next = [...prev];
+      if (shirtCount > next.length) {
+        while (next.length < shirtCount) next.push('');
+      } else if (shirtCount < next.length) {
+        next.length = shirtCount;
+      }
+      return next;
+    });
+  }, [shirtCount]);
+
+  const [email, setEmail] = React.useState('');
+  const [willAttend, setWillAttend] = React.useState('');
+  const [needsAda, setNeedsAda] = React.useState('');
+  const showAdaQuestion = willAttend === 'yes';
+
+  React.useEffect(() => {
+    if (!showAdaQuestion) setNeedsAda('');
+  }, [showAdaQuestion]);
+
+  function isValidEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+  const [firstName, setFirstName] = React.useState('');
+  const [anon, setAnon] = React.useState(false);
   
 // Generate a unique ID on the client only (avoid SSR errors)
 const [customId, setCustomId] = React.useState('');
@@ -742,19 +749,7 @@ const progress = Math.min(totalRaised / FUNDING_GOAL, 1); // <-- add this back
 const visibleDonors = showAllDonors ? donors : donors.slice(0, 6);
 
 
-  function chooseTier(t){
-    setSelectedTier({ cost: t.cost, name: t.name });
-    setAmount(t.cost);
-    setNoReward(false);
-    setErrorMsg("");
-    setTimeout(() => { pledgeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 0);
-  }
 
-  React.useEffect(() => {
-    if (!amount && amount !== 0) { setSuggestedTier(null); return; }
-    const nearest = nearestTier(amount, tiers);
-    if (!selectedTier || nearest.cost !== selectedTier.cost) setSuggestedTier(nearest); else setSuggestedTier(null);
-  }, [amount, selectedTier, tiers]);
 
   // ---- One-time image existence check (remove after confirming) ----
 React.useEffect(() => {
@@ -1018,96 +1013,141 @@ React.useEffect(() => {
     <div className="pb-panel" style={{ padding:12, marginBottom:12 }}>
       <div className="pb-glow" style={{ fontWeight:700 }}>Only 100 seats available</div>
       <p style={{ color:'var(--pb-dim)', marginTop:8, marginBottom:0 }}>
-        All past donors still qualify for a premiere ticket. Existing donors keep the rewards tied to their original donation and should expect an email soon with screening details.
-      </p>
-      <p style={{ color:'var(--pb-dim)', marginTop:8, marginBottom:0 }}>
-        Premiere-related rewards are for in-person attendance only. Travel, lodging, and other accommodations will not be provided.
+        Past supporters still qualify for premiere access, keep the rewards tied to their original donation, and will receive an email soon with details.
       </p>
     </div>
 
-    <label style={{ fontSize:12, color:'var(--pb-dim)' }}>Enter your donation amount</label>
+    <div style={{ marginBottom:16 }}>
+      <div className="pb-glow" style={{ fontWeight:700 }}>Premiere Access Donations</div>
+      <p style={{ color:'var(--pb-dim)', marginTop:8, marginBottom:0 }}>
+        Reserve your screening access through a donation of $15 per ticket. Shirts may be added for $25 each.
+      </p>
+    </div>
 
-    <div style={{ marginTop:10, display:'flex', gap:8, flexWrap:'wrap' }}>
-      {tiers.filter(t => [15, 40, 75].includes(t.cost)).map((t) => (
+    {/* Ticket Counter */}
+    <div className="pb-panel" style={{ padding:12, marginTop:12 }}>
+      <label style={{ display:'block', fontSize:14, fontWeight:600 }}>Premiere Tickets</label>
+      <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>$15 each</p>
+
+      <div style={{ display:'flex', alignItems:'center', gap:10, marginTop:10 }}>
         <button
-          key={t.cost}
+          type="button"
+          className="pb-btn pb-btn-ghost"
+          style={{ padding:'8px 12px', borderRadius:10 }}
+          onClick={() => setTicketCount(Math.max(0, ticketCount - 1))}
+        >
+          −
+        </button>
+
+        <div className="pb-panel" style={{ padding:'8px 16px', minWidth:60, textAlign:'center' }}>
+          {ticketCount}
+        </div>
+
+        <button
           type="button"
           className="pb-btn"
           style={{ padding:'8px 12px', borderRadius:10 }}
-          onClick={() => chooseTier(t)}
+          onClick={() => setTicketCount(ticketCount + 1)}
         >
-          ${t.cost}
+          +
         </button>
-      ))}
-
-      <button
-        type="button"
-        className="pb-btn pb-btn-ghost"
-        style={{ padding:'8px 12px', borderRadius:10 }}
-        onClick={() => {
-          setSelectedTier(null);
-          setNoReward(false);
-          setTimeout(() => amountInputRef.current?.focus(), 0);
-        }}
-      >
-        Custom donation
-      </button>
+      </div>
     </div>
 
-    <div style={{ marginTop:8, display:'flex', gap:8, alignItems:'center' }}>
-      <span style={{ color:'var(--pb-dim)' }}>$</span>
-      <input
-        ref={amountInputRef}
-        type="number"
-        min={1}
-        value={amount}
-        onChange={(e)=>{ setAmount(e.target.value === '' ? '' : Number(e.target.value)); setNoReward(false); }}
-        className="pb-input"
-      />
-    </div>
+    {/* Shirt Counter */}
+    <div className="pb-panel" style={{ padding:12, marginTop:12 }}>
+      <label style={{ display:'block', fontSize:14, fontWeight:600 }}>Shirt Add-Ons</label>
+      <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>
+        $25 each. Shirts can only be added with at least one premiere ticket.
+      </p>
 
-    {needsShirtSize && (
-      <div style={{ marginTop: 12 }}>
-       <label htmlFor="tshirt-size" style={{ display:'block', fontSize:14, fontWeight:600 }}>
-  T-Shirt Size (required for shirt tiers)
-</label>
-        <select
-          id="tshirt-size"
-          value={tShirtSize}
-          onChange={(e) => setTShirtSize(e.target.value)}
-          className="pb-input"
-          style={{ marginTop: 6 }}
+      <div style={{ display:'flex', alignItems:'center', gap:10, marginTop:10 }}>
+        <button
+          type="button"
+          className="pb-btn pb-btn-ghost"
+          style={{ padding:'8px 12px', borderRadius:10 }}
+          onClick={() => setShirtCount(Math.max(0, shirtCount - 1))}
+          disabled={shirtCount === 0}
         >
-          <option value="" disabled>Select a size…</option>
-          {sizeOptions.map(s => <option key={s} value={s}>{s}</option>)}
-        </select>
-        <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>Sizes: XS–3XL • Unisex fit</p>
+          −
+        </button>
+
+        <div className="pb-panel" style={{ padding:'8px 16px', minWidth:60, textAlign:'center' }}>
+          {shirtCount}
+        </div>
+
+        <button
+          type="button"
+          className="pb-btn"
+          style={{ padding:'8px 12px', borderRadius:10 }}
+          onClick={() => {
+            if (ticketCount < 1) return;
+            setShirtCount(shirtCount + 1);
+          }}
+          disabled={ticketCount < 1}
+        >
+          +
+        </button>
+      </div>
+
+      {ticketCount < 1 && (
+        <div style={{ marginTop:8, fontSize:13 }} className="pb-error">
+          Add at least one premiere ticket before adding shirts.
+        </div>
+      )}
+    </div>
+
+    {/* Shirt Sizes */}
+    {shirtCount > 0 && (
+      <div style={{ marginTop:12 }}>
+        <label style={{ display:'block', fontSize:14, fontWeight:600 }}>
+          Shirt Sizes
+        </label>
+        <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>
+          Please select one size for each shirt.
+        </p>
+
+        <div style={{ display:'grid', gap:10, marginTop:10 }}>
+          {shirtSizes.map((size, idx) => (
+            <div key={idx}>
+              <label style={{ display:'block', fontSize:13, color:'var(--pb-dim)', marginBottom:6 }}>
+                Shirt {idx + 1} Size
+              </label>
+              <select
+                value={size}
+                onChange={(e) => {
+                  const next = [...shirtSizes];
+                  next[idx] = e.target.value;
+                  setShirtSizes(next);
+                }}
+                className="pb-input"
+              >
+                <option value="">Select a size…</option>
+                {sizeOptions.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+            </div>
+          ))}
+        </div>
       </div>
     )}
 
-   {amount > 0 && amount < 15 && !noReward && (
-  <div style={{ marginTop:8, fontSize:13 }} className="pb-error">
-    Donations under $15 require either selecting the $15 tier or checking 'Donate without claiming a reward.'
-  </div>
-)}
-
-    {!noReward && suggestedTier && (
-      <div style={{ marginTop:8, fontSize:13, color:'var(--pb-dim)' }}>
-        Suggested tier: <strong>{suggestedTier.name}</strong> (${suggestedTier.cost}).
-        <button onClick={() => chooseTier(suggestedTier)} className="pb-btn" style={{ marginLeft:8, padding:'6px 10px', borderRadius:8 }}>Select</button>
-      </div>
-    )}
-
-    <label style={{ display:'flex', alignItems:'center', gap:8, marginTop:10, fontSize:13, color:'var(--pb-dim)' }}>
+    {/* Donor info */}
+    <div style={{ marginTop:12 }}>
+      <label style={{ display:'block', fontSize:14, fontWeight:600 }}>
+        First name
+      </label>
       <input
-        type="checkbox"
-        checked={noReward}
-        onChange={(e)=>{ setNoReward(e.target.checked); if (e.target.checked) setSelectedTier(null); }}
+        type="text"
+        className="pb-input"
+        placeholder="Jane"
+        value={firstName}
+        onChange={e => setFirstName(e.target.value)}
+        style={{ marginTop:6 }}
       />
-      Donate without claiming a reward
-    </label>
+    </div>
 
-      {/* Email */}
     <div style={{ marginTop:12 }}>
       <label style={{ display:'block', fontSize:14, fontWeight:600 }}>Email (required)</label>
       <input
@@ -1120,9 +1160,18 @@ React.useEffect(() => {
         required
       />
       <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>
-        We’ll send screening info, updates, and any digital rewards here.
+        We’ll send screening details and follow-up information here.
       </p>
     </div>
+
+    <label style={{ display:'flex', alignItems:'center', gap:8, marginTop:10, fontSize:13, color:'var(--pb-dim)' }}>
+      <input
+        type="checkbox"
+        checked={anon}
+        onChange={e => setAnon(e.target.checked)}
+      />
+      Make my donation anonymous on the public tracker
+    </label>
 
     {/* Screening attendance */}
     <div style={{ marginTop:12 }}>
@@ -1187,141 +1236,90 @@ React.useEffect(() => {
       </div>
     )}
 
-   {/* Address (for $75+) */}
-{needsShipping && (
-  <div style={{ marginTop:12 }}>
-    <label style={{ display:'block', fontSize:14, fontWeight:600 }}>Shipping address (required for $75+)</label>
-        <input className="pb-input" placeholder="Street address" value={addr.line1} onChange={e=>setAddr({...addr, line1:e.target.value})} style={{ marginTop:6 }} />
-        <input className="pb-input" placeholder="Apt, suite, etc. (optional)" value={addr.line2} onChange={e=>setAddr({...addr, line2:e.target.value})} style={{ marginTop:8 }} />
-        <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr 1fr', gap:8, marginTop:8 }}>
-          <input className="pb-input" placeholder="City" value={addr.city} onChange={e=>setAddr({...addr, city:e.target.value})} />
-          <input className="pb-input" placeholder="State" value={addr.state} onChange={e=>setAddr({...addr, state:e.target.value})} />
-          <input className="pb-input" placeholder="ZIP" value={addr.postal} onChange={e=>setAddr({...addr, postal:e.target.value})} />
+    {/* Donation Summary */}
+    <div className="pb-panel" style={{ padding:12, marginTop:16 }}>
+      <div className="pb-glow" style={{ fontWeight:700, marginBottom:8 }}>Donation Summary</div>
+      <div style={{ color:'var(--pb-dim)', fontSize:14 }}>
+        <div>Tickets: {ticketCount} × $15 = {formatUSD(ticketSubtotal)}</div>
+        <div style={{ marginTop:6 }}>Shirts: {shirtCount} × $25 = {formatUSD(shirtSubtotal)}</div>
+        <div style={{ marginTop:10, fontWeight:700, color:'var(--pb-bright)' }}>
+          Total Donation: {formatUSD(amount)}
         </div>
-        <input className="pb-input" placeholder="Country (US, CA, ...)" value={addr.country} onChange={e=>setAddr({...addr, country:e.target.value})} style={{ marginTop:8 }} />
-        <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>
-  We only ship physical perks to this address. <em>*Physical rewards can only be shipped to the U.S. at this time.</em>
-</p>
-
       </div>
-    )}
-{/* Donor display preferences */}
-<div style={{ marginTop:12 }}>
-  <label style={{ display:'block', fontSize:14, fontWeight:600 }}>
-    First name (for the public tracker)
-  </label>
-  <input
-    type="text"
-    className="pb-input"
-    placeholder="Jane"
-    value={firstName}
-    onChange={e => setFirstName(e.target.value)}
-    style={{ marginTop:6 }}
-  />
+    </div>
 
-  <label style={{ display:'flex', alignItems:'center', gap:8, marginTop:10, fontSize:13, color:'var(--pb-dim)' }}>
-    <input
-      type="checkbox"
-      checked={anon}
-      onChange={e => setAnon(e.target.checked)}
-    />
-    Make my donation anonymous
-  </label>
-  <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>
-    If checked, your name will appear as “Anonymous” on the public tracker.
-  </p>
-</div>
+    {/* PayPal */}
+    <form
+      action="https://www.paypal.com/donate"
+      method="post"
+      target="_blank"
+      style={{ marginTop: 12 }}
+      onSubmit={async (e) => {
+        if (!(ticketCount > 0)) { e.preventDefault(); alert('Please add at least one premiere ticket.'); return; }
+        if (!isValidEmail(email)) { e.preventDefault(); alert('Please enter a valid email.'); return; }
+        if (!willAttend) { e.preventDefault(); alert('Please let us know if you plan to attend the screening.'); return; }
+        if (showAdaQuestion && !needsAda) { e.preventDefault(); alert('Please let us know whether ADA accommodation is needed.'); return; }
+        if (shirtCount > 0 && shirtSizes.some(s => !s)) { e.preventDefault(); alert('Please select a size for each shirt.'); return; }
+        if (!customId) { e.preventDefault(); alert('One sec—initializing checkout. Try again.'); return; }
 
-    {/* Donate via PayPal (hosted full-page) */}
-  <form
-  action="https://www.paypal.com/donate"
-  method="post"
-  target="_blank"
-  style={{ marginTop: 12 }}
-  onSubmit={async (e) => {
-    if (!(Number(amount) > 0)) { e.preventDefault(); alert('Please enter a donation amount first.'); return; }
-    if (!isValidEmail(email)) { e.preventDefault(); alert('Please enter a valid email.'); return; }
-    if (!willAttend) { e.preventDefault(); alert('Please let us know if you plan to attend the screening.'); return; }
-    if (showAdaQuestion && !needsAda) { e.preventDefault(); alert('Please let us know whether ADA accommodation is needed.'); return; }
-    if (needsShirtSize && !tShirtSize) { e.preventDefault(); alert('Please select a T-Shirt size for shirt tiers.'); return; }
+        try {
+          await fetch('/api/pledge-intent', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: customId,
+              amount,
+              email,
+              willAttend,
+              needsAda: showAdaQuestion ? needsAda : null,
+              firstName: firstName || null,
+              anon: Boolean(anon),
+              ticketCount,
+              shirtCount,
+              shirtSizes
+            }),
+          });
+        } catch (err) {
+          console.error('pledge-intent failed', err);
+        }
+      }}
+    >
+      <input type="hidden" name="hosted_button_id" value="VPRLL2BPRULJ8" />
+      <input type="hidden" name="amount" value={amount || ''} />
+      <input type="hidden" name="currency_code" value="USD" />
+      <input type="hidden" name="custom" value={customId} />
+      <input type="hidden" name="notify_url" value="https://killemkindly.info/api/paypal/ipn" />
+      <input type="hidden" name="return" value="https://killemkindly.info/thanks" />
+      <input type="hidden" name="cancel_return" value="https://killemkindly.info/cancelled" />
 
-    if (needsShipping) {
-      const { line1, city, state, postal, country } = addr;
-      if (!line1 || !city || !state || !postal || !country) {
-        e.preventDefault(); alert('Please complete your shipping address for $75+ donations.'); return;
-      }
-    }
+      <button
+        type="submit"
+        className="pb-btn"
+        style={{ display:'inline-block', padding:'12px 18px', borderRadius:14 }}
+        disabled={
+          !customId ||
+          !(ticketCount > 0) ||
+          !isValidEmail(email) ||
+          !willAttend ||
+          (showAdaQuestion && !needsAda) ||
+          (shirtCount > 0 && shirtSizes.some(s => !s))
+        }
+        title="Donate with PayPal"
+      >
+        Get Tickets Now
+      </button>
 
-    if (!customId) { e.preventDefault(); alert('One sec—initializing checkout. Try again.'); return; }
-
-    try {
-      await fetch('/api/pledge-intent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: customId,
-          amount: Number(amount),
-          tShirtSize: tShirtSize || null,
-          email,
-          willAttend,
-          needsAda: showAdaQuestion ? needsAda : null,
-          address: needsShipping ? addr : null,
-          tier: selectedTier?.name || null,
-          noReward,
-          firstName: firstName || null,
-          anon: Boolean(anon),
-        }),
-      });
-    } catch (err) {
-      console.error('pledge-intent failed', err);
-    }
-  }}
->
-  {/* Hosted button + passthrough fields */}
-  <input type="hidden" name="hosted_button_id" value="VPRLL2BPRULJ8" />
-  <input type="hidden" name="amount" value={Number(amount) || ''} />
-  <input type="hidden" name="currency_code" value="USD" />
-  <input type="hidden" name="custom" value={customId} />
-  <input type="hidden" name="notify_url" value="https://killemkindly.info/api/paypal/ipn" />
-  <input type="hidden" name="return" value="https://killemkindly.info/thanks" />
-  <input type="hidden" name="cancel_return" value="https://killemkindly.info/cancelled" />
-
-    <button
-    type="submit"
-    className="pb-btn"
-    style={{ display:'inline-block', padding:'12px 18px', borderRadius:14 }}
-    disabled={
-      !customId ||
-      !(Number(amount) > 0) ||
-      !isValidEmail(email) ||
-      !willAttend ||
-      (showAdaQuestion && !needsAda) ||
-      (needsShirtSize && !tShirtSize) ||
-      (needsShipping && (!addr.line1 || !addr.city || !addr.state || !addr.postal || !addr.country))
-    }
-    title="Donate with PayPal"
-  >
-    Get Tickets Now
-  </button>
-
-   <p style={{ marginTop:8, fontSize:12, color:'var(--pb-dim)' }}>
-    You’ll be taken to a secure PayPal page to complete your donation. Previous supporters still qualify for premiere access and will receive an email soon with details.
-  </p>
-</form>
-
-    {/* Selected tier + errors + policy */}
-    {selectedTier && !noReward && (
-      <div style={{ marginTop:8, fontSize:13, color:'var(--pb-bright)' }}>
-        Selected Tier: <strong>{selectedTier.name}</strong> (${selectedTier.cost})
-      </div>
-    )}
+      <p style={{ marginTop:8, fontSize:12, color:'var(--pb-dim)' }}>
+        You’ll be taken to a secure PayPal page to complete your donation. Past supporters will be contacted directly with premiere details.
+      </p>
+    </form>
 
     {errorMsg && (<div style={{ marginTop:8, fontSize:13 }} className="pb-error">{errorMsg}</div>)}
 
     <p style={{ marginTop:4, fontSize:11, color:'var(--pb-dim)' }}>
-      By pledging you agree to our <a href="/refunds" style={{ color:'var(--pb-bright)' }}>Refunds & Responsibility</a> and <a href="/privacy" style={{ color:'var(--pb-bright)' }}>Privacy Policy</a>.
+      By donating you agree to our <a href="/refunds" style={{ color:'var(--pb-bright)' }}>Refunds & Responsibility</a> and <a href="/privacy" style={{ color:'var(--pb-bright)' }}>Privacy Policy</a>.
     </p>
-  </div> {/* closes the Pledge Box panel */}
+  </div>
 
   {/* Rewards Banner */}
   <div className="pb-panel" style={{ padding:0, overflow:'hidden', marginTop:24 }}>
@@ -1334,29 +1332,7 @@ React.useEffect(() => {
     </div>
   </div>
 
-  {/* Reward Tiers (click to select) */}
-  <div style={{ marginTop: 24, display: 'grid', gap: 12 }}>
-    {tiers.map((t, idx) => (
-      <div
-        key={`${t.name}-${t.cost}-${idx}`}
-        className="pb-panel"
-        style={{
-          padding: 16,
-          cursor: 'pointer',
-          boxShadow:
-            selectedTier?.cost === t.cost
-              ? '0 0 0 2px var(--pb-border-strong), inset 0 0 24px rgba(255,156,43,0.18)'
-              : undefined
-        }}
-        onClick={() => chooseTier(t)}
-      >
-        <div className="pb-glow" style={{ fontWeight: 600 }}>
-          {t.name} — ${t.cost}
-        </div>
-        <div style={{ color: 'var(--pb-dim)', marginTop: 6 }}>{t.rewards}</div>
-      </div>
-    ))}
-  </div>
+
 </section>
 
 
@@ -1567,9 +1543,9 @@ React.useEffect(() => {
   a: "Yes. While principal fundraising wrapped in November 2025, donations remain open to help cover post-production, distribution, and reward fulfillment costs. Every contribution from this point forward directly supports editing, sound design, final delivery, and getting the film in front of audiences."
 },
 
-        {
-  q: "What do I get for donating?",
-  a: "Donation rewards are tied to the amount of a single donation. Current premiere-focused donation options include premiere access rewards and select merchandise or digital items depending on tier. Past donors still qualify for a premiere ticket, keep the rewards tied to their original donation, and will receive an email soon with more details."
+ {
+  q: "How do premiere donations work?",
+  a: "Premiere access donations are structured around a simple ticket builder. Premiere tickets are $15 each, and shirts may be added for $25 each with at least one ticket. Past donors still qualify for premiere access, keep the rewards tied to their original donation, and will receive an email soon with more details."
 },
             {
               q: "How long is the film?",
