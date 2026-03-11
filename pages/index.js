@@ -370,7 +370,19 @@ html, body, .pipboy {
 .pb-error {
   color:#ff6b6b;
 }
+.pb-divider {
+  border-bottom: 1px solid var(--pb-border);
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+}
 
+.pb-soft-text {
+  color: var(--pb-dim);
+}
+
+.pb-strong-text {
+  color: var(--pb-bright);
+}
 .pb-grid-overlay {
   position: fixed;
   inset: 0;
@@ -603,16 +615,14 @@ function Header(){
           />
         </div>
 
-       <nav className="pb-nav" style={{ justifyContent:'flex-end' }}>
+      <nav className="pb-nav" style={{ justifyContent:'flex-end' }}>
   <a href="#details" className="pb-btn pb-nav-about" style={{ borderRadius:10 }}>
     About
   </a>
-  <a href="#rewards" className="pb-btn" style={{ borderRadius:10 }}>
-    Rewards
+
+  <a href="#pledge" className="pb-btn" style={{ borderRadius:10 }}>
+    Tickets
   </a>
- <a href="#pledge" className="pb-btn" style={{ borderRadius:10 }}>
-  Tickets
-</a>
 </nav>
 
       </div>
@@ -886,12 +896,12 @@ React.useEffect(() => {
 
     <div style={{ display:'flex', gap:12, marginTop:12 }}>
 <a href="#pledge" className="pb-btn" style={{ padding:'10px 14px', borderRadius:12 }}>Get Tickets Now</a>
-      <button
+         <button
         className="pb-btn pb-btn-ghost"
         style={{ padding:'10px 14px', borderRadius:12 }}
         onClick={()=>document.getElementById('rewards')?.scrollIntoView({behavior:'smooth'})}
       >
-        View rewards
+        View tickets
       </button>
     </div>
 
@@ -971,37 +981,7 @@ React.useEffect(() => {
 </div>     {/* closes pb-panel inside #details */}
 </section> {/* closes #details section */}
 
-{/* Updates (under Timeline) */}
-<section className="pb-container" style={{ padding:'16px 0' }}>
-  <h3 className="pb-glow" style={{ fontSize:18, fontWeight:600 }}>Updates</h3>
 
-  <div className="updates-grid" style={{ marginTop:12 }}>
- {[...UPDATES].sort((a, b) => new Date(b.date) - new Date(a.date)).map((u) => {
-  return (
-    <article key={u.id} className="pb-panel" style={{ padding:12 }}>
-      {u.image ? (
-        <img
-          src={`${u.image}?v=2`}
-          alt={u.title}
-          className="update-img"
-          onError={(e) => {
-            console.warn('Update image failed to load:', u.image);
-            e.currentTarget.style.display = 'none';
-          }}
-        />
-      ) : null}
-
-      <div style={{ marginTop:10 }}>
-        <div className="pb-glow" style={{ fontWeight:700 }}>{u.title}</div>
-        <div style={{ color:'var(--pb-dim)', fontSize:12, marginTop:4 }}>{u.date}</div>
-        <p style={{ color:'var(--pb-dim)', marginTop:8 }}>{u.body}</p>
-      </div>
-    </article>
-  );
-})}
-
-  </div>
-</section>
 
 
     {/* Rewards & Pledge Section */}
@@ -1009,25 +989,26 @@ React.useEffect(() => {
 <h3 className="pb-glow" style={{ fontSize:18, fontWeight:600 }}>Donate for Premiere Access</h3>
 
   {/* Pledge Box */}
-   <div className="pb-panel" style={{ marginTop:16, padding:16 }} id="pledge" ref={pledgeRef}>
-    <div className="pb-panel" style={{ padding:12, marginBottom:12 }}>
-      <div className="pb-glow" style={{ fontWeight:700 }}>Only 100 seats available</div>
-      <p style={{ color:'var(--pb-dim)', marginTop:8, marginBottom:0 }}>
+  <div className="pb-panel" style={{ marginTop:16, padding:20 }} id="pledge" ref={pledgeRef}>
+    <div className="pb-divider">
+      <div className="pb-glow" style={{ fontWeight:700, fontSize:18 }}>Only 100 seats available</div>
+      <p className="pb-soft-text" style={{ marginTop:8, marginBottom:0, lineHeight:1.55 }}>
         Past supporters still qualify for premiere access, keep the rewards tied to their original donation, and will receive an email soon with details.
       </p>
     </div>
 
-    <div style={{ marginBottom:16 }}>
-      <div className="pb-glow" style={{ fontWeight:700 }}>Premiere Access Donations</div>
-      <p style={{ color:'var(--pb-dim)', marginTop:8, marginBottom:0 }}>
+    <div className="pb-divider">
+      <div className="pb-glow" style={{ fontWeight:700, fontSize:18 }}>Premiere Access Donations</div>
+      <p className="pb-soft-text" style={{ marginTop:8, marginBottom:0, lineHeight:1.55 }}>
         Reserve your screening access through a donation of $15 per ticket. Shirts may be added for $25 each.
       </p>
     </div>
 
-    {/* Ticket Counter */}
-    <div className="pb-panel" style={{ padding:12, marginTop:12 }}>
-      <label style={{ display:'block', fontSize:14, fontWeight:600 }}>Premiere Tickets</label>
-      <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>$15 each</p>
+    <div className="pb-divider">
+      <label style={{ display:'block', fontSize:15, fontWeight:700 }} className="pb-strong-text">
+        Premiere Tickets
+      </label>
+      <p className="pb-soft-text" style={{ marginTop:6, fontSize:13 }}>$15 each</p>
 
       <div style={{ display:'flex', alignItems:'center', gap:10, marginTop:10 }}>
         <button
@@ -1039,7 +1020,17 @@ React.useEffect(() => {
           −
         </button>
 
-        <div className="pb-panel" style={{ padding:'8px 16px', minWidth:60, textAlign:'center' }}>
+        <div
+          style={{
+            padding:'8px 16px',
+            minWidth:60,
+            textAlign:'center',
+            border:'1px solid var(--pb-border)',
+            borderRadius:10,
+            color:'var(--pb-bright)',
+            background:'rgba(255,156,43,.05)'
+          }}
+        >
           {ticketCount}
         </div>
 
@@ -1054,10 +1045,11 @@ React.useEffect(() => {
       </div>
     </div>
 
-    {/* Shirt Counter */}
-    <div className="pb-panel" style={{ padding:12, marginTop:12 }}>
-      <label style={{ display:'block', fontSize:14, fontWeight:600 }}>Shirt Add-Ons</label>
-      <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>
+    <div className="pb-divider">
+      <label style={{ display:'block', fontSize:15, fontWeight:700 }} className="pb-strong-text">
+        Shirt Add-Ons
+      </label>
+      <p className="pb-soft-text" style={{ marginTop:6, fontSize:13 }}>
         $25 each. Shirts can only be added with at least one premiere ticket.
       </p>
 
@@ -1072,7 +1064,17 @@ React.useEffect(() => {
           −
         </button>
 
-        <div className="pb-panel" style={{ padding:'8px 16px', minWidth:60, textAlign:'center' }}>
+        <div
+          style={{
+            padding:'8px 16px',
+            minWidth:60,
+            textAlign:'center',
+            border:'1px solid var(--pb-border)',
+            borderRadius:10,
+            color:'var(--pb-bright)',
+            background:'rgba(255,156,43,.05)'
+          }}
+        >
           {shirtCount}
         </div>
 
@@ -1097,13 +1099,12 @@ React.useEffect(() => {
       )}
     </div>
 
-    {/* Shirt Sizes */}
     {shirtCount > 0 && (
-      <div style={{ marginTop:12 }}>
-        <label style={{ display:'block', fontSize:14, fontWeight:600 }}>
+      <div className="pb-divider">
+        <label style={{ display:'block', fontSize:15, fontWeight:700 }} className="pb-strong-text">
           Shirt Sizes
         </label>
-        <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>
+        <p className="pb-soft-text" style={{ marginTop:6, fontSize:13 }}>
           Please select one size for each shirt.
         </p>
 
@@ -1133,9 +1134,8 @@ React.useEffect(() => {
       </div>
     )}
 
-    {/* Donor info */}
-    <div style={{ marginTop:12 }}>
-      <label style={{ display:'block', fontSize:14, fontWeight:600 }}>
+    <div className="pb-divider">
+      <label style={{ display:'block', fontSize:14, fontWeight:700 }} className="pb-strong-text">
         First name
       </label>
       <input
@@ -1148,8 +1148,10 @@ React.useEffect(() => {
       />
     </div>
 
-    <div style={{ marginTop:12 }}>
-      <label style={{ display:'block', fontSize:14, fontWeight:600 }}>Email (required)</label>
+    <div className="pb-divider">
+      <label style={{ display:'block', fontSize:14, fontWeight:700 }} className="pb-strong-text">
+        Email (required)
+      </label>
       <input
         type="email"
         className="pb-input"
@@ -1159,23 +1161,22 @@ React.useEffect(() => {
         style={{ marginTop:6 }}
         required
       />
-      <p style={{ marginTop:6, fontSize:12, color:'var(--pb-dim)' }}>
+      <p className="pb-soft-text" style={{ marginTop:6, fontSize:12 }}>
         We’ll send screening details and follow-up information here.
       </p>
+
+      <label style={{ display:'flex', alignItems:'center', gap:8, marginTop:12, fontSize:13, color:'var(--pb-dim)' }}>
+        <input
+          type="checkbox"
+          checked={anon}
+          onChange={e => setAnon(e.target.checked)}
+        />
+        Make my donation anonymous on the public tracker
+      </label>
     </div>
 
-    <label style={{ display:'flex', alignItems:'center', gap:8, marginTop:10, fontSize:13, color:'var(--pb-dim)' }}>
-      <input
-        type="checkbox"
-        checked={anon}
-        onChange={e => setAnon(e.target.checked)}
-      />
-      Make my donation anonymous on the public tracker
-    </label>
-
-    {/* Screening attendance */}
-    <div style={{ marginTop:12 }}>
-      <label style={{ display:'block', fontSize:14, fontWeight:600 }}>
+    <div className="pb-divider">
+      <label style={{ display:'block', fontSize:14, fontWeight:700 }} className="pb-strong-text">
         Do you plan to attend the screening? (required)
       </label>
 
@@ -1202,53 +1203,51 @@ React.useEffect(() => {
           No
         </label>
       </div>
+
+      {showAdaQuestion && (
+        <div style={{ marginTop:12 }}>
+          <label style={{ display:'block', fontSize:14, fontWeight:700 }} className="pb-strong-text">
+            Will you need ADA accommodation? (required if attending)
+          </label>
+
+          <div style={{ display:'flex', gap:16, flexWrap:'wrap', marginTop:8 }}>
+            <label style={{ display:'flex', alignItems:'center', gap:8, color:'var(--pb-dim)' }}>
+              <input
+                type="radio"
+                name="needsAda"
+                value="yes"
+                checked={needsAda === 'yes'}
+                onChange={(e) => setNeedsAda(e.target.value)}
+              />
+              Yes
+            </label>
+
+            <label style={{ display:'flex', alignItems:'center', gap:8, color:'var(--pb-dim)' }}>
+              <input
+                type="radio"
+                name="needsAda"
+                value="no"
+                checked={needsAda === 'no'}
+                onChange={(e) => setNeedsAda(e.target.value)}
+              />
+              No
+            </label>
+          </div>
+        </div>
+      )}
     </div>
 
-    {showAdaQuestion && (
-      <div style={{ marginTop:12 }}>
-        <label style={{ display:'block', fontSize:14, fontWeight:600 }}>
-          Will you need ADA accommodation? (required if attending)
-        </label>
-
-        <div style={{ display:'flex', gap:16, flexWrap:'wrap', marginTop:8 }}>
-          <label style={{ display:'flex', alignItems:'center', gap:8, color:'var(--pb-dim)' }}>
-            <input
-              type="radio"
-              name="needsAda"
-              value="yes"
-              checked={needsAda === 'yes'}
-              onChange={(e) => setNeedsAda(e.target.value)}
-            />
-            Yes
-          </label>
-
-          <label style={{ display:'flex', alignItems:'center', gap:8, color:'var(--pb-dim)' }}>
-            <input
-              type="radio"
-              name="needsAda"
-              value="no"
-              checked={needsAda === 'no'}
-              onChange={(e) => setNeedsAda(e.target.value)}
-            />
-            No
-          </label>
-        </div>
-      </div>
-    )}
-
-    {/* Donation Summary */}
-    <div className="pb-panel" style={{ padding:12, marginTop:16 }}>
-      <div className="pb-glow" style={{ fontWeight:700, marginBottom:8 }}>Donation Summary</div>
-      <div style={{ color:'var(--pb-dim)', fontSize:14 }}>
+    <div className="pb-divider">
+      <div className="pb-glow" style={{ fontWeight:700, marginBottom:8, fontSize:16 }}>Donation Summary</div>
+      <div style={{ color:'var(--pb-bright)', fontSize:14, lineHeight:1.7 }}>
         <div>Tickets: {ticketCount} × $15 = {formatUSD(ticketSubtotal)}</div>
-        <div style={{ marginTop:6 }}>Shirts: {shirtCount} × $25 = {formatUSD(shirtSubtotal)}</div>
-        <div style={{ marginTop:10, fontWeight:700, color:'var(--pb-bright)' }}>
+        <div>Shirts: {shirtCount} × $25 = {formatUSD(shirtSubtotal)}</div>
+        <div style={{ marginTop:10, fontWeight:800 }}>
           Total Donation: {formatUSD(amount)}
         </div>
       </div>
     </div>
 
-    {/* PayPal */}
     <form
       action="https://www.paypal.com/donate"
       method="post"
@@ -1309,32 +1308,51 @@ React.useEffect(() => {
         Get Tickets Now
       </button>
 
-      <p style={{ marginTop:8, fontSize:12, color:'var(--pb-dim)' }}>
-        You’ll be taken to a secure PayPal page to complete your donation. Past supporters will be contacted directly with premiere details.
+      <p style={{ marginTop:8, fontSize:12, color:'var(--pb-dim)', lineHeight:1.55 }}>
+        You’ll be taken to a secure PayPal page to complete your donation. Please keep the PayPal amount unchanged to redeem your selected tickets and shirts.
       </p>
     </form>
 
     {errorMsg && (<div style={{ marginTop:8, fontSize:13 }} className="pb-error">{errorMsg}</div>)}
 
-    <p style={{ marginTop:4, fontSize:11, color:'var(--pb-dim)' }}>
+    <p style={{ marginTop:8, fontSize:11, color:'var(--pb-dim)' }}>
       By donating you agree to our <a href="/refunds" style={{ color:'var(--pb-bright)' }}>Refunds & Responsibility</a> and <a href="/privacy" style={{ color:'var(--pb-bright)' }}>Privacy Policy</a>.
     </p>
   </div>
 
-  {/* Rewards Banner */}
-  <div className="pb-panel" style={{ padding:0, overflow:'hidden', marginTop:24 }}>
-    <div style={{ aspectRatio:'21/5', width:'100%', display:'flex', alignItems:'center', justifyContent:'center', borderBottom:'1px solid var(--pb-border)', color:'var(--pb-dim)' }}>
-      <img
-        src="/images/rewards-banner-orange.png"
-        alt="Rewards Banner"
-        style={{ width:'100%', height:'100%', objectFit:'cover', filter:'grayscale(40%) contrast(1.2) brightness(0.8)' }}
-      />
-    </div>
-  </div>
-
 
 </section>
+{/* Updates (under Timeline) */}
+<section className="pb-container" style={{ padding:'16px 0' }}>
+  <h3 className="pb-glow" style={{ fontSize:18, fontWeight:600 }}>Updates</h3>
 
+  <div className="updates-grid" style={{ marginTop:12 }}>
+ {[...UPDATES].sort((a, b) => new Date(b.date) - new Date(a.date)).map((u) => {
+  return (
+    <article key={u.id} className="pb-panel" style={{ padding:12 }}>
+      {u.image ? (
+        <img
+          src={`${u.image}?v=2`}
+          alt={u.title}
+          className="update-img"
+          onError={(e) => {
+            console.warn('Update image failed to load:', u.image);
+            e.currentTarget.style.display = 'none';
+          }}
+        />
+      ) : null}
+
+      <div style={{ marginTop:10 }}>
+        <div className="pb-glow" style={{ fontWeight:700 }}>{u.title}</div>
+        <div style={{ color:'var(--pb-dim)', fontSize:12, marginTop:4 }}>{u.date}</div>
+        <p style={{ color:'var(--pb-dim)', marginTop:8 }}>{u.body}</p>
+      </div>
+    </article>
+  );
+})}
+
+  </div>
+</section>
 
 
       {/* Cast & Producers */}
