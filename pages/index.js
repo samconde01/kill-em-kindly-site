@@ -829,8 +829,19 @@ React.useEffect(() => {
       }}
     >
       In this fan film a collision of western style and post-apocalyptic ruin come together to tell the story of a woman searching for her family. Along the way a deadly alter ego born from an experiment gone wrong or maybe exactly right may just save her life.
-   PRIVATE PREMIERE SCREENING • TEXAS THEATRE • APRIL 11 • 6–9 PM
         </p>
+<div
+  className="pb-glow"
+  style={{
+    marginTop:16,
+    fontWeight:800,
+    letterSpacing:'.08em',
+    textTransform:'uppercase',
+    fontSize:14
+  }}
+>
+  PRIVATE PREMIERE SCREENING • TEXAS THEATRE • APRIL 11 • 6–9 PM
+</div>
 
     {/* Buttons */}
     <div
