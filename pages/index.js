@@ -1003,20 +1003,19 @@ React.useEffect(() => {
 <h3 className="pb-glow" style={{ fontSize:18, fontWeight:600 }}>Donate for Premiere Access</h3>
 
   {/* Pledge Box */}
-  <div className="pb-panel" style={{ marginTop:16, padding:20 }} id="pledge" ref={pledgeRef}>
-    <div className="pb-divider">
-      <div className="pb-glow" style={{ fontWeight:700, fontSize:18 }}>Only 100 seats available</div>
-      <p className="pb-soft-text" style={{ marginTop:8, marginBottom:0, lineHeight:1.55 }}>
-        Past supporters still qualify for premiere access, keep the rewards tied to their original donation, and will receive an email soon with details.
-      </p>
-    </div>
+<div className="pb-divider">
+  <div className="pb-glow" style={{ fontWeight:700, fontSize:18 }}>
+    Premiere Access | Only 100 Seats Available
+  </div>
 
-    <div className="pb-divider">
-      <div className="pb-glow" style={{ fontWeight:700, fontSize:18 }}>Premiere Access Donations</div>
-      <p className="pb-soft-text" style={{ marginTop:8, marginBottom:0, lineHeight:1.55 }}>
-        Reserve your screening access through a donation of $15 per ticket. Shirts may be added for $25 each.
-      </p>
-    </div>
+  <p className="pb-soft-text" style={{ marginTop:8, lineHeight:1.55 }}>
+    Reserve your screening access through a donation of $15 per ticket. Shirts may be added for $25 each.
+  </p>
+
+  <p className="pb-soft-text" style={{ marginTop:6, marginBottom:0, fontSize:13 }}>
+    Past supporters still qualify for premiere access, keep the rewards tied to their original donation, and will receive an email soon with details.
+  </p>
+</div>
 
     <div className="pb-divider">
       <label style={{ display:'block', fontSize:15, fontWeight:700 }} className="pb-strong-text">
@@ -1150,7 +1149,7 @@ React.useEffect(() => {
 
     <div className="pb-divider">
       <label style={{ display:'block', fontSize:14, fontWeight:700 }} className="pb-strong-text">
-        First name
+        First Name (Required)
       </label>
       <input
         type="text"
@@ -1159,12 +1158,13 @@ React.useEffect(() => {
         value={firstName}
         onChange={e => setFirstName(e.target.value)}
         style={{ marginTop:6 }}
+Required
       />
     </div>
 
     <div className="pb-divider">
       <label style={{ display:'block', fontSize:14, fontWeight:700 }} className="pb-strong-text">
-        Email (required)
+        Email (Required)
       </label>
       <input
         type="email"
@@ -1173,7 +1173,7 @@ React.useEffect(() => {
         value={email}
         onChange={e=>setEmail(e.target.value)}
         style={{ marginTop:6 }}
-        required
+        Required
       />
       <p className="pb-soft-text" style={{ marginTop:6, fontSize:12 }}>
         We’ll send screening details and follow-up information here.
@@ -1191,7 +1191,7 @@ React.useEffect(() => {
 
     <div className="pb-divider">
       <label style={{ display:'block', fontSize:14, fontWeight:700 }} className="pb-strong-text">
-        Do you plan to attend the screening? (required)
+        Do you plan to attend the screening?* (Required)
       </label>
 
       <div style={{ display:'flex', gap:16, flexWrap:'wrap', marginTop:8 }}>
@@ -1221,7 +1221,7 @@ React.useEffect(() => {
       {showAdaQuestion && (
         <div style={{ marginTop:12 }}>
           <label style={{ display:'block', fontSize:14, fontWeight:700 }} className="pb-strong-text">
-            Will you need ADA accommodation? (required if attending)
+            Will you need ADA accommodation? 
           </label>
 
           <div style={{ display:'flex', gap:16, flexWrap:'wrap', marginTop:8 }}>
@@ -1323,7 +1323,7 @@ React.useEffect(() => {
       </button>
 
       <p style={{ marginTop:8, fontSize:12, color:'var(--pb-dim)', lineHeight:1.55 }}>
-        You’ll be taken to a secure PayPal page to complete your donation. Please keep the PayPal amount unchanged to redeem your selected tickets and shirts.
+        You’ll be taken to a secure PayPal page to complete your donation. Please ensure the PayPal amount matches the Donation Summary Total to redeem your selected tickets and shirts.
       </p>
     </form>
 
