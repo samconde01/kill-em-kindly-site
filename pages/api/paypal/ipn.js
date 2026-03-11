@@ -35,7 +35,7 @@ export default async function handler(req, res) {
 
     // --- Values we expect from PayPal --------------------------------------
     const customId = (data.custom || "").trim();             // our pledge.id (uuid)
-    const amount = Number(data.mc_gross || 0);
+const paidAmount = Number(data.mc_gross || 0);
     const txnId = (data.txn_id || "").trim();
 
     // Prefer payer_email; fall back to other known fields if present
@@ -80,23 +80,27 @@ export default async function handler(req, res) {
     // Idempotent upsert: mark pledge COMPLETED; fill missing bits from PayPal
     // We only use PayPal-provided name/email/address as *fallbacks* so we don't
     // overwrite values captured earlier by /api/pledge-intent.
-    await sql`
-      insert into pledges (
-        id,
-        amount,
-        email,
-        address,
-        status,
-        completed_at,
-        paypal_txn_id,
-        name,
-        first_name,
-        is_anonymous,
-        source
-      )
-      values (
-        ${customId}::uuid,
-        ${amount},
+  await sql`
+  insert into pledges (
+    id,
+    amount,
+    paid_amount,
+    amount_matches,
+    email,
+    address,
+    status,
+    completed_at,
+    paypal_txn_id,
+    name,
+    first_name,
+    is_anonymous,
+    source
+  )
+  values (
+    ${customId}::uuid,
+    ${paidAmount},
+    ${paidAmount},
+    true,
         ${payerEmail},
         ${addr ? JSON.stringify(addr) : null}::jsonb,
         'COMPLETED',
@@ -112,6 +116,8 @@ export default async function handler(req, res) {
             completed_at  = coalesce(pledges.completed_at, now()),
             paypal_txn_id = coalesce(pledges.paypal_txn_id, excluded.paypal_txn_id),
             amount        = coalesce(pledges.amount, excluded.amount),
+                  paid_amount   = ${paidAmount},
+      amount_matches = (pledges.amount = ${paidAmount}),
             email         = coalesce(pledges.email, excluded.email),
             address       = coalesce(pledges.address, excluded.address),
             -- keep user-entered values; otherwise use PayPal fallbacks
