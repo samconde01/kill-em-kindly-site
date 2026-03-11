@@ -136,7 +136,13 @@ const UPDATES = [
   body: `Filming is wrapped and the project is now in post. We’re editing, shaping the sound, and locking in the final tone — everything that makes the wasteland feel real. Donations from here forward directly support post costs and reward fulfillment.`,
   image: '/images/post-production.PNG'
 },
-
+{
+  id: '2026-04-11-premiere',
+  title: 'Official Premiere Announced',
+  date: 'March 11, 2026',
+  body: `We’re excited to announce that the premiere screening of Kill ’em Kindly will take place at the historic Texas Theatre in Dallas on April 11 from 6PM–9PM. This ticketed event will bring together cast, crew, and supporters to celebrate the film’s debut on the big screen. Only 100 tickets available!`,
+  image: '/images/updates/texas-theater.png'
+},
 
 
 ];
@@ -353,6 +359,7 @@ html, body, .pipboy {
 
 .pb-input {
   width:100%;
+  box-sizing:border-box;
   padding:.6rem .8rem;
   background:#1c0f03;
   border:1px solid var(--pb-border);
@@ -462,7 +469,14 @@ html, body, .pipboy {
 
 /* Updates & Sponsors */
 .updates-grid { display:grid; grid-template-columns: 1fr; gap:12px; }
-.update-img { width:100%; height:220px; object-fit:cover; border:1px solid var(--pb-border); border-radius:10px; }
+.update-img {
+  width:100%;
+  height:220px;
+  object-fit:cover;
+  border:1px solid var(--pb-border);
+  border-radius:10px;
+  filter:contrast(1.05) brightness(.95);
+}
 .sponsors-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:12px; }
 .sponsor-card { padding:18px; display:flex; align-items:center; justify-content:center; min-height:96px; }
 .sponsor-logo { max-width: 180px; max-height: 48px; width:auto; height:auto; object-fit:contain; filter: grayscale(15%) contrast(1.1); }
