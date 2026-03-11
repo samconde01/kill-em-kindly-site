@@ -80,7 +80,7 @@ const paidAmount = Number(data.mc_gross || 0);
     // Idempotent upsert: mark pledge COMPLETED; fill missing bits from PayPal
     // We only use PayPal-provided name/email/address as *fallbacks* so we don't
     // overwrite values captured earlier by /api/pledge-intent.
-  await sql`
+ await sql`
   insert into pledges (
     id,
     amount,
@@ -101,32 +101,30 @@ const paidAmount = Number(data.mc_gross || 0);
     ${paidAmount},
     ${paidAmount},
     true,
-        ${payerEmail},
-        ${addr ? JSON.stringify(addr) : null}::jsonb,
-        'COMPLETED',
-        now(),
-        ${txnId},
-        ${payerFull},          -- name (fallback)
-        ${payerFirst || null}, -- first_name (fallback)
-        false,                 -- default public unless user set anon in intent
-        'paypal:ipn'
-      )
-      on conflict (id) do update
-        set status        = 'COMPLETED',
-            completed_at  = coalesce(pledges.completed_at, now()),
-            paypal_txn_id = coalesce(pledges.paypal_txn_id, excluded.paypal_txn_id),
-            amount        = coalesce(pledges.amount, excluded.amount),
-                  paid_amount   = ${paidAmount},
-      amount_matches = (pledges.amount = ${paidAmount}),
-            email         = coalesce(pledges.email, excluded.email),
-            address       = coalesce(pledges.address, excluded.address),
-            -- keep user-entered values; otherwise use PayPal fallbacks
-            name          = coalesce(pledges.name, excluded.name),
-            first_name    = coalesce(pledges.first_name, excluded.first_name),
-            -- honor prior setting from pledge-intent; otherwise default false
-            is_anonymous  = coalesce(pledges.is_anonymous, excluded.is_anonymous),
-            source        = coalesce(pledges.source, excluded.source);
-    `;
+    ${payerEmail},
+    ${addr ? JSON.stringify(addr) : null}::jsonb,
+    'COMPLETED',
+    now(),
+    ${txnId},
+    ${payerFull},
+    ${payerFirst || null},
+    false,
+    'paypal:ipn'
+  )
+  on conflict (id) do update
+    set status         = 'COMPLETED',
+        completed_at   = coalesce(pledges.completed_at, now()),
+        paypal_txn_id  = coalesce(pledges.paypal_txn_id, excluded.paypal_txn_id),
+        amount         = coalesce(pledges.amount, excluded.amount),
+        paid_amount    = ${paidAmount},
+        amount_matches = (pledges.amount = ${paidAmount}),
+        email          = coalesce(pledges.email, excluded.email),
+        address        = coalesce(pledges.address, excluded.address),
+        name           = coalesce(pledges.name, excluded.name),
+        first_name     = coalesce(pledges.first_name, excluded.first_name),
+        is_anonymous   = coalesce(pledges.is_anonymous, excluded.is_anonymous),
+        source         = coalesce(pledges.source, excluded.source);
+`;
 
     return res.status(200).end();
   } catch (e) {
