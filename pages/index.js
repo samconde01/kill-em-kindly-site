@@ -998,10 +998,12 @@ React.useEffect(() => {
 
 
 
-    {/* Rewards & Pledge Section */}
+ {/* Rewards & Pledge Section */}
 <section id="rewards" className="pb-container" style={{ padding:'48px 0' }}>
-<h3 className="pb-glow" style={{ fontSize:18, fontWeight:600 }}>Donate for Premiere Access</h3>
+  <h3 className="pb-glow" style={{ fontSize:18, fontWeight:600 }}>Donate for Premiere Access</h3>
 
+  <div className="pb-panel" style={{ marginTop:16, padding:20 }} id="pledge" ref={pledgeRef}>
+  
   {/* Pledge Box */}
 <div className="pb-divider">
   <div className="pb-glow" style={{ fontWeight:700, fontSize:18 }}>
@@ -1158,7 +1160,7 @@ React.useEffect(() => {
         value={firstName}
         onChange={e => setFirstName(e.target.value)}
         style={{ marginTop:6 }}
-Required
+required
       />
     </div>
 
@@ -1173,7 +1175,7 @@ Required
         value={email}
         onChange={e=>setEmail(e.target.value)}
         style={{ marginTop:6 }}
-        Required
+        required
       />
       <p className="pb-soft-text" style={{ marginTop:6, fontSize:12 }}>
         We’ll send screening details and follow-up information here.
