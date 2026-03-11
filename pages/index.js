@@ -1061,7 +1061,7 @@ React.useEffect(() => {
 
     <div className="pb-divider">
       <label style={{ display:'block', fontSize:15, fontWeight:700 }} className="pb-strong-text">
-        Shirt Add-Ons
+        Shirt Add-Ons (Only available for pickup at screening event.)
       </label>
       <p className="pb-soft-text" style={{ marginTop:6, fontSize:13 }}>
         $25 each. Shirts can only be added with at least one premiere ticket.
