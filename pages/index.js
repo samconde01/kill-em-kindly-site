@@ -882,14 +882,14 @@ React.useEffect(() => {
     {/* Progress */}
     <div className="pb-panel" style={{ padding: 12 }}>
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
-        <div className="pb-glow" style={{ fontWeight:700 }}>Funding Progress</div>
-        <span className="pb-chip">Fundraising Ongoing</span>
+<div className="pb-glow" style={{ fontWeight:700 }}>Premiere Tickets</div>
+      <span className="pb-chip">Status: Available</span>
       </div>
     </div>
 
     <div style={{ marginTop:10, height:14, border:'1px solid var(--pb-border-strong)', borderRadius:10, overflow:'hidden', background:'rgba(77,240,138,.06)' }}>
-      <div style={{ width:`${progress*100}%`, height:'100%', background:'linear-gradient(90deg, rgba(77,240,138,.45), rgba(77,240,138,.15))' }} />
-    </div>
+<div style={{ width:'15%', height:'100%', background:'linear-gradient(90deg, rgba(77,240,138,.45), rgba(77,240,138,.15))' }} />
+      </div>
 
     <div style={{ marginTop:10, display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12, fontSize:14 }}>
       <div className="pb-panel" style={{ padding:10, textAlign:'center' }}>
@@ -910,13 +910,7 @@ React.useEffect(() => {
 
     <div style={{ display:'flex', gap:12, marginTop:12 }}>
 <a href="#pledge" className="pb-btn" style={{ padding:'10px 14px', borderRadius:12 }}>Get Tickets Now</a>
-         <button
-        className="pb-btn pb-btn-ghost"
-        style={{ padding:'10px 14px', borderRadius:12 }}
-        onClick={()=>document.getElementById('rewards')?.scrollIntoView({behavior:'smooth'})}
-      >
-        View tickets
-      </button>
+        
     </div>
 
     {/* Donor list */}
