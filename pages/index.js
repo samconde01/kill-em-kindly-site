@@ -991,18 +991,20 @@ React.useEffect(() => {
 
       
 
-       {/* Timeline */}
+      {/* Timeline */}
 <div style={{ marginTop:16 }}>
   <div className="pb-glow" style={{ fontWeight:600, marginBottom:6 }}>Timeline</div>
 
   <div style={{ display:'grid', gap:8 }}>
-   const MINI_TIMELINE = [
-  { label: 'Crowdfunding Campaign', note: 'Funded with support from backers online' },
-  { label: 'Pre-production', note: 'October & November 2025' },
-  { label: 'Filming', note: 'December 2025 — shot in 5 days', glow: true },
-  { label: 'Post-production', note: 'January – March 2026' },
-  { label: 'Release', note: 'April 2026 — completed in under a year' },
-];
+    {MINI_TIMELINE.map((m, i) => (
+      <div
+        key={`${m.label}-${i}`}
+        className="pb-panel"
+        style={{
+          padding: 10,
+          boxShadow: m.glow
+            ? '0 0 0 2px var(--pb-border-strong), inset 0 0 24px rgba(255,156,43,0.18)'
+            : undefined,
         }}
       >
         <strong className={m.glow ? 'pb-glow' : undefined}>{m.label}</strong>
@@ -1012,10 +1014,6 @@ React.useEffect(() => {
     ))}
   </div>
 </div>
-</div>     {/* closes pb-panel inside #details */}
-</section> {/* closes #details section */}
-
-
 
 
 {/* Support Section */}
