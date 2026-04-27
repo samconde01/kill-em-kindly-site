@@ -870,13 +870,13 @@ React.useEffect(() => {
         justifyContent: 'center',
       }}
     >
-      <a
-        href="#pledge"
-        className="pb-btn"
-        style={{ padding: '12px 18px', borderRadius: 14 }}
-      >
-        Watch Now
-      </a>
+     <a
+  href="#watch"
+  className="pb-btn"
+  style={{ padding: '12px 18px', borderRadius: 14 }}
+>
+  Watch Now
+</a>
 
       <button
         className="pb-btn pb-btn-ghost"
@@ -905,9 +905,13 @@ React.useEffect(() => {
   </div>
 </section>
 
+{/* Donors */}
+<section className="pb-container" style={{ padding: '0 0 24px' }}>
+  <div className="pb-panel" style={{ marginTop: 16, padding: 16 }}>
+    <div className="pb-glow" style={{ fontSize:18, fontWeight:700, marginBottom:12 }}>
+      Donors
+    </div>
 
-
-    {/* Donor list */}
     <div className="pb-panel" style={{ padding:12, marginTop:12 }}>
       <div className="pb-glow" style={{ fontWeight:700, marginBottom:8 }}>Recent Supporters</div>
 
