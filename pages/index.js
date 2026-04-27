@@ -92,6 +92,7 @@ const MINI_TIMELINE = [
 
 // --- Updates & Sponsors ----------------------------------------------------
 const UPDATES = [
+  
   {
     id: '2025-11-17-gunnar',
     title: 'Gunnar Optiks is officially on board.',
@@ -143,7 +144,13 @@ const UPDATES = [
   body: `We’re excited to announce that the premiere screening of Kill ’em Kindly will take place at the historic Texas Theatre in Dallas on April 11 from 6PM–9PM. This ticketed event will bring together cast, crew, and supporters to celebrate the film’s debut on the big screen. Only 100 tickets available!`,
   image: '/images/updates/texas-theater.png'
 },
-
+{
+  id: '2026-04-27-youtube-launch',
+  title: 'Kill ’em Kindly is now live on YouTube.',
+  date: 'April 27, 2026',
+  body: `After a 5-day shoot, a successful crowdfunding campaign, and a full turnaround in under a year, Kill ’em Kindly: A Fallout Fan Film is officially available to watch online. Thank you to every backer, cast member, crew member, sponsor, and friend who helped bring this wasteland story to life.`,
+  image: '/images/updates/youtube-launch.png'
+},
 
 ];
 
@@ -183,16 +190,25 @@ const SPONSORS = [
 // --- Video Station (Pip-Boy Radio style) -----------------------------------
 const VIDEO_STATIONS = [
   {
+    key: 'full-film',
+    label: 'WATCH NOW',
+    videoId: 'e0XpUpbPe8c',
+    title: "Kill ’em Kindly: A Fallout Fan Film",
+    note: 'Full film now live',
+  },
+  {
     key: 'teaser',
     label: 'TEASER',
     videoId: 'vWk6iyifXgg',
     title: "Kill ’em Kindly — Teaser",
+    note: 'Official teaser',
   },
   {
     key: 'crowdfunding',
     label: 'CROWDFUNDING VIDEO',
     videoId: 'uQTAh-MuzgA',
     title: "Kill ’em Kindly — Crowdfunding Video",
+    note: 'Campaign video',
   },
 ];
 
@@ -634,8 +650,8 @@ function Header(){
     About
   </a>
 
-  <a href="#pledge" className="pb-btn" style={{ borderRadius:10 }}>
-    Tickets
+  <a href="#watch" className="pb-btn" style={{ borderRadius:10 }}>
+    Watch Now
   </a>
 </nav>
 
@@ -840,7 +856,7 @@ React.useEffect(() => {
     fontSize:14
   }}
 >
-  PRIVATE PREMIERE SCREENING • TEXAS THEATRE • APRIL 11 • 6–9 PM
+  NOW STREAMING ON YOUTUBE
 </div>
 
     {/* Buttons */}
@@ -882,7 +898,7 @@ React.useEffect(() => {
 
 
 {/* Video Station */}
-<section className="pb-container" style={{ padding:'0 0 24px' }}>
+<section id="watch" className="pb-container" style={{ padding:'0 0 24px' }}>
   <div className="pb-panel" style={{ marginTop:16, padding:16 }}>
     <VideoStation />
   </div>
@@ -895,7 +911,7 @@ React.useEffect(() => {
     <div className="pb-panel" style={{ padding: 12 }}>
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
 <div className="pb-glow" style={{ fontWeight:700 }}>Premiere Tickets</div>
-      <span className="pb-chip">Status: Available</span>
+      <span className="pb-chip">Status: Streaming Now</span>
       </div>
     </div>
 
@@ -921,7 +937,7 @@ React.useEffect(() => {
     </div>
 
     <div style={{ display:'flex', gap:12, marginTop:12 }}>
-<a href="#pledge" className="pb-btn" style={{ padding:'10px 14px', borderRadius:12 }}>Get Tickets Now</a>
+<a href="#pledge" className="pb-btn" style={{ padding:'10px 14px', borderRadius:12 }}>Watch Now</a>
         
     </div>
 
@@ -980,15 +996,13 @@ React.useEffect(() => {
   <div className="pb-glow" style={{ fontWeight:600, marginBottom:6 }}>Timeline</div>
 
   <div style={{ display:'grid', gap:8 }}>
-    {MINI_TIMELINE.map((m, i) => (
-      <div
-        key={`${m.label}-${i}`}
-        className="pb-panel"
-        style={{
-          padding: 10,
-          boxShadow: m.glow
-            ? '0 0 0 2px var(--pb-border-strong), inset 0 0 24px rgba(255,156,43,0.18)'
-            : undefined,
+   const MINI_TIMELINE = [
+  { label: 'Crowdfunding Campaign', note: 'Funded with support from backers online' },
+  { label: 'Pre-production', note: 'October & November 2025' },
+  { label: 'Filming', note: 'December 2025 — shot in 5 days', glow: true },
+  { label: 'Post-production', note: 'January – March 2026' },
+  { label: 'Release', note: 'April 2026 — completed in under a year' },
+];
         }}
       >
         <strong className={m.glow ? 'pb-glow' : undefined}>{m.label}</strong>
@@ -1004,11 +1018,34 @@ React.useEffect(() => {
 
 
 
- {/* Rewards & Pledge Section */}
-<section id="rewards" className="pb-container" style={{ padding:'48px 0' }}>
-  <h3 className="pb-glow" style={{ fontSize:18, fontWeight:600 }}>Donate for Premiere Access</h3>
+{/* Support Section */}
+<section id="pledge" className="pb-container" style={{ padding:'48px 0' }}>
+  <h3 className="pb-glow" style={{ fontSize:18, fontWeight:600 }}>Support the Film</h3>
 
-  <div className="pb-panel" style={{ marginTop:16, padding:20 }} id="pledge" ref={pledgeRef}>
+  <div className="pb-panel" style={{ marginTop:16, padding:20 }}>
+    <div className="pb-divider">
+      <div className="pb-glow" style={{ fontWeight:700, fontSize:18 }}>
+        Contributions Are Still Open
+      </div>
+
+      <p className="pb-soft-text" style={{ marginTop:8 }}>
+        Kill ’em Kindly is now live. Contributions help cover production costs, rewards, festival submissions, and distribution.
+      </p>
+
+      <p className="pb-soft-text" style={{ marginTop:8 }}>
+        This is a not-for-profit fan film. No profit will be made, and contributions do not include new rewards.
+      </p>
+    </div>
+
+    <form action="https://www.paypal.com/donate" method="post" target="_blank">
+      <input type="hidden" name="hosted_button_id" value="VPRLL2BPRULJ8" />
+
+      <button className="pb-btn" style={{ padding:'12px 18px', borderRadius:14 }}>
+        Contribute
+      </button>
+    </form>
+  </div>
+</section>
   
   {/* Pledge Box */}
 <div className="pb-divider">
@@ -1027,7 +1064,7 @@ React.useEffect(() => {
 
     <div className="pb-divider">
       <label style={{ display:'block', fontSize:15, fontWeight:700 }} className="pb-strong-text">
-        Premiere Tickets
+        Film Support
       </label>
       <p className="pb-soft-text" style={{ marginTop:6, fontSize:13 }}>$15 each</p>
 
@@ -1607,8 +1644,8 @@ required
 }
 function VideoStation() {
   const defaultStation =
-  VIDEO_STATIONS.find((v) => v.key === "teaser") || VIDEO_STATIONS[0];
-
+VIDEO_STATIONS.find((v) => v.key === "full-film") || VIDEO_STATIONS[0];
+  
   const [active, setActive] = React.useState(defaultStation);
 
   const isPlayable = Boolean(active?.videoId);
