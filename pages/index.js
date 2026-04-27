@@ -984,6 +984,8 @@ React.useEffect(() => {
     ))}
   </div>
 </div>
+</div>
+</section>
 
 
 {/* Support Section */}
